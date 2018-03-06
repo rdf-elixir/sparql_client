@@ -1,0 +1,35 @@
+[
+  {
+    "request": {
+      "body": "query=PREFIX+%3A+%3Chttp%3A%2F%2Fdbpedia.org%2Fresource%2F%3E%0APREFIX+dbo%3A+%3Chttp%3A%2F%2Fdbpedia.org%2Fontology%2F%3E%0A%0AASK+WHERE+%7B+%3AKevin_Bacon+a+dbo%3AAgent+%7D%0A",
+      "headers": {
+        "accept": "application/sparql-results+xml",
+        "content-type": "application/x-www-form-urlencoded"
+      },
+      "method": "post",
+      "options": [],
+      "request_body": "",
+      "url": "http://dbpedia.org/sparql"
+    },
+    "response": {
+      "binary": false,
+      "body": "<sparql xmlns=\"http://www.w3.org/2005/sparql-results#\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.w3.org/2001/sw/DataAccess/rf1/result2.xsd\">\n <head></head>\n <boolean>true</boolean>\n</sparql>",
+      "headers": {
+        "Date": "Tue, 06 Mar 2018 11:19:52 GMT",
+        "Content-Type": "application/sparql-results+xml; charset=UTF-8",
+        "Content-Length": "233",
+        "Connection": "keep-alive",
+        "Server": "Virtuoso/07.20.3224 (Linux) i686-generic-linux-glibc212-64  VDB",
+        "Expires": "Tue, 13 Mar 2018 11:19:52 GMT",
+        "Cache-Control": "max-age=604800",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+        "Access-Control-Allow-Headers": "DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Accept-Encoding",
+        "Accept-Ranges": "bytes"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]
