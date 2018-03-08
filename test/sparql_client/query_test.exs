@@ -68,7 +68,7 @@ defmodule SPARQL.Client.QueryTest do
     @success_response %Tesla.Env{
       status: 200,
       body: @success_json_result,
-      headers: %{"content-type" => Query.Result.JSON.content_type}
+      headers: %{"content-type" => Query.Result.JSON.media_type}
     }
 
     test "via GET" do
@@ -204,7 +204,7 @@ defmodule SPARQL.Client.QueryTest do
           %Tesla.Env{
                 status: 200,
                 body: @success_json_result,
-                headers: %{"content-type" => Query.Result.JSON.content_type}
+                headers: %{"content-type" => Query.Result.JSON.media_type}
               }
       end
 
@@ -219,7 +219,7 @@ defmodule SPARQL.Client.QueryTest do
           %Tesla.Env{
                 status: 200,
                 body: @success_csv_result,
-                headers: %{"content-type" => Query.Result.CSV.content_type}
+                headers: %{"content-type" => Query.Result.CSV.media_type}
               }
       end
 
@@ -349,7 +349,7 @@ defmodule SPARQL.Client.QueryTest do
           %Tesla.Env{
                 status: 200,
                 body: @ask_success_json_result,
-                headers: %{"content-type" => Query.Result.JSON.content_type}
+                headers: %{"content-type" => Query.Result.JSON.media_type}
               }
       end
 

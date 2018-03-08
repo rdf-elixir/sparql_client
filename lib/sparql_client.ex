@@ -12,16 +12,16 @@ defmodule SPARQL.Client do
   @default_protocol_version "1.0"
 
   @default_select_accept_header [
-      SPARQL.Query.Result.JSON.content_type,
-      SPARQL.Query.Result.XML.content_type,
-      "#{SPARQL.Query.Result.TSV.content_type};p=0.8",
-      "#{SPARQL.Query.Result.CSV.content_type};p=0.2",
+      SPARQL.Query.Result.JSON.media_type,
+      SPARQL.Query.Result.XML.media_type,
+      "#{SPARQL.Query.Result.TSV.media_type};p=0.8",
+      "#{SPARQL.Query.Result.CSV.media_type};p=0.2",
       "*/*;p=0.1"
     ] |> Enum.join(", ")
 
   @default_ask_accept_header [
-      SPARQL.Query.Result.JSON.content_type,
-      SPARQL.Query.Result.XML.content_type,
+      SPARQL.Query.Result.JSON.media_type,
+      SPARQL.Query.Result.XML.media_type,
       "*/*;p=0.1"
     ] |> Enum.join(", ")
 
@@ -105,7 +105,7 @@ defmodule SPARQL.Client do
   defp add_accept_header(headers, query, nil),
     do: Map.put_new(headers, "Accept", default_accept_header(query))
   defp add_accept_header(headers, _query, result_format),
-    do: Map.put(headers, "Accept", result_format.content_type)
+    do: Map.put(headers, "Accept", result_format.media_type)
 
 
 
@@ -144,7 +144,7 @@ defmodule SPARQL.Client do
       if query.form in result_format.supported_query_forms do
         result_format.decode(response.body)
       else
-        {:error, "unsupported result format for #{query.form} query: #{inspect result_format.content_type}"}
+        {:error, "unsupported result format for #{query.form} query: #{inspect result_format.media_type}"}
       end
     end
   end
@@ -152,7 +152,7 @@ defmodule SPARQL.Client do
   defp response_result_format(%Tesla.Env{headers: %{"content-type" => content_type}}, options) do
     ( content_type
       |> parse_content_type()
-      |> SPARQL.result_format_by_content_type()
+      |> SPARQL.result_format_by_media_type()
     ) || result_format(options)
       || {:error, "unsupported result format: #{inspect content_type}"}
   end
