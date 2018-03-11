@@ -107,31 +107,59 @@ defmodule SPARQL.Client do
   defp add_accept_header(headers, _query, result_format),
     do: Map.put(headers, "Accept", result_format.media_type)
 
+  defp graph_params(options) do
+    options
+    |> Enum.reduce([], fn
+         {:default_graph, graph_uris}, acc when is_list(graph_uris) ->
+           Enum.reduce graph_uris, acc, fn graph_uri, acc ->
+             [{"default-graph-uri", graph_uri} | acc]
+           end
+         {:default_graph, graph_uri}, acc ->
+           [{"default-graph-uri", graph_uri} | acc]
+         {:named_graph, graph_uris}, acc when is_list(graph_uris) ->
+           Enum.reduce graph_uris, acc, fn graph_uri, acc ->
+             [{"named-graph-uri", graph_uri} | acc]
+           end
+         {:named_graph, graph_uri}, acc ->
+           [{"named-graph-uri", graph_uri} | acc]
+         _, acc ->
+           acc
+       end)
+    |> Enum.reverse()
+  end
 
 
   ############################################################################
   # HTTP Request execution
 
   defp http_request(client, endpoint, query, options) do
-    do_http_request(client, request_method(options), protocol_version(options), endpoint, query)
+    do_http_request(client, request_method(options), protocol_version(options), endpoint, query, options)
   end
 
-  defp do_http_request(client, :get, "1.1", endpoint, query) do
+  defp do_http_request(client, :get, "1.1", endpoint, query, options) do
     client
-    |> get(endpoint <> "?" <> URI.encode_query(%{query: query.query_string}))
+    |> get(endpoint <> "?" <> URI.encode_query(
+            [{"query", query.query_string} | graph_params(options)]))
   end
 
-  defp do_http_request(client, :post, "1.1", endpoint, query) do
+  defp do_http_request(client, :post, "1.1", endpoint, query, options) do
+    url =
+      case graph_params(options) do
+        []           -> endpoint
+        graph_params -> endpoint <> "?" <> URI.encode_query(graph_params)
+      end
+
     client
-    |> post(endpoint, query.query_string)
+    |> post(url, query.query_string)
   end
 
-  defp do_http_request(client, :post, "1.0", endpoint, query) do
+  defp do_http_request(client, :post, "1.0", endpoint, query, options) do
     client
-    |> post(endpoint, URI.encode_query(%{query: query.query_string}))
+    |> post(endpoint, URI.encode_query(
+              [{"query", query.query_string} | graph_params(options)]))
   end
 
-  defp do_http_request(_, request_method, protocol_version, _, _),
+  defp do_http_request(_, request_method, protocol_version, _, _, _),
     do: {:error, "unknown request method: #{inspect request_method} with SPARQL protocol version #{protocol_version}"}
 
 

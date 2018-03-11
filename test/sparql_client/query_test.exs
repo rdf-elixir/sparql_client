@@ -131,6 +131,126 @@ defmodule SPARQL.Client.QueryTest do
     end
   end
 
+  describe "specifying an RDF Dataset" do
+    @graph_uri "http://www.other.example/sparql/"
+    @another_graph_uri "http://www.another.example/sparql/"
+
+    @success_response %Tesla.Env{
+      status: 200,
+      body: @success_json_result,
+      headers: %{"content-type" => Query.Result.JSON.media_type}
+    }
+
+    test "one default graph via GET" do
+      url = @example_endpoint <> "?" <> URI.encode_query([
+              {"query"            , @example_select_query},
+              {"default-graph-uri", @graph_uri}
+              ])
+      Tesla.Mock.mock fn %{method: :get, url: ^url} -> @success_response end
+
+      assert SPARQL.Client.query(@example_select_query, @example_endpoint,
+              request_method: :get, protocol_version: "1.1",
+              default_graph: @graph_uri) ==
+                {:ok, @success_result}
+    end
+
+
+    test "multiple default graphs via GET" do
+      url = @example_endpoint <> "?" <> URI.encode_query([
+              {"query"            , @example_select_query},
+              {"default-graph-uri", @graph_uri},
+              {"default-graph-uri", @another_graph_uri}
+            ])
+      Tesla.Mock.mock fn %{method: :get, url: ^url} -> @success_response end
+
+      assert SPARQL.Client.query(@example_select_query, @example_endpoint,
+              request_method: :get, protocol_version: "1.1",
+              default_graph: [@graph_uri, @another_graph_uri]) ==
+                {:ok, @success_result}
+    end
+
+    test "one named graph via GET" do
+      url = @example_endpoint <> "?" <> URI.encode_query([
+              {"query"            , @example_select_query},
+              {"named-graph-uri"  , @graph_uri}
+              ])
+      Tesla.Mock.mock fn %{method: :get, url: ^url} -> @success_response end
+
+      assert SPARQL.Client.query(@example_select_query, @example_endpoint,
+              request_method: :get, protocol_version: "1.1",
+              named_graph: @graph_uri) ==
+                {:ok, @success_result}
+    end
+
+    test "multiple named graphs via GET" do
+      url = @example_endpoint <> "?" <> URI.encode_query([
+              {"query"            , @example_select_query},
+              {"named-graph-uri"  , @graph_uri},
+              {"named-graph-uri"  , @another_graph_uri}
+            ])
+      Tesla.Mock.mock fn %{method: :get, url: ^url} -> @success_response end
+
+      assert SPARQL.Client.query(@example_select_query, @example_endpoint,
+              request_method: :get, protocol_version: "1.1",
+              named_graph: [@graph_uri, @another_graph_uri]) ==
+                {:ok, @success_result}
+    end
+
+    test "multiple default and named graphs via GET" do
+      url = @example_endpoint <> "?" <> URI.encode_query([
+              {"query"            , @example_select_query},
+              {"default-graph-uri", @graph_uri <> "1"},
+              {"named-graph-uri"  , @graph_uri <> "2"},
+              {"named-graph-uri"  , @graph_uri <> "3"},
+            ])
+      Tesla.Mock.mock fn %{method: :get, url: ^url} -> @success_response end
+
+      assert SPARQL.Client.query(@example_select_query, @example_endpoint,
+              request_method: :get, protocol_version: "1.1",
+              named_graph: [@graph_uri <> "2", @graph_uri <> "3"],
+              default_graph: @graph_uri <> "1") ==
+                {:ok, @success_result}
+    end
+
+    test "multiple default and named graphs via URL-encoded POST" do
+      body = URI.encode_query([
+              {"query"            , @example_select_query},
+              {"default-graph-uri", @graph_uri <> "1"},
+              {"named-graph-uri"  , @graph_uri <> "2"},
+              {"named-graph-uri"  , @graph_uri <> "3"},
+            ])
+      Tesla.Mock.mock fn
+        %{method: :post, url: @example_endpoint, body: ^body,
+            headers: %{"content-type" => "application/x-www-form-urlencoded"}} ->
+          @success_response
+      end
+
+      assert SPARQL.Client.query(@example_select_query, @example_endpoint,
+              request_method: :post, protocol_version: "1.0",
+              named_graph: [@graph_uri <> "2", @graph_uri <> "3"],
+              default_graph: @graph_uri <> "1") ==
+                {:ok, @success_result}
+    end
+
+    test "multiple default and named graphs via POST directly" do
+      url = @example_endpoint <> "?" <> URI.encode_query([
+              {"default-graph-uri", @graph_uri <> "1"},
+              {"named-graph-uri"  , @graph_uri <> "2"},
+              {"named-graph-uri"  , @graph_uri <> "3"},
+            ])
+      Tesla.Mock.mock fn
+        %{method: :post, url: ^url, body: @example_select_query,
+            headers: %{"content-type" => "application/sparql-query"}} ->
+          @success_response
+      end
+
+      assert SPARQL.Client.query(@example_select_query, @example_endpoint,
+              request_method: :post, protocol_version: "1.1",
+              named_graph: [@graph_uri <> "2", @graph_uri <> "3"],
+              default_graph: @graph_uri <> "1") ==
+                {:ok, @success_result}
+    end
+  end
 
   describe "SELECT response evaluation" do
     setup do
