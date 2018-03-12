@@ -79,7 +79,9 @@ defmodule SPARQL.Client do
       {:ok,
         Tesla.build_client [
           {Tesla.Middleware.Tuples,  rescue_errors: :all},
-          {Tesla.Middleware.Headers, headers}
+          {Tesla.Middleware.Headers, headers},
+          {Tesla.Middleware.FollowRedirects,
+            max_redirects: Map.get(options, :max_redirects, 5)}
         ]
       }
     end
