@@ -3,6 +3,8 @@ defmodule SPARQL.Client.QueryTest do
 
   alias SPARQL.Query
 
+  import RDF.Sigils
+
 
   @example_endpoint "http://example.org/sparql"
 
@@ -114,6 +116,57 @@ defmodule SPARQL.Client.QueryTest do
 
       assert SPARQL.Client.query(@example_select_query, @example_endpoint) ==
               {:ok, @success_result}
+    end
+
+    test "custom headers via GET" do
+      url = @example_endpoint <> "?" <> URI.encode_query(%{query: @example_select_query})
+      Tesla.Mock.mock fn
+        %{method: :get, url: ^url, headers: %{"authorization" => "Basic XXX=="}} ->
+          @success_response
+      end
+
+      assert SPARQL.Client.query(@example_select_query, @example_endpoint,
+              request_method: :get, protocol_version: "1.1",
+                  headers: %{"Authorization" => "Basic XXX=="}) ==
+                {:ok, @success_result}
+    end
+
+    test "custom headers via URL-encoded POST" do
+      body = URI.encode_query(%{query: @example_select_query})
+      Tesla.Mock.mock fn
+        %{method: :post, url: @example_endpoint, body: ^body, headers: %{
+              "content-type"  => "application/x-www-form-urlencoded",
+              "authorization" => "Basic XXX==",
+              "accept"        => "text/tab-separated-values"
+            }} ->
+          @success_response
+      end
+
+      assert SPARQL.Client.query(@example_select_query, @example_endpoint,
+              request_method: :post, protocol_version: "1.0", result_format: :tsv,
+                  headers: %{"Authorization" => "Basic XXX=="}) ==
+                {:ok, @success_result}
+    end
+
+    test "custom headers via POST directly" do
+      Tesla.Mock.mock fn
+        %{method: :post, url: @example_endpoint, body: @example_select_query,
+            headers: %{
+              "content-type" => "application/sparql-query",
+              "authorization" => "Basic XXX==",
+              "accept"        => "text/tab-separated-values"
+
+            }} ->
+          @success_response
+      end
+
+      assert SPARQL.Client.query(@example_select_query, @example_endpoint,
+              request_method: :post, protocol_version: "1.1", result_format: :tsv,
+                  headers: %{
+                    "Authorization" => "Basic XXX==",
+                    "Accept"        => "text/csv"
+                  }) ==
+                {:ok, @success_result}
     end
 
     test "invalid request forms" do
@@ -363,7 +416,7 @@ defmodule SPARQL.Client.QueryTest do
     end
 
 
-    test "custom accept header", %{body: body} do
+    test "custom Accept header", %{body: body} do
       Tesla.Mock.mock fn
         %{method: :post, url: @example_endpoint, body: ^body,
             headers: %{"accept" => "text/tab-separated-values"}} ->
@@ -405,6 +458,31 @@ defmodule SPARQL.Client.QueryTest do
 
       assert SPARQL.Client.query(@example_select_query, @example_endpoint, result_format: :tsv) ==
               {:error, "invalid header variable: '<html><body>HTML content</body></html>'"}
+    end
+
+    test "international characters in response body", %{body: body} do
+      Tesla.Mock.mock fn
+        %{method: :post, url: @example_endpoint, body: ^body,
+            headers: %{"accept" => "application/sparql-results+json"}} ->
+          %Tesla.Env{
+                status: 200,
+                body: """
+                  {
+                    "results": {
+                      "bindings": [
+                        {
+                          "name": { "type": "literal" , "xml:lang": "jp", "value": "東京" }
+                        }
+                      ]
+                    }
+                  }
+                  """,
+                headers: %{"content-type" => "application/sparql-results+json"}
+              }
+      end
+
+      assert SPARQL.Client.query(@example_select_query, @example_endpoint, result_format: :json) ==
+              {:ok, %Query.ResultSet{results: [%Query.Result{bindings: %{"name" => ~L"東京"jp}}]}}
     end
   end
 
