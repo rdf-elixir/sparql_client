@@ -506,4 +506,21 @@ defmodule SPARQL.Client.QueryTest do
     end
   end
 
+
+  describe "error handling" do
+    test "4XX response" do
+      Tesla.Mock.mock fn _ -> %Tesla.Env{status: 400, body: "error"} end
+
+      assert SPARQL.Client.query(@example_ask_query, @example_endpoint) ==
+              {:error, %Tesla.Env{status: 400, body: "error"}}
+    end
+
+    test "5XX response" do
+      Tesla.Mock.mock fn _ -> %Tesla.Env{status: 500, body: "error"} end
+
+      assert SPARQL.Client.query(@example_ask_query, @example_endpoint) ==
+              {:error, %Tesla.Env{status: 500, body: "error"}}
+    end
+  end
+
 end

@@ -37,7 +37,7 @@ defmodule SPARQL.Client do
 
   def query(%SPARQL.Query{} = query, endpoint, options) do
     with {:ok, client}   <- client(query, endpoint, options),
-         {:ok ,response} <- http_request(client, endpoint, query, options)
+         {:ok, response} <- http_request(client, endpoint, query, options)
     do
       evaluate_response(query, response, options)
     end
@@ -168,7 +168,9 @@ defmodule SPARQL.Client do
   ############################################################################
   # HTTP Response evaluation
 
-  defp evaluate_response(query, response, options) do
+  defp evaluate_response(query, %Tesla.Env{status: status} = response, options)
+    when status in 200..299
+  do
     with result_format when is_atom(result_format) <-
           response_result_format(response, options) do
       if query.form in result_format.supported_query_forms do
@@ -178,6 +180,9 @@ defmodule SPARQL.Client do
       end
     end
   end
+
+  defp evaluate_response(_, response, _), do: {:error, response}
+
 
   defp response_result_format(%Tesla.Env{headers: %{"content-type" => content_type}}, options) do
     ( content_type
