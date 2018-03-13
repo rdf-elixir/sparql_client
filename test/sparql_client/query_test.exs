@@ -154,7 +154,7 @@ defmodule SPARQL.Client.QueryTest do
             headers: %{
               "content-type" => "application/sparql-query",
               "authorization" => "Basic XXX==",
-              "accept"        => "text/tab-separated-values"
+              "accept"        => "text/csv"
 
             }} ->
           @success_response
@@ -416,22 +416,6 @@ defmodule SPARQL.Client.QueryTest do
     end
 
 
-    test "custom Accept header", %{body: body} do
-      Tesla.Mock.mock fn
-        %{method: :post, url: @example_endpoint, body: ^body,
-            headers: %{"accept" => "text/tab-separated-values"}} ->
-          %Tesla.Env{
-                status: 200,
-                body: @success_tsv_result,
-                headers: %{"content-type" => "text/tab-separated-values"}
-              }
-      end
-
-      assert SPARQL.Client.query(@example_select_query, @example_endpoint,
-                headers: %{"Accept" => "text/tab-separated-values"}) ==
-              {:ok, @success_result}
-    end
-
     test "unsupported content-type response and no result_format set", %{body: body} do
       Tesla.Mock.mock fn
         %{method: :post, url: @example_endpoint, body: ^body} ->
@@ -458,6 +442,54 @@ defmodule SPARQL.Client.QueryTest do
 
       assert SPARQL.Client.query(@example_select_query, @example_endpoint, result_format: :tsv) ==
               {:error, "invalid header variable: '<html><body>HTML content</body></html>'"}
+    end
+
+    test "custom accept header with valid format", %{body: body} do
+      Tesla.Mock.mock fn
+        %{method: :post, url: @example_endpoint, body: ^body,
+            headers: %{"accept" => "text/tab-separated-values"}} ->
+          %Tesla.Env{
+                status: 200,
+                body: @success_tsv_result,
+                headers: %{"content-type" => "text/tab-separated-values"}
+              }
+      end
+
+      assert SPARQL.Client.query(@example_select_query, @example_endpoint,
+                headers: %{"Accept" => "text/tab-separated-values"}) ==
+              {:ok, @success_result}
+    end
+
+    test "custom accept header with invalid format and no result_format", %{body: body} do
+      Tesla.Mock.mock fn
+        %{method: :post, url: @example_endpoint, body: ^body,
+            headers: %{"accept" => "text/plain"}} ->
+          %Tesla.Env{
+                status: 200,
+                body: @success_tsv_result,
+                headers: %{"content-type" => "text/plain"}
+              }
+      end
+
+      assert SPARQL.Client.query(@example_select_query, @example_endpoint,
+                headers: %{"Accept" => "text/plain"}) ==
+              {:error, ~s[unsupported result format for select query: "text/plain"]}
+    end
+
+    test "custom accept header with invalid format and result_format", %{body: body} do
+      Tesla.Mock.mock fn
+        %{method: :post, url: @example_endpoint, body: ^body,
+            headers: %{"accept" => "text/plain"}} ->
+          %Tesla.Env{
+                status: 200,
+                body: @success_json_result,
+                headers: %{"content-type" => "text/plain"}
+              }
+      end
+
+      assert SPARQL.Client.query(@example_select_query, @example_endpoint, result_format: :json,
+                headers: %{"Accept" => "text/plain"}) ==
+              {:ok, @success_result}
     end
 
     test "international characters in response body", %{body: body} do
@@ -591,10 +623,9 @@ defmodule SPARQL.Client.QueryTest do
 
   @describe_dataset_success_result RDF.Dataset.new(@describe_graph_success_result)
 
-  @describe_success_turtle_result RDF.Turtle.write_string!(@describe_graph_success_result)
-
-  @describe_success_json_ld_result JSON.LD.write_string!(@describe_dataset_success_result)
-
+  @describe_success_turtle_result   RDF.Turtle.write_string!(@describe_graph_success_result)
+  @describe_success_ntriples_result RDF.NTriples.write_string!(@describe_graph_success_result)
+  @describe_success_json_ld_result  JSON.LD.write_string!(@describe_dataset_success_result)
 
   describe "DESCRIBE response evaluation" do
     setup do
@@ -638,7 +669,7 @@ defmodule SPARQL.Client.QueryTest do
         %{method: :get, url: ^url, headers: %{"accept" => "application/n-triples"}} ->
           %Tesla.Env{
                 status: 200,
-                body: RDF.NTriples.write_string!(@describe_graph_success_result),
+                body: @describe_success_ntriples_result,
                 headers: %{"content-type" => "application/n-triples"}
               }
       end
@@ -706,6 +737,55 @@ defmodule SPARQL.Client.QueryTest do
       assert SPARQL.Client.query(@example_describe_query, @example_endpoint, result_format: :turtle) ==
               {:ok, @describe_graph_success_result}
     end
+
+    test "custom accept header with valid format", %{body: body} do
+      Tesla.Mock.mock fn
+        %{method: :post, url: @example_endpoint, body: ^body,
+            headers: %{"accept" => "text/turtle"}} ->
+          %Tesla.Env{
+                status: 200,
+                body: @describe_success_turtle_result,
+                headers: %{"content-type" => "text/turtle"}
+              }
+      end
+
+      assert SPARQL.Client.query(@example_describe_query, @example_endpoint,
+                headers: %{"Accept" => "text/turtle"}) ==
+              {:ok, @describe_graph_success_result}
+    end
+
+    test "custom accept header with invalid format and no result_format", %{body: body} do
+      Tesla.Mock.mock fn
+        %{method: :post, url: @example_endpoint, body: ^body,
+            headers: %{"accept" => "text/plain"}} ->
+          %Tesla.Env{
+                status: 200,
+                body: @describe_success_ntriples_result,
+                headers: %{"content-type" => "text/plain"}
+              }
+      end
+
+      assert SPARQL.Client.query(@example_describe_query, @example_endpoint,
+                headers: %{"Accept" => "text/plain"}) ==
+              {:error, ~s[unsupported result format for describe query: "text/plain"]}
+    end
+
+    test "custom accept header with invalid format and result_format", %{body: body} do
+      Tesla.Mock.mock fn
+        %{method: :post, url: @example_endpoint, body: ^body,
+            headers: %{"accept" => "text/plain"}} ->
+          %Tesla.Env{
+                status: 200,
+                body: @describe_success_ntriples_result,
+                headers: %{"content-type" => "text/plain"}
+              }
+      end
+
+      assert SPARQL.Client.query(@example_describe_query, @example_endpoint, result_format: :ntriples,
+                headers: %{"Accept" => "text/plain"}) ==
+              {:ok, @describe_graph_success_result}
+    end
+
   end
 
 

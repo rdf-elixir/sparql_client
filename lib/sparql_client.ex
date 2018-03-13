@@ -115,12 +115,10 @@ defmodule SPARQL.Client do
     do: Map.put(headers, "Content-Type", "application/x-www-form-urlencoded")
   defp add_content_type(headers, _, _), do: headers
 
-  defp add_accept_header(headers, query, :all),
-    do: Map.put(headers, "Accept", default_accept_header(query))
   defp add_accept_header(headers, query, nil),
     do: Map.put_new(headers, "Accept", default_accept_header(query))
   defp add_accept_header(headers, _query, result_format),
-    do: Map.put(headers, "Accept", result_format.media_type)
+    do: Map.put_new(headers, "Accept", result_format.media_type)
 
   defp graph_params(options) do
     options
