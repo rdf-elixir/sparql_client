@@ -64,7 +64,7 @@ defmodule SPARQL.Client.QueryTest do
 
   @default_select_accept_header SPARQL.Client.default_accept_header(:select)
   @default_ask_accept_header SPARQL.Client.default_accept_header(:ask)
-
+  @default_rdf_accept_header SPARQL.Client.default_accept_header(:describe)
 
   describe "query request methods" do
     @success_response %Tesla.Env{
@@ -443,7 +443,7 @@ defmodule SPARQL.Client.QueryTest do
       end
 
       assert SPARQL.Client.query(@example_select_query, @example_endpoint) ==
-              {:error, ~s[unsupported result format: "text/html"]}
+              {:error, ~s[unsupported result format for select query: "text/html"]}
     end
 
     test "unsupported content-type response is tried to be interpreted as result_format", %{body: body} do
@@ -505,7 +505,6 @@ defmodule SPARQL.Client.QueryTest do
   @ask_success_result @ask_success_json_result |> Query.Result.JSON.decode() |> elem(1)
 
   describe "ASK response evaluation" do
-
     setup do
       {:ok, body: URI.encode_query(%{query: @example_ask_query})}
     end
@@ -581,6 +580,131 @@ defmodule SPARQL.Client.QueryTest do
 
       assert SPARQL.Client.query(@example_ask_query, @example_endpoint, result_format: :json) ==
               {:error, %Jason.DecodeError{data: "<html><body>HTML content</body></html>", position: 0, token: nil}}
+    end
+  end
+
+
+  @example_describe_query "DESCRIBE <http://example.org/S>"
+
+  @describe_graph_success_result RDF.Graph.new(
+    {~I<http://example.org/S>, ~I<http://example.org/p>, ~I<http://example.org/O>})
+
+  @describe_dataset_success_result RDF.Dataset.new(@describe_graph_success_result)
+
+  @describe_success_turtle_result RDF.Turtle.write_string!(@describe_graph_success_result)
+
+  @describe_success_json_ld_result JSON.LD.write_string!(@describe_dataset_success_result)
+
+
+  describe "DESCRIBE response evaluation" do
+    setup do
+      {:ok, body: URI.encode_query(%{query: @example_describe_query})}
+    end
+
+    test "with Turtle result", %{body: body} do
+      Tesla.Mock.mock fn
+        %{method: :post, url: @example_endpoint, body: ^body,
+            headers: %{"accept" => "text/turtle"}} ->
+          %Tesla.Env{
+                status: 200,
+                body: @describe_success_turtle_result,
+                headers: %{"content-type" => "text/turtle"}
+              }
+      end
+
+      assert SPARQL.Client.query(@example_describe_query, @example_endpoint, result_format: :turtle) ==
+              {:ok, @describe_graph_success_result}
+    end
+
+
+    test "with JSON-LD result", %{body: body} do
+      Tesla.Mock.mock fn
+        %{method: :post, url: @example_endpoint, body: ^body,
+            headers: %{"accept" => "application/ld+json"}} ->
+          %Tesla.Env{
+                status: 200,
+                body: @describe_success_json_ld_result,
+                headers: %{"content-type" => "application/ld+json"}
+              }
+      end
+
+      assert SPARQL.Client.query(@example_describe_query, @example_endpoint, result_format: :jsonld) ==
+              {:ok, @describe_dataset_success_result}
+    end
+
+    test "with NTriples result" do
+      url = @example_endpoint <> "?" <> URI.encode_query(%{query: @example_describe_query})
+      Tesla.Mock.mock fn
+        %{method: :get, url: ^url, headers: %{"accept" => "application/n-triples"}} ->
+          %Tesla.Env{
+                status: 200,
+                body: RDF.NTriples.write_string!(@describe_graph_success_result),
+                headers: %{"content-type" => "application/n-triples"}
+              }
+      end
+
+      assert SPARQL.Client.query(@example_describe_query, @example_endpoint, result_format: :ntriples,
+                request_method: :get, protocol_version: "1.1") ==
+              {:ok, @describe_graph_success_result}
+    end
+
+    test "with NQuads result" do
+      Tesla.Mock.mock fn
+        %{method: :post, url: @example_endpoint, body: @example_describe_query,
+            headers: %{"accept" => "application/n-quads"}} ->
+          %Tesla.Env{
+                status: 200,
+                body: RDF.NQuads.write_string!(@describe_graph_success_result),
+                headers: %{"content-type" => "application/n-quads"}
+              }
+      end
+
+      assert SPARQL.Client.query(@example_describe_query, @example_endpoint, result_format: :nquads,
+                request_method: :post, protocol_version: "1.1") ==
+              {:ok, @describe_dataset_success_result}
+    end
+
+    test "with default accept header and best accepted content-type returned (Turtle)", %{body: body} do
+      Tesla.Mock.mock fn
+        %{method: :post, url: @example_endpoint, body: ^body,
+            headers: %{"accept" => @default_rdf_accept_header}} ->
+          %Tesla.Env{
+                status: 200,
+                body: @describe_success_turtle_result,
+                headers: %{"content-type" => "text/turtle"}
+              }
+      end
+
+      assert SPARQL.Client.query(@example_describe_query, @example_endpoint) ==
+              {:ok, @describe_graph_success_result}
+    end
+
+    test "unsupported content-type response and no result_format set", %{body: body} do
+      Tesla.Mock.mock fn
+        %{method: :post, url: @example_endpoint, body: ^body} ->
+          %Tesla.Env{
+                status: 200,
+                body: "bool\ntrue",
+                headers: %{"content-type" => "text/plain"}
+              }
+      end
+
+      assert SPARQL.Client.query(@example_describe_query, @example_endpoint) ==
+              {:error, ~s[unsupported result format for describe query: "text/plain"]}
+    end
+
+    test "unsupported content-type response is tried to be interpreted as result_format", %{body: body} do
+      Tesla.Mock.mock fn
+        %{method: :post, url: @example_endpoint, body: ^body} ->
+          %Tesla.Env{
+                status: 200,
+                body: @describe_success_turtle_result,
+                headers: %{"content-type" => "text/plain"}
+              }
+      end
+
+      assert SPARQL.Client.query(@example_describe_query, @example_endpoint, result_format: :turtle) ==
+              {:ok, @describe_graph_success_result}
     end
   end
 

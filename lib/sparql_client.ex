@@ -25,6 +25,13 @@ defmodule SPARQL.Client do
       "*/*;p=0.1"
     ] |> Enum.join(", ")
 
+  @default_rdf_accept_header [
+      RDF.Turtle.media_type,
+      RDF.NTriples.media_type,
+      RDF.NQuads.media_type,
+      JSON.LD.media_type,
+      "*/*;p=0.1"
+    ] |> Enum.join(", ")
 
 
   @doc """
@@ -59,11 +66,17 @@ defmodule SPARQL.Client do
   defp protocol_version(%{protocol_version: protocol_version}), do: protocol_version
   defp protocol_version(_),                                     do: @default_protocol_version
 
-  defp result_format(%{result_format: result_format}), do: SPARQL.result_format(result_format)
-  defp result_format(_),                               do: nil
+  defp result_format(query_form, %{result_format: result_format})
+    when query_form in ~w[select ask]a,
+    do: SPARQL.result_format(result_format)
+  defp result_format(query_form, %{result_format: result_format})
+    when query_form in ~w[construct describe]a,
+    do: RDF.Serialization.format(result_format)
+  defp result_format(_, _), do: nil
 
-  def default_accept_header(:select), do: @default_select_accept_header
-  def default_accept_header(:ask),    do: @default_ask_accept_header
+  def default_accept_header(:select),   do: @default_select_accept_header
+  def default_accept_header(:ask),      do: @default_ask_accept_header
+  def default_accept_header(:describe), do: @default_rdf_accept_header
   def default_accept_header(%SPARQL.Query{form: form}), do: default_accept_header(form)
 
 
@@ -92,7 +105,7 @@ defmodule SPARQL.Client do
         options
         |> Map.get(:headers, %{})
         |> add_content_type(request_method(options), protocol_version(options))
-        |> add_accept_header(query, result_format(options))
+        |> add_accept_header(query, result_format(query.form, options))
     }
   end
 
@@ -172,9 +185,10 @@ defmodule SPARQL.Client do
     when status in 200..299
   do
     with result_format when is_atom(result_format) <-
-          response_result_format(response, options) do
-      if query.form in result_format.supported_query_forms do
-        result_format.decode(response.body)
+          response_result_format(query.form, response, options) do
+      if query.form in ~w[construct describe]a or
+         query.form in result_format.supported_query_forms do
+        result_format.read_string(response.body)
       else
         {:error, "unsupported result format for #{query.form} query: #{inspect result_format.media_type}"}
       end
@@ -184,13 +198,23 @@ defmodule SPARQL.Client do
   defp evaluate_response(_, response, _), do: {:error, response}
 
 
-  defp response_result_format(%Tesla.Env{headers: %{"content-type" => content_type}}, options) do
+  defp response_result_format(query_form, %Tesla.Env{headers: %{"content-type" => content_type}}, options)
+  do
     ( content_type
       |> parse_content_type()
-      |> SPARQL.result_format_by_media_type()
-    ) || result_format(options)
-      || {:error, "unsupported result format: #{inspect content_type}"}
+      |> result_format_by_media_type(query_form)
+    ) || result_format(query_form, options)
+      || {:error, "unsupported result format for #{query_form} query: #{inspect content_type}"}
   end
+
+  defp result_format_by_media_type(media_type, query_form)
+    when query_form in ~w[select ask]a,
+    do: SPARQL.result_format_by_media_type(media_type)
+
+  defp result_format_by_media_type(media_type, query_form)
+    when query_form in ~w[construct describe]a,
+    do: RDF.Serialization.format_by_media_type(media_type)
+
 
   defp parse_content_type(content_type) do
     with {:ok, type, subtype, _params} <- content_type(content_type) do

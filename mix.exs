@@ -60,6 +60,8 @@ defmodule SPARQL.Client.Mixfile do
   defp deps do
     [
       {:sparql, path: "../sparql"},
+      {:rdf, "~> 0.4"},
+      {:json_ld, path: "../json_ld"},
 
       {:tesla, "~> 0.10"},
       {:hackney, "~> 1.10"},
