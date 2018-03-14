@@ -268,6 +268,10 @@ defmodule SPARQL.Client.QueryTest do
 
 
   describe "error handling" do
+    test "malformed query" do
+      assert {:error, _} = SPARQL.Client.query("Foo bar", @example_endpoint)
+    end
+
     test "4XX response" do
       Tesla.Mock.mock fn _ -> %Tesla.Env{status: 400, body: "error"} end
 

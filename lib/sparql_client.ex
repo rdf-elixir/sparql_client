@@ -51,7 +51,7 @@ defmodule SPARQL.Client do
   end
 
   def query(query_string, endpoint, options) do
-    with query = SPARQL.Query.new(query_string) do
+    with %SPARQL.Query{} = query <- SPARQL.Query.new(query_string) do
       query(query, endpoint, options)
     end
   end
