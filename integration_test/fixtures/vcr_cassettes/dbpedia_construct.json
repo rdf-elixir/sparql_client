@@ -1,0 +1,35 @@
+[
+  {
+    "request": {
+      "body": "query=CONSTRUCT+%7B+%3Chttp%3A%2F%2Fexample.org%2FElixir%3E+%3Fp+%3Fo+%7D%0AWHERE++%7B+%3Chttp%3A%2F%2Fdbpedia.org%2Fresource%2FElixir_%28programming_language%29%3E+%3Fp+%3Fo+%7D%0ALIMIT+3%0A",
+      "headers": {
+        "accept": "text/turtle, application/n-triples, application/n-quads, application/ld+json, */*;p=0.1",
+        "content-type": "application/x-www-form-urlencoded"
+      },
+      "method": "post",
+      "options": [],
+      "request_body": "",
+      "url": "http://dbpedia.org/sparql"
+    },
+    "response": {
+      "binary": false,
+      "body": "@prefix rdf:\t<http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n@prefix ns1:\t<http://example.org/> .\n@prefix dbo:\t<http://dbpedia.org/ontology/> .\nns1:Elixir\trdf:type\tdbo:Language .\n@prefix owl:\t<http://www.w3.org/2002/07/owl#> .\nns1:Elixir\trdf:type\towl:Thing .\n@prefix wikidata:\t<http://www.wikidata.org/entity/> .\nns1:Elixir\trdf:type\twikidata:Q315 .",
+      "headers": {
+        "Date": "Wed, 14 Mar 2018 21:36:55 GMT",
+        "Content-Type": "text/turtle; charset=UTF-8",
+        "Content-Length": "348",
+        "Connection": "keep-alive",
+        "Server": "Virtuoso/07.20.3224 (Linux) i686-generic-linux-glibc212-64  VDB",
+        "Expires": "Wed, 21 Mar 2018 21:36:55 GMT",
+        "Cache-Control": "max-age=604800",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+        "Access-Control-Allow-Headers": "DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Accept-Encoding",
+        "Accept-Ranges": "bytes"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]

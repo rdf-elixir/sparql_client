@@ -74,9 +74,10 @@ defmodule SPARQL.Client do
     do: RDF.Serialization.format(result_format)
   defp result_format(_, _), do: nil
 
-  def default_accept_header(:select),   do: @default_select_accept_header
-  def default_accept_header(:ask),      do: @default_ask_accept_header
-  def default_accept_header(:describe), do: @default_rdf_accept_header
+  def default_accept_header(:select),    do: @default_select_accept_header
+  def default_accept_header(:ask),       do: @default_ask_accept_header
+  def default_accept_header(:describe),  do: @default_rdf_accept_header
+  def default_accept_header(:construct), do: @default_rdf_accept_header
   def default_accept_header(%SPARQL.Query{form: form}), do: default_accept_header(form)
 
 

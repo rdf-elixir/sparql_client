@@ -1,0 +1,35 @@
+[
+  {
+    "request": {
+      "body": "query=CONSTRUCT+%7B+%3Chttp%3A%2F%2Fexample.org%2FElixir%3E+%3Fp+%3Fo+%7D%0AWHERE++%7B+%3Chttp%3A%2F%2Fdbpedia.org%2Fresource%2FElixir_%28programming_language%29%3E+%3Fp+%3Fo+%7D%0ALIMIT+3%0A",
+      "headers": {
+        "accept": "text/plain",
+        "content-type": "application/x-www-form-urlencoded"
+      },
+      "method": "post",
+      "options": [],
+      "request_body": "",
+      "url": "http://dbpedia.org/sparql"
+    },
+    "response": {
+      "binary": false,
+      "body": "<http://example.org/Elixir>\t<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>\t<http://dbpedia.org/ontology/Language> .\n<http://example.org/Elixir>\t<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>\t<http://www.w3.org/2002/07/owl#Thing> .\n<http://example.org/Elixir>\t<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>\t<http://www.wikidata.org/entity/Q315> .\n",
+      "headers": {
+        "Date": "Wed, 14 Mar 2018 21:36:57 GMT",
+        "Content-Type": "text/plain; charset=UTF-8",
+        "Content-Length": "355",
+        "Connection": "keep-alive",
+        "Server": "Virtuoso/07.20.3224 (Linux) i686-generic-linux-glibc212-64  VDB",
+        "Expires": "Wed, 21 Mar 2018 21:36:57 GMT",
+        "Cache-Control": "max-age=604800",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+        "Access-Control-Allow-Headers": "DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Accept-Encoding",
+        "Accept-Ranges": "bytes"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]
