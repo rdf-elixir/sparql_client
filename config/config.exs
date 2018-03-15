@@ -1,7 +1,5 @@
 use Mix.Config
 
-config :tesla, :adapter, :hackney
-
 config :exvcr, [
   vcr_cassette_library_dir: "integration_test/fixtures/vcr_cassettes",
   custom_cassette_library_dir: "integration_test/fixtures/custom_cassettes",

@@ -64,10 +64,10 @@ defmodule SPARQL.Client.Mixfile do
       {:json_ld, path: "../json_ld"},
 
       {:tesla, "~> 0.10"},
-      {:hackney, "~> 1.10"},
       {:content_type, "~> 0.1"},
 
       # Development
+      {:hackney, "~> 1.10",  only: [:dev, :test]},
       {:dialyxir, "~> 0.5",  only: [:dev, :test], runtime: false},
       {:credo, "~> 0.8",     only: [:dev, :test], runtime: false},
       {:exvcr, "~> 0.8",     only: [:dev, :test]},
