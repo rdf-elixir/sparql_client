@@ -1,9 +1,16 @@
 defmodule SPARQL.Client do
   @moduledoc """
-  A [SPARQL protocol](https://www.w3.org/TR/sparql11-protocol/) HTTP client.
+  A SPARQL protocol client.
+
+  The [SPARQL Protocol](https://www.w3.org/TR/sparql11-protocol/) consists of
+  two HTTP operations:
+
+  - a query operation for performing SPARQL 1.0 and 1.1 Query Language queries
+  - an update operation for performing SPARQL Update Language requests, which is
+    not implemented yet
   """
 
-  use Tesla
+  use Tesla, docs: false
 
   import ContentType
 
@@ -35,9 +42,103 @@ defmodule SPARQL.Client do
 
 
   @doc """
-  The query operation is used to send a SPARQL query to a service and receive the results of the query.
+  The query operation is used to send a SPARQL query to a service endpoint and receive the results of the query.
+
+  The query can either be given as string or as an already parsed `SPARQL.Query`.
+
+      with %SPARQL.Query{} = query <- SPARQL.Query.new("SELECT * WHERE { ?s ?p ?o }") do
+        SPARQL.Client.query(query, "http://dbpedia.org/sparql")
+      end
+
+  The type of the result returned depends on the query form:
+
+  - `SELECT` queries will return a `SPARQL.Query.ResultSet` struct with a list of
+    `SPARQL.Query.Result` structs in the `results` field.
+  - `ASK` queries will return a `SPARQL.Query.ResultSet` struct with the boolean
+    result in the `results` field
+  - `CONSTRUCT` and `DESCRIBE` queries will return an RDF data structure
+
+
+  ## Specifying the request method
+
+  The SPARQL 1.1 protocol spec defines [three methods](https://www.w3.org/TR/sparql11-protocol/#query-operation)
+  to perform a SPARQL query operation via HTTP, which can be specified via the
+  `request_method` and `protocol_version` options:
+
+  1. query via GET: by setting the options as `request_method: :get` and `protocol_version: "1.1"`
+  2. query via URL-encoded POST: by setting the options as `request_method: :post` and `protocol_version: "1.0"`
+  3. query via POST directly: by setting the options as `request_method: :post` and `protocol_version: "1.1"`
+
+  In order to work with SPARQL 1.0 services out-of-the-box the second method,
+  query via URL-encoded POST, is the default.
+
+  To perform previous query via GET, you would have to call it like this:
+
+      SPARQL.Client.query(query, "http://dbpedia.org/sparql",
+        request_method: :get, protocol_version: "1.1")
+
+
+  ## Specifying custom headers
+
+  You can specify custom headers for the HTTP request to the SPARQL service with
+  the `headers` option and a map.
+
+      SPARQL.Client.query(query, "http://some.company.org/private/sparql",
+        headers: %{"Authorization" => "Basic XXX=="})
+
+
+  ## Specifying the response format
+
+  The `SPARQL.Client` can handle all of the specified result formats for SPARQL
+  tuple results (JSON, XML, CSV and TSV) and for `CONSTRUCT` and `DESCRIBE` queries
+  all RDF serialization formats supported by [RDF.ex](https://github.com/marcelotto/rdf-ex)
+  can be handled.
+
+  If no custom `Accept` header is specified, all accepted formats for the resp.
+  query form will be set automatically, with
+
+  - JSON being the preferred format for `SELECT` and `ASK` queries
+  - Turtle being the preferred format for `CONSTRUCT` and `DESCRIBE` queries
+
+  Although the returned result is mostly independent from the actually returned
+  response format from the service, you might want to set it manually with the
+  `result_format` and the name of the format
+
+      SPARQL.Client.query(query, "http://some.company.org/private/sparql",
+        result_format: :xml)
+
+  These are the names of the supported formats:
+
+  - tuple result formats: `:json, :xml, :csv, :tsv`
+  - RDF result formats: `:turtle, :ntriples, :nquads, :jsonld`
+
+  When a `result_format` is specified the `Accept` header is set to the corresponding
+  media type. You might however still want to overwrite the `Accept` header, for
+  example when a SPARQL service uses a non-standard media type for a format.
+  Note that, when providing a custom non-standard `Accept` header the `result_format`
+  option is mandatory.
+
+
+  ## Specifying an RDF Dataset
+
+  The RDF dataset to be queried can be specified [as described in the spec](https://www.w3.org/TR/sparql11-protocol/#dataset)
+  via the the `default_graph` and `named_graph` options and either a single dataset
+  names or lists of datasets.
+
+      SPARQL.Client.query(query, "http://some.company.org/private/sparql",
+        default_graph: "http://www.example/sparql/",
+        named_graph: [
+          "http://www.other.example/sparql/",
+          "http://www.another.example/sparql/"
+        ])
+
+
+  ## Other options
+
+  - `max_redirects`: the number of redirects to follow before the operation fails (default: `5`)
+
   """
-  def query(endpoint, query, options \\ %{})
+  def query(query, endpoint, options \\ %{})
 
   def query(query, endpoint, options) when is_list(options),
     do: query(query, endpoint, Map.new(options))
@@ -74,15 +175,13 @@ defmodule SPARQL.Client do
     do: RDF.Serialization.format(result_format)
   defp result_format(_, _), do: nil
 
+  @doc false
+  def default_accept_header(query_form)
   def default_accept_header(:select),    do: @default_select_accept_header
   def default_accept_header(:ask),       do: @default_ask_accept_header
   def default_accept_header(:describe),  do: @default_rdf_accept_header
   def default_accept_header(:construct), do: @default_rdf_accept_header
   def default_accept_header(%SPARQL.Query{form: form}), do: default_accept_header(form)
-
-
-
-# TODO:  defp native_results?(options), do: false
 
 
   ############################################################################
