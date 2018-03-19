@@ -17,7 +17,7 @@ A [SPARQL protocol](https://www.w3.org/TR/sparql11-protocol/) client for Elixir.
 
 ## Installation
 
-The SPARQL.Client Hex package can be installed as usual, by adding `sparql_client ` to your list of dependencies in `mix.exs`:
+The [SPARQL.Client] Hex package can be installed as usual, by adding `sparql_client` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
@@ -269,6 +269,7 @@ see [CONTRIBUTING](CONTRIBUTING.md) for details.
 (c) 2018 Marcel Otto. MIT Licensed, see [LICENSE](LICENSE.md) for details.
 
 
+[SPARQL.Client]:        https://hex.pm/packages/sparql_client
 [SPARQL.ex]:            https://hex.pm/packages/sparql
 [RDF.ex]:               https://hex.pm/packages/rdf
 [JSON-LD.ex]:           https://hex.pm/packages/json_ld  
