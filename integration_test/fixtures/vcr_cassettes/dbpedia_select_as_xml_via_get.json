@@ -8,18 +8,18 @@
       "method": "get",
       "options": [],
       "request_body": "",
-      "url": "http://dbpedia.org/sparql?query=PREFIX+xsd%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2001%2FXMLSchema%23%3E%0APREFIX+foaf%3A+%3Chttp%3A%2F%2Fxmlns.com%2Ffoaf%2F0.1%2F%3E%0APREFIX+%3A+%3Chttp%3A%2F%2Fdbpedia.org%2Fresource%2F%3E%0APREFIX+dbo%3A+%3Chttp%3A%2F%2Fdbpedia.org%2Fontology%2F%3E%0A%0ASELECT+%3Fname+%3Fbirth+%3Fdeath+%3Fperson%0AWHERE+%7B%0A++%3Fperson+dbo%3AbirthPlace+%3ABerlin+.%0A++%3Fperson+dbo%3AbirthDate++%3Fbirth+.%0A++%3Fperson+foaf%3Aname++++++%3Fname+.%0A++%3Fperson+dbo%3AdeathDate++%3Fdeath+.%0A++FILTER+%28%3Fbirth+%3C+%221900-01-01%22%5E%5Exsd%3Adate%29+.%0A%7D%0AORDER+BY+%3Fname%0ALIMIT+3%0A"
+      "url": "http://dbpedia.org/sparql?query=PREFIX+xsd%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2001%2FXMLSchema%23%3E%0APREFIX+foaf%3A+%3Chttp%3A%2F%2Fxmlns.com%2Ffoaf%2F0.1%2F%3E%0APREFIX+%3A+%3Chttp%3A%2F%2Fdbpedia.org%2Fresource%2F%3E%0APREFIX+dbo%3A+%3Chttp%3A%2F%2Fdbpedia.org%2Fontology%2F%3E%0A%0ASELECT+%3Fname+%3Fbirth+%3Fdeath+%3Fperson%0AWHERE+%7B%0A++%3Fperson%0A++++foaf%3Aname++++++%3Fname+%3B%0A++++dbo%3AbirthPlace+%3ABerlin+%3B%0A++++dbo%3AbirthDate++%3Fbirth+%3B%0A++++dbo%3AdeathDate++%3Fdeath+.%0A++FILTER+%28%3Fbirth+%3C+%221900-01-01%22%5E%5Exsd%3Adate%29+.%0A%7D%0AORDER+BY+%3Fname%0ALIMIT+3%0A"
     },
     "response": {
       "binary": false,
       "body": "<sparql xmlns=\"http://www.w3.org/2005/sparql-results#\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.w3.org/2001/sw/DataAccess/rf1/result2.xsd\">\n <head>\n  <variable name=\"name\"/>\n  <variable name=\"birth\"/>\n  <variable name=\"death\"/>\n  <variable name=\"person\"/>\n </head>\n <results distinct=\"false\" ordered=\"true\">\n  <result>\n   <binding name=\"name\"><literal xml:lang=\"en\">&quot;Annot&quot; (Annot Jacobi)</literal></binding>\n   <binding name=\"birth\"><literal datatype=\"http://www.w3.org/2001/XMLSchema#date\">1894-12-27</literal></binding>\n   <binding name=\"death\"><literal datatype=\"http://www.w3.org/2001/XMLSchema#date\">1981-10-20</literal></binding>\n   <binding name=\"person\"><uri>http://dbpedia.org/resource/Annot_(artist)</uri></binding>\n  </result>\n  <result>\n   <binding name=\"name\"><literal xml:lang=\"en\">()</literal></binding>\n   <binding name=\"birth\"><literal datatype=\"http://www.w3.org/2001/XMLSchema#date\">1811-10-29</literal></binding>\n   <binding name=\"death\"><literal datatype=\"http://www.w3.org/2001/XMLSchema#date\">1873-06-06</literal></binding>\n   <binding name=\"person\"><uri>http://dbpedia.org/resource/Prince_Adalbert_of_Prussia_(1811–1873)</uri></binding>\n  </result>\n  <result>\n   <binding name=\"name\"><literal xml:lang=\"en\">()</literal></binding>\n   <binding name=\"birth\"><literal datatype=\"http://www.w3.org/2001/XMLSchema#date\">1811-10-29</literal></binding>\n   <binding name=\"death\"><literal datatype=\"http://www.w3.org/2001/XMLSchema#date\">1873-6-6</literal></binding>\n   <binding name=\"person\"><uri>http://dbpedia.org/resource/Prince_Adalbert_of_Prussia_(1811–1873)</uri></binding>\n  </result>\n </results>\n</sparql>",
       "headers": {
-        "Date": "Tue, 06 Mar 2018 11:19:53 GMT",
+        "Date": "Sun, 18 Mar 2018 21:43:30 GMT",
         "Content-Type": "application/sparql-results+xml; charset=UTF-8",
         "Content-Length": "1686",
         "Connection": "keep-alive",
-        "Server": "Virtuoso/07.20.3224 (Linux) i686-generic-linux-glibc212-64  VDB",
-        "Expires": "Tue, 13 Mar 2018 11:19:53 GMT",
+        "Server": "Virtuoso/07.20.3226 (Linux) i686-generic-linux-glibc212-64  VDB",
+        "Expires": "Sun, 25 Mar 2018 21:43:30 GMT",
         "Cache-Control": "max-age=604800",
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Credentials": "true",

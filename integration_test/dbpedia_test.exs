@@ -31,10 +31,11 @@ defmodule SPARQL.Client.DBpediaTest do
 
       SELECT ?name ?birth ?death ?person
       WHERE {
-        ?person dbo:birthPlace :Berlin .
-        ?person dbo:birthDate  ?birth .
-        ?person foaf:name      ?name .
-        ?person dbo:deathDate  ?death .
+        ?person
+          foaf:name      ?name ;
+          dbo:birthPlace :Berlin ;
+          dbo:birthDate  ?birth ;
+          dbo:deathDate  ?death .
         FILTER (?birth < "1900-01-01"^^xsd:date) .
       }
       ORDER BY ?name
