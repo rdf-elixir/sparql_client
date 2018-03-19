@@ -1,7 +1,7 @@
 defmodule SPARQL.Client.Mixfile do
   use Mix.Project
 
-  @repo_url "https://github.com/marcelotto/sparql-client"
+  @repo_url "https://github.com/marcelotto/sparql_client"
 
   @version File.read!("VERSION") |> String.trim
 
@@ -33,12 +33,21 @@ defmodule SPARQL.Client.Mixfile do
       preferred_cli_env: [
         vcr: :dev, "vcr.delete": :dev, "vcr.check": :dev, "vcr.show": :dev
       ],
+
+      # ExCoveralls
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: [
+        "coveralls": :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test
+      ],
     ]
   end
 
   defp description do
     """
-    A SPARQL protocol client for Elixir.
+    A SPARQL client for Elixir.
     """
   end
 
@@ -59,9 +68,9 @@ defmodule SPARQL.Client.Mixfile do
 
   defp deps do
     [
-      {:sparql, path: "../sparql"},
+      {:sparql, "~> 0.1"},
       {:rdf, "~> 0.4"},
-      {:json_ld, path: "../json_ld"},
+      {:json_ld, "~> 0.2.2"},
 
       {:tesla, "~> 0.10"},
       {:content_type, "~> 0.1"},
@@ -72,7 +81,7 @@ defmodule SPARQL.Client.Mixfile do
       {:credo, "~> 0.8",     only: [:dev, :test], runtime: false},
       {:exvcr, "~> 0.8",     only: [:dev, :test]},
       {:ex_doc, "~> 0.17.1", only: :dev, runtime: false},
-      {:inch_ex, ">= 0.0.0", only: [:dev, :test]}
+      {:excoveralls, "~> 0.7", only: :test},
     ]
   end
 
