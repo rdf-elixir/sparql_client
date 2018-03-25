@@ -9,10 +9,10 @@ A [SPARQL protocol](https://www.w3.org/TR/sparql11-protocol/) client for Elixir.
 
 ## Features
 
-- Executes all forms of SPARQL queries against any SPARQL 1.0/1.1-compatible endpoint over HTTP.
-- Supports result sets in both XML, JSON, CSV and TSV formats, with JSON being the preferred default for content-negotiation purposes.
-- Supports graph results in any RDF serialization format understood by [RDF.ex].
-- Works with multiple HTTP client libraries.
+- executes all forms of SPARQL queries against any SPARQL 1.0/1.1-compatible endpoint over HTTP
+- supports result sets in both XML, JSON, CSV and TSV formats, with JSON being the preferred default for content-negotiation purposes
+- supports graph results in any RDF serialization format understood by [RDF.ex]
+- works with multiple HTTP client libraries
 
 
 ## Installation
@@ -30,7 +30,7 @@ end
 
 ## Usage
 
-The major function of the SPARQL.Client is `SPARQL.Client.query/3` to perform the various forms of SPARQL queries. It takes a string with a SPARQL query, a URL of a SPARQL endpoint and some options. The query is only sent to the endpoint if it is syntactically valid. Depending on the query form either a `SPARQL.Query.ResultSet` struct is returned or an `RDF.Graph`.
+The major function of the SPARQL.Client is `SPARQL.Client.query/3` to perform the various forms of SPARQL queries. It takes a SPARQL query string, a SPARQL endpoint URL, and some options. The query is only sent to the endpoint if it is syntactically valid. Depending on the query form either a `SPARQL.Query.ResultSet` struct or an `RDF.Graph` is returned.
 
 For a more detailed description, including the various `SPARQL.Client.query/3` options, see its [documentation](http://hexdocs.pm/sparql_client/SPARQL.Client.html#query/3).
 
@@ -106,7 +106,7 @@ ASK {:Sleepers dbo:starring :Kevin_Bacon }
 |> SPARQL.Client.query("http://dbpedia.org/sparql")
 ```
 
-`ASK` query results are also returned as a `SPARQL.Query.ResultSet` struct, but with the `results` field containing just the boolean result value.
+`ASK` query results are also returned as a `SPARQL.Query.ResultSet` struct, but with the `results` field containing just a boolean result value.
 
 ```elixir
 {:ok, %SPARQL.Query.ResultSet{results: true, variables: nil}}
@@ -120,7 +120,7 @@ ASK {:Sleepers dbo:starring :Kevin_Bacon }
 |> SPARQL.Client.query("http://dbpedia.org/sparql")
 ```
 
-`DESCRIBE` query results are returned as an `RDF.Graph` resp. as an `RDF.Dataset` if the format returned by the server supports quads.
+`DESCRIBE` query results are returned as an `RDF.Graph` respective as an `RDF.Dataset` if the format returned by the server supports quads.
 
 ```elixir
 {:ok, #RDF.Graph{name: nil
@@ -191,7 +191,7 @@ WHERE  {
 |> SPARQL.Client.query("http://dbpedia.org/sparql")
 ```
 
-`CONSTRUCT` query results are also returned as an `RDF.Graph` resp. as an `RDF.Dataset` if the format returned by the server supports quads.
+`CONSTRUCT` query results are also returned as an `RDF.Graph` respective as an `RDF.Dataset` if the format returned by the server supports quads.
 
 ```elixir
 {:ok, #RDF.Graph{name: nil
@@ -210,9 +210,9 @@ WHERE  {
 
 ## Configuration
 
-SPARQL.Client uses [Tesla](https://github.com/teamon/tesla), an abstraction over different HTTP client libraries. This allows you to use the HTTP client of your choice, as long as a Tesla adapter exists, currently httpc, [hackney](https://github.com/benoitc/hackney) or [ibrowse](https://github.com/cmullaparthi/ibrowse). 
+SPARQL.Client uses [Tesla](https://github.com/teamon/tesla), an abstraction over different HTTP client libraries. This allows you to use the HTTP client of your choice, as long as a Tesla adapter exists. Currently httpc, [hackney](https://github.com/benoitc/hackney) or [ibrowse](https://github.com/cmullaparthi/ibrowse). 
 
-Without further configuration, the built-in Erlang httpc is used. For simple tests or if you want to keep your dependencies clean you can go with that, but I recommend using one of the alternatives. I've experienced encoding related issues with httpc, which none of the other HTTP clients had.
+Without further configuration, the built-in Erlang httpc is used. You can use it for simple tests or to keep your dependencies clean, but I recommend using one of the alternatives. I've experienced encoding related issues with httpc, which none of the other HTTP clients had.
 
 If you want to use another client library, you'll have to add it to your list of dependencies in `mix.exs` and configure Tesla to use it.
 
