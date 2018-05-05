@@ -44,78 +44,78 @@ defmodule SPARQL.Client.DBpediaTest do
 
     test "SELECT query with defaults" do
       use_cassette "dbpedia_select_via_defaults" do
-        assert {:ok, %Query.ResultSet{} = result_set} =
+        assert {:ok, %Query.Result{} = result} =
           SPARQL.Client.query(@test_select_query, @dbpedia)
-        assert Enum.count(result_set.results) == @result_count
+        assert Enum.count(result.results) == @result_count
       end
     end
 
     test "JSON result via get" do
       use_cassette "dbpedia_select_as_json_via_get" do
-        assert {:ok, %Query.ResultSet{} = result_set} =
+        assert {:ok, %Query.Result{} = result} =
           SPARQL.Client.query(@test_select_query, @dbpedia,
               request_method: :get,
               protocol_version: "1.1",
               result_format: :json)
-        assert Enum.count(result_set.results) == @result_count
+        assert Enum.count(result.results) == @result_count
       end
     end
 
     test "XML result via get" do
       use_cassette "dbpedia_select_as_xml_via_get" do
-        assert {:ok, %Query.ResultSet{} = result_set} =
+        assert {:ok, %Query.Result{} = result} =
           SPARQL.Client.query(@test_select_query, @dbpedia,
               request_method: :get,
               protocol_version: "1.1",
               result_format: :xml)
-        assert Enum.count(result_set.results) == @result_count
+        assert Enum.count(result.results) == @result_count
       end
     end
 
     test "CSV result via get" do
       use_cassette "dbpedia_select_as_csv_via_get" do
-        assert {:ok, %Query.ResultSet{} = result_set} =
+        assert {:ok, %Query.Result{} = result} =
           SPARQL.Client.query(@test_select_query, @dbpedia,
               request_method: :get,
               protocol_version: "1.1",
               result_format: :csv)
-        assert Enum.count(result_set.results) == @result_count
+        assert Enum.count(result.results) == @result_count
       end
     end
 
     @tag skip: "TODO: The currently deployed version does not return spec-conform SPARQL 1.1 TSV results, but just CSV with tabs as separators"
     test "TSV result via get" do
       use_cassette "dbpedia_select_as_tsv_via_get" do
-        assert {:ok, %Query.ResultSet{} = result_set} =
+        assert {:ok, %Query.Result{} = result} =
           SPARQL.Client.query(@test_select_query, @dbpedia,
               request_method: :get,
               protocol_version: "1.1",
               result_format: :tsv)
-        assert Enum.count(result_set.results) == @result_count
+        assert Enum.count(result.results) == @result_count
       end
     end
 
     test "JSON result via post_url_encoded" do
       use_cassette "dbpedia_select_as_json_via_post_url_encoded" do
-        assert {:ok, %Query.ResultSet{} = result_set} =
+        assert {:ok, %Query.Result{} = result} =
           SPARQL.Client.query(@test_select_query, @dbpedia,
               request_method: :post,
               protocol_version: "1.0",
               result_format: :json)
-        assert Enum.count(result_set.results) == @result_count
+        assert Enum.count(result.results) == @result_count
       end
     end
 
     @tag skip: "TODO: Why is this failing? Doesn't DBpedia/Virtuoso support this method? It seems there's a problem with that: https://www.mail-archive.com/virtuoso-users@lists.sourceforge.net/msg07984.html"
     test "JSON result via post_directly" do
       use_cassette "dbpedia_select_as_json_via_post_directly" do
-        assert {:ok, %Query.ResultSet{} = result_set} =
+        assert {:ok, %Query.Result{} = result} =
           SPARQL.Client.query(@test_select_query, @dbpedia,
               request_method: :post,
               protocol_version: "1.1",
               result_format: :json)
 
-        assert Enum.count(result_set.results) == 3
+        assert Enum.count(result.results) == 3
       end
     end
   end
@@ -130,17 +130,17 @@ defmodule SPARQL.Client.DBpediaTest do
 
     test "JSON result" do
       use_cassette "dbpedia_ask_as_json" do
-        assert {:ok, %Query.ResultSet{} = result_set} =
+        assert {:ok, %Query.Result{} = result} =
           SPARQL.Client.query(@test_ask_query, @dbpedia, result_format: :json)
-        assert result_set.results == true
+        assert result.results == true
       end
     end
 
     test "XML result" do
       use_cassette "dbpedia_ask_as_xml" do
-        assert {:ok, %Query.ResultSet{} = result_set} =
+        assert {:ok, %Query.Result{} = result} =
           SPARQL.Client.query(@test_ask_query, @dbpedia, result_format: :xml)
-        assert result_set.results == true
+        assert result.results == true
       end
     end
   end

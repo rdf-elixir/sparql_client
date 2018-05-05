@@ -23,7 +23,7 @@
   "nimble_csv": {:hex, :nimble_csv, "0.4.0", "e2a21d93071cb3b3278411b5b49fe6b55a0e4b3e90485d1187e0c9c75c74f977", [:mix], []},
   "poison": {:hex, :poison, "3.1.0", "d9eb636610e096f86f25d9a46f35a9facac35609a7591b3be3326e99a0484665", [:mix], []},
   "rdf": {:hex, :rdf, "0.4.1", "8c879a091cc2a6035cc6e955186948a15477c9cce4a7ca61a54f38f7259ff396", [:mix], []},
-  "sparql": {:hex, :sparql, "0.1.0", "d6a09efd302a751b75cc649e47326fc858fb54ec2ca1dd0e4d1d02f962e9022d", [:mix], [{:jason, "~> 1.0", [hex: :jason, optional: false]}, {:nimble_csv, "~> 0.4", [hex: :nimble_csv, optional: false]}, {:rdf, "~> 0.4", [hex: :rdf, optional: false]}, {:sweet_xml, "~> 0.6", [hex: :sweet_xml, optional: false]}]},
+  "sparql": {:git, "https://github.com/marcelotto/sparql-ex", "afba76bc29e98171a1b20b0c16c44462adae66ae", [branch: "algebra"]},
   "ssl_verify_fun": {:hex, :ssl_verify_fun, "1.1.1", "28a4d65b7f59893bc2c7de786dec1e1555bd742d336043fe644ae956c3497fbe", [:make, :rebar], []},
   "sweet_xml": {:hex, :sweet_xml, "0.6.5", "dd9cde443212b505d1b5f9758feb2000e66a14d3c449f04c572f3048c66e6697", [:mix], []},
   "tesla": {:hex, :tesla, "0.10.0", "e588c7e7f1c0866c81eeed5c38f02a4a94d6309eede336c1e6ca08b0a95abd3f", [:mix], [{:exjsx, ">= 0.1.0", [hex: :exjsx, optional: true]}, {:fuse, "~> 2.4", [hex: :fuse, optional: true]}, {:hackney, "~> 1.6", [hex: :hackney, optional: true]}, {:ibrowse, "~> 4.2", [hex: :ibrowse, optional: true]}, {:mime, "~> 1.0", [hex: :mime, optional: false]}, {:poison, ">= 1.0.0", [hex: :poison, optional: true]}]},

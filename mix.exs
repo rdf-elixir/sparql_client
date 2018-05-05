@@ -68,7 +68,8 @@ defmodule SPARQL.Client.Mixfile do
 
   defp deps do
     [
-      {:sparql, "~> 0.1"},
+#      {:sparql, "~> 0.2"},
+      {:sparql, git: "https://github.com/marcelotto/sparql-ex", branch: "algebra"}, # TODO: Remove this when SPARQL.ex 0.2 released
       {:rdf, "~> 0.4"},
       {:json_ld, "~> 0.2.2"},
 

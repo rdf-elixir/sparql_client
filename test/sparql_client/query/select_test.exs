@@ -149,7 +149,7 @@ defmodule SPARQL.Client.Query.SelectTest do
       end
 
       assert SPARQL.Client.query(@example_query, @example_endpoint, result_format: :json) ==
-              {:ok, %Query.ResultSet{results: [%Query.Result{bindings: %{"name" => ~L"東京"jp}}]}}
+              {:ok, %Query.Result{results: [%{"name" => ~L"東京"jp}]}}
     end
 
   describe "content negotiation" do

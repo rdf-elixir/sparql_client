@@ -30,7 +30,7 @@ end
 
 ## Usage
 
-The major function of the SPARQL.Client is `SPARQL.Client.query/3` to perform the various forms of SPARQL queries. It takes a SPARQL query string, a SPARQL endpoint URL, and some options. The query is only sent to the endpoint if it is syntactically valid. Depending on the query form either a `SPARQL.Query.ResultSet` struct or an `RDF.Graph` is returned.
+The major function of the SPARQL.Client is `SPARQL.Client.query/3`, which performs the various forms of SPARQL queries. It takes a SPARQL query string, a SPARQL endpoint URL, and some options. The query is only sent to the endpoint if it is syntactically valid. Depending on the query form either a `SPARQL.Query.Result` struct or an `RDF.Graph` is returned.
 
 For a more detailed description, including the various `SPARQL.Client.query/3` options, see its [documentation](http://hexdocs.pm/sparql_client/SPARQL.Client.html#query/3).
 
@@ -54,38 +54,30 @@ LIMIT 100
 |> SPARQL.Client.query("https://query.wikidata.org/bigdata/namespace/wdq/sparql")
 ```
 
-`SELECT` query results are returned as a `SPARQL.Query.ResultSet` struct:
+`SELECT` query results are returned as a `SPARQL.Query.Result` struct:
 
 ```elixir
-{:ok, %SPARQL.Query.ResultSet{
+{:ok, %SPARQL.Query.Result{
    results: [
-     %SPARQL.Query.Result{
-       bindings: %{
+     %{
          "coord" => ~L"Point(23.32527778 42.695)",
          "item" => ~I<http://www.wikidata.org/entity/Q5123174>,
          "itemLabel" => ~L"City Garden"en
-       }
      },
-     %SPARQL.Query.Result{
-       bindings: %{
+     %{
          "coord" => ~L"Point(24.74138889 42.13444444)",
          "item" => ~I<http://www.wikidata.org/entity/Q7205164>,
          "itemLabel" => ~L"Plovdiv Central railway station"en
-       }
      },
-     %SPARQL.Query.Result{
-       bindings: %{
+     %{
          "coord" => ~L"Point(27.9122 43.1981)",
          "item" => ~I<http://www.wikidata.org/entity/Q7916008>,
          "itemLabel" => ~L"Varna railway station"en
-       }
      },
-     %SPARQL.Query.Result{
-       bindings: %{
+     %{
          "coord" => ~L"Point(23.31966111 42.69133056)",
          "item" => ~I<http://www.wikidata.org/entity/Q7937209>,
          "itemLabel" => ~L"Vitosha Boulevard"en
-       }
      },
      ...
    ],
@@ -106,10 +98,10 @@ ASK {:Sleepers dbo:starring :Kevin_Bacon }
 |> SPARQL.Client.query("http://dbpedia.org/sparql")
 ```
 
-`ASK` query results are also returned as a `SPARQL.Query.ResultSet` struct, but with the `results` field containing just a boolean result value.
+`ASK` query results are also returned as a `SPARQL.Query.Result` struct, but with the `results` field containing just a boolean result value.
 
 ```elixir
-{:ok, %SPARQL.Query.ResultSet{results: true, variables: nil}}
+{:ok, %SPARQL.Query.Result{results: true, variables: nil}}
 ```
 
 
