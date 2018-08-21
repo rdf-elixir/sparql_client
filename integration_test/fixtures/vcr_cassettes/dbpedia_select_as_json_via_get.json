@@ -3,7 +3,7 @@
     "request": {
       "body": "",
       "headers": {
-        "accept": "application/sparql-results+json"
+        "Accept": "application/sparql-results+json"
       },
       "method": "get",
       "options": [],
@@ -14,12 +14,12 @@
       "binary": false,
       "body": "\n{ \"head\": { \"link\": [], \"vars\": [\"name\", \"birth\", \"death\", \"person\"] },\n  \"results\": { \"distinct\": false, \"ordered\": true, \"bindings\": [\n    { \"name\": { \"type\": \"literal\", \"xml:lang\": \"en\", \"value\": \"\\\"Annot\\\" (Annot Jacobi)\" }\t, \"birth\": { \"type\": \"typed-literal\", \"datatype\": \"http://www.w3.org/2001/XMLSchema#date\", \"value\": \"1894-12-27\" }\t, \"death\": { \"type\": \"typed-literal\", \"datatype\": \"http://www.w3.org/2001/XMLSchema#date\", \"value\": \"1981-10-20\" }\t, \"person\": { \"type\": \"uri\", \"value\": \"http://dbpedia.org/resource/Annot_(artist)\" }},\n    { \"name\": { \"type\": \"literal\", \"xml:lang\": \"en\", \"value\": \"()\" }\t, \"birth\": { \"type\": \"typed-literal\", \"datatype\": \"http://www.w3.org/2001/XMLSchema#date\", \"value\": \"1811-10-29\" }\t, \"death\": { \"type\": \"typed-literal\", \"datatype\": \"http://www.w3.org/2001/XMLSchema#date\", \"value\": \"1873-06-06\" }\t, \"person\": { \"type\": \"uri\", \"value\": \"http://dbpedia.org/resource/Prince_Adalbert_of_Prussia_(1811\\u20131873)\" }},\n    { \"name\": { \"type\": \"literal\", \"xml:lang\": \"en\", \"value\": \"()\" }\t, \"birth\": { \"type\": \"typed-literal\", \"datatype\": \"http://www.w3.org/2001/XMLSchema#date\", \"value\": \"1811-10-29\" }\t, \"death\": { \"type\": \"typed-literal\", \"datatype\": \"http://www.w3.org/2001/XMLSchema#date\", \"value\": \"1873-6-6\" }\t, \"person\": { \"type\": \"uri\", \"value\": \"http://dbpedia.org/resource/Prince_Adalbert_of_Prussia_(1811\\u20131873)\" }} ] } }",
       "headers": {
-        "Date": "Sun, 18 Mar 2018 21:43:33 GMT",
+        "Date": "Tue, 21 Aug 2018 20:53:20 GMT",
         "Content-Type": "application/sparql-results+json",
         "Content-Length": "1378",
         "Connection": "keep-alive",
-        "Server": "Virtuoso/07.20.3226 (Linux) i686-generic-linux-glibc212-64  VDB",
-        "Expires": "Sun, 25 Mar 2018 21:43:33 GMT",
+        "Server": "Virtuoso/07.20.3229 (Linux) i686-generic-linux-glibc25-64  VDB",
+        "Expires": "Tue, 28 Aug 2018 20:53:20 GMT",
         "Cache-Control": "max-age=604800",
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Credentials": "true",
