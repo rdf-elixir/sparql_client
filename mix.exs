@@ -72,7 +72,7 @@ defmodule SPARQL.Client.Mixfile do
       {:rdf, "~> 0.4"},
       {:json_ld, "~> 0.2.2"},
 
-      {:tesla, "~> 0.10"},
+      {:tesla, "~> 1.1"},
       {:content_type, "~> 0.1"},
 
       # Development

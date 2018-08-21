@@ -27,12 +27,12 @@ defmodule SPARQL.Client.Query.ConstructTest do
 
   test "Turtle result", %{body: body} do
     Tesla.Mock.mock fn
-      %{method: :post, url: @example_endpoint, body: ^body,
-          headers: %{"accept" => "text/turtle"}} ->
+      env = %{method: :post, url: @example_endpoint, body: ^body} ->
+        assert Tesla.get_header(env, "Accept") == "text/turtle"
         %Tesla.Env{
               status: 200,
               body: @turtle_result,
-              headers: %{"content-type" => "text/turtle"}
+              headers: [{"content-type", "text/turtle"}]
             }
     end
 
@@ -43,12 +43,12 @@ defmodule SPARQL.Client.Query.ConstructTest do
 
   test "JSON-LD result", %{body: body} do
     Tesla.Mock.mock fn
-      %{method: :post, url: @example_endpoint, body: ^body,
-          headers: %{"accept" => "application/ld+json"}} ->
+      env = %{method: :post, url: @example_endpoint, body: ^body} ->
+        assert Tesla.get_header(env, "Accept") == "application/ld+json"
         %Tesla.Env{
               status: 200,
               body: @json_ld_result,
-              headers: %{"content-type" => "application/ld+json"}
+              headers: [{"content-type", "application/ld+json"}]
             }
     end
 
@@ -59,11 +59,12 @@ defmodule SPARQL.Client.Query.ConstructTest do
   test "NTriples result" do
     url = @example_endpoint <> "?" <> URI.encode_query(%{query: @example_query})
     Tesla.Mock.mock fn
-      %{method: :get, url: ^url, headers: %{"accept" => "application/n-triples"}} ->
+      env = %{method: :get, url: ^url} ->
+        assert Tesla.get_header(env, "Accept") == "application/n-triples"
         %Tesla.Env{
               status: 200,
               body: @ntriples_result,
-              headers: %{"content-type" => "application/n-triples"}
+              headers: [{"content-type", "application/n-triples"}]
             }
     end
 
@@ -74,12 +75,12 @@ defmodule SPARQL.Client.Query.ConstructTest do
 
   test "NQuads result" do
     Tesla.Mock.mock fn
-      %{method: :post, url: @example_endpoint, body: @example_query,
-          headers: %{"accept" => "application/n-quads"}} ->
+      env = %{method: :post, url: @example_endpoint, body: @example_query} ->
+        assert Tesla.get_header(env, "Accept") == "application/n-quads"
         %Tesla.Env{
               status: 200,
               body: RDF.NQuads.write_string!(@result_graph),
-              headers: %{"content-type" => "application/n-quads"}
+              headers: [{"content-type", "application/n-quads"}]
             }
     end
 
@@ -91,12 +92,12 @@ defmodule SPARQL.Client.Query.ConstructTest do
   describe "content negotiation" do
     test "with default accept header and best accepted content-type returned (Turtle)", %{body: body} do
       Tesla.Mock.mock fn
-        %{method: :post, url: @example_endpoint, body: ^body,
-            headers: %{"accept" => @default_accept_header}} ->
+        env = %{method: :post, url: @example_endpoint, body: ^body} ->
+          assert Tesla.get_header(env, "Accept") == @default_accept_header
           %Tesla.Env{
                 status: 200,
                 body: @turtle_result,
-                headers: %{"content-type" => "text/turtle"}
+                headers: [{"content-type", "text/turtle"}]
               }
       end
 
@@ -110,7 +111,7 @@ defmodule SPARQL.Client.Query.ConstructTest do
           %Tesla.Env{
                 status: 200,
                 body: "bool\ntrue",
-                headers: %{"content-type" => "text/plain"}
+                headers: [{"content-type", "text/plain"}]
               }
       end
 
@@ -126,7 +127,7 @@ defmodule SPARQL.Client.Query.ConstructTest do
           %Tesla.Env{
                 status: 200,
                 body: @turtle_result,
-                headers: %{"content-type" => "text/plain"}
+                headers: [{"content-type", "text/plain"}]
               }
       end
 
@@ -139,12 +140,12 @@ defmodule SPARQL.Client.Query.ConstructTest do
   describe "custom accept header" do
     test "with valid format", %{body: body} do
       Tesla.Mock.mock fn
-        %{method: :post, url: @example_endpoint, body: ^body,
-            headers: %{"accept" => "text/turtle"}} ->
+        env = %{method: :post, url: @example_endpoint, body: ^body} ->
+          assert Tesla.get_header(env, "Accept") == "text/turtle"
           %Tesla.Env{
                 status: 200,
                 body: @turtle_result,
-                headers: %{"content-type" => "text/turtle"}
+                headers: [{"content-type", "text/turtle"}]
               }
       end
 
@@ -155,12 +156,12 @@ defmodule SPARQL.Client.Query.ConstructTest do
 
     test "with invalid format and no result_format", %{body: body} do
       Tesla.Mock.mock fn
-        %{method: :post, url: @example_endpoint, body: ^body,
-            headers: %{"accept" => "text/plain"}} ->
+        env = %{method: :post, url: @example_endpoint, body: ^body} ->
+          assert Tesla.get_header(env, "Accept") == "text/plain"
           %Tesla.Env{
                 status: 200,
                 body: @ntriples_result,
-                headers: %{"content-type" => "text/plain"}
+                headers: [{"content-type", "text/plain"}]
               }
       end
 
@@ -171,12 +172,12 @@ defmodule SPARQL.Client.Query.ConstructTest do
 
     test "with invalid format and result_format", %{body: body} do
       Tesla.Mock.mock fn
-        %{method: :post, url: @example_endpoint, body: ^body,
-            headers: %{"accept" => "text/plain"}} ->
+        env = %{method: :post, url: @example_endpoint, body: ^body} ->
+          assert Tesla.get_header(env, "Accept") == "text/plain"
           %Tesla.Env{
                 status: 200,
                 body: @ntriples_result,
-                headers: %{"content-type" => "text/plain"}
+                headers: [{"content-type", "text/plain"}]
               }
       end
 

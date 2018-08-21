@@ -31,12 +31,12 @@ defmodule SPARQL.Client.Query.AskTest do
 
   test "JSON result", %{body: body} do
     Tesla.Mock.mock fn
-      %{method: :post, url: @example_endpoint, body: ^body,
-          headers: %{"accept" => "application/sparql-results+json"}} ->
+      env = %{method: :post, url: @example_endpoint, body: ^body} ->
+        assert Tesla.get_header(env, "Accept") == "application/sparql-results+json"
         %Tesla.Env{
               status: 200,
               body: @json_result,
-              headers: %{"content-type" => "application/sparql-results+json"}
+              headers: [{"content-type", "application/sparql-results+json"}]
             }
     end
 
@@ -46,12 +46,12 @@ defmodule SPARQL.Client.Query.AskTest do
 
   test "XML result", %{body: body} do
     Tesla.Mock.mock fn
-      %{method: :post, url: @example_endpoint, body: ^body,
-          headers: %{"accept" => "application/sparql-results+xml"}} ->
+      env = %{method: :post, url: @example_endpoint, body: ^body} ->
+        assert Tesla.get_header(env, "Accept") == "application/sparql-results+xml"
         %Tesla.Env{
               status: 200,
               body: @xml_result,
-              headers: %{"content-type" => "application/sparql-results+xml"}
+              headers: [{"content-type", "application/sparql-results+xml"}]
             }
     end
 
@@ -62,12 +62,12 @@ defmodule SPARQL.Client.Query.AskTest do
   describe "content negotiation" do
     test "with default accept header and best accepted content-type returned (JSON)", %{body: body} do
       Tesla.Mock.mock fn
-        %{method: :post, url: @example_endpoint, body: ^body,
-            headers: %{"accept" => @default_accept_header}} ->
+        env = %{method: :post, url: @example_endpoint, body: ^body} ->
+          assert Tesla.get_header(env, "Accept") == @default_accept_header
           %Tesla.Env{
                 status: 200,
                 body: @json_result,
-                headers: %{"content-type" => Query.Result.JSON.media_type}
+                headers: [{"content-type", Query.Result.JSON.media_type}]
               }
       end
 
@@ -83,7 +83,7 @@ defmodule SPARQL.Client.Query.AskTest do
           %Tesla.Env{
                 status: 200,
                 body: "bool\ntrue",
-                headers: %{"content-type" => "text/plain"}
+                headers: [{"content-type", "text/plain"}]
               }
       end
 
@@ -97,7 +97,7 @@ defmodule SPARQL.Client.Query.AskTest do
           %Tesla.Env{
                 status: 200,
                 body: @json_result,
-                headers: %{"content-type" => "text/plain"}
+                headers: [{"content-type", "text/plain"}]
               }
       end
 

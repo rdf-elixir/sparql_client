@@ -31,7 +31,7 @@ defmodule SPARQL.Client.QueryTest do
     @success_response %Tesla.Env{
       status: 200,
       body: @success_json_result,
-      headers: %{"content-type" => Query.Result.JSON.media_type}
+      headers: [{"content-type", Query.Result.JSON.media_type}]
     }
 
     test "via GET" do
@@ -46,8 +46,8 @@ defmodule SPARQL.Client.QueryTest do
     test "via URL-encoded POST" do
       body = URI.encode_query(%{query: @example_query})
       Tesla.Mock.mock fn
-        %{method: :post, url: @example_endpoint, body: ^body,
-            headers: %{"content-type" => "application/x-www-form-urlencoded"}} ->
+        env = %{method: :post, url: @example_endpoint, body: ^body} ->
+          assert Tesla.get_header(env, "Content-Type") == "application/x-www-form-urlencoded"
           @success_response
       end
 
@@ -58,8 +58,8 @@ defmodule SPARQL.Client.QueryTest do
 
     test "via POST directly" do
       Tesla.Mock.mock fn
-        %{method: :post, url: @example_endpoint, body: @example_query,
-            headers: %{"content-type" => "application/sparql-query"}} ->
+        env = %{method: :post, url: @example_endpoint, body: @example_query} ->
+          assert Tesla.get_header(env, "Content-Type") == "application/sparql-query"
           @success_response
       end
 
@@ -82,7 +82,8 @@ defmodule SPARQL.Client.QueryTest do
     test "custom headers via GET" do
       url = @example_endpoint <> "?" <> URI.encode_query(%{query: @example_query})
       Tesla.Mock.mock fn
-        %{method: :get, url: ^url, headers: %{"authorization" => "Basic XXX=="}} ->
+        env = %{method: :get, url: ^url} ->
+          assert Tesla.get_header(env, "Authorization") == "Basic XXX=="
           @success_response
       end
 
@@ -95,11 +96,10 @@ defmodule SPARQL.Client.QueryTest do
     test "custom headers via URL-encoded POST" do
       body = URI.encode_query(%{query: @example_query})
       Tesla.Mock.mock fn
-        %{method: :post, url: @example_endpoint, body: ^body, headers: %{
-              "content-type"  => "application/x-www-form-urlencoded",
-              "authorization" => "Basic XXX==",
-              "accept"        => "text/tab-separated-values"
-            }} ->
+        env = %{method: :post, url: @example_endpoint, body: ^body} ->
+          assert Tesla.get_header(env, "Content-Type") == "application/x-www-form-urlencoded"
+          assert Tesla.get_header(env, "Authorization") == "Basic XXX=="
+          assert Tesla.get_header(env, "Accept") == "text/tab-separated-values"
           @success_response
       end
 
@@ -111,13 +111,10 @@ defmodule SPARQL.Client.QueryTest do
 
     test "custom headers via POST directly" do
       Tesla.Mock.mock fn
-        %{method: :post, url: @example_endpoint, body: @example_query,
-            headers: %{
-              "content-type" => "application/sparql-query",
-              "authorization" => "Basic XXX==",
-              "accept"        => "text/csv"
-
-            }} ->
+        env = %{method: :post, url: @example_endpoint, body: @example_query} ->
+          assert Tesla.get_header(env, "Content-Type") == "application/sparql-query"
+          assert Tesla.get_header(env, "Authorization") == "Basic XXX=="
+          assert Tesla.get_header(env, "Accept") == "text/csv"
           @success_response
       end
 
@@ -152,7 +149,7 @@ defmodule SPARQL.Client.QueryTest do
     @success_response %Tesla.Env{
       status: 200,
       body: @success_json_result,
-      headers: %{"content-type" => Query.Result.JSON.media_type}
+      headers: [{"content-type", Query.Result.JSON.media_type}]
     }
 
     test "one default graph via GET" do
@@ -234,8 +231,8 @@ defmodule SPARQL.Client.QueryTest do
               {"named-graph-uri"  , @graph_uri <> "3"},
             ])
       Tesla.Mock.mock fn
-        %{method: :post, url: @example_endpoint, body: ^body,
-            headers: %{"content-type" => "application/x-www-form-urlencoded"}} ->
+        env = %{method: :post, url: @example_endpoint, body: ^body} ->
+          assert Tesla.get_header(env, "Content-Type") == "application/x-www-form-urlencoded"
           @success_response
       end
 
@@ -253,8 +250,8 @@ defmodule SPARQL.Client.QueryTest do
               {"named-graph-uri"  , @graph_uri <> "3"},
             ])
       Tesla.Mock.mock fn
-        %{method: :post, url: ^url, body: @example_query,
-            headers: %{"content-type" => "application/sparql-query"}} ->
+        env = %{method: :post, url: ^url, body: @example_query} ->
+          assert Tesla.get_header(env, "Content-Type") == "application/sparql-query"
           @success_response
       end
 
