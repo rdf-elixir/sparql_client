@@ -12,7 +12,14 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 - adapt to new query result representation in SPARQL.ex 0.2
 
 
-[Compare v0.1.0...HEAD](https://github.com/marcelotto/sparql_client/compare/v0.1.0...HEAD)
+[Compare v0.1.1...HEAD](https://github.com/marcelotto/sparql_client/compare/v0.1.1...HEAD)
+
+
+## v0.1.1 - 2018-08-21
+
+- Upgrade to Tesla 1.1
+
+[Compare v0.1.0...v0.1.1](https://github.com/marcelotto/sparql_client/compare/v0.1.0...v0.1.1)
 
 
 

@@ -69,12 +69,12 @@ defmodule SPARQL.Client.Query.SelectTest do
 
   test "JSON result", %{body: body} do
     Tesla.Mock.mock fn
-      %{method: :post, url: @example_endpoint, body: ^body,
-          headers: %{"accept" => "application/sparql-results+json"}} ->
+      env = %{method: :post, url: @example_endpoint, body: ^body} ->
+        assert Tesla.get_header(env, "Accept") == "application/sparql-results+json"
         %Tesla.Env{
               status: 200,
               body: @json_result,
-              headers: %{"content-type" => "application/sparql-results+json"}
+              headers: [{"content-type", "application/sparql-results+json"}]
             }
     end
 
@@ -84,12 +84,12 @@ defmodule SPARQL.Client.Query.SelectTest do
 
   test "XML result", %{body: body} do
     Tesla.Mock.mock fn
-      %{method: :post, url: @example_endpoint, body: ^body,
-          headers: %{"accept" => "application/sparql-results+xml"}} ->
+      env = %{method: :post, url: @example_endpoint, body: ^body} ->
+        assert Tesla.get_header(env, "Accept") == "application/sparql-results+xml"
         %Tesla.Env{
               status: 200,
               body: @xml_result,
-              headers: %{"content-type" => "application/sparql-results+xml"}
+              headers: [{"content-type", "application/sparql-results+xml"}]
             }
     end
 
@@ -99,12 +99,12 @@ defmodule SPARQL.Client.Query.SelectTest do
 
   test "TSV result", %{body: body} do
     Tesla.Mock.mock fn
-      %{method: :post, url: @example_endpoint, body: ^body,
-          headers: %{"accept" => "text/tab-separated-values"}} ->
+      env = %{method: :post, url: @example_endpoint, body: ^body} ->
+        assert Tesla.get_header(env, "Accept") == "text/tab-separated-values"
         %Tesla.Env{
               status: 200,
               body: @tsv_result,
-              headers: %{"content-type" => "text/tab-separated-values"}
+              headers: [{"content-type", "text/tab-separated-values"}]
             }
     end
 
@@ -114,12 +114,12 @@ defmodule SPARQL.Client.Query.SelectTest do
 
   test "CSV result", %{body: body} do
     Tesla.Mock.mock fn
-      %{method: :post, url: @example_endpoint, body: ^body,
-          headers: %{"accept" => "text/csv"}} ->
+      env = %{method: :post, url: @example_endpoint, body: ^body} ->
+        assert Tesla.get_header(env, "Accept") == "text/csv"
         %Tesla.Env{
               status: 200,
               body: @csv_result,
-              headers: %{"content-type" => "text/csv"}
+              headers: [{"content-type", "text/csv"}]
             }
     end
 
@@ -129,8 +129,8 @@ defmodule SPARQL.Client.Query.SelectTest do
 
     test "international characters in response body", %{body: body} do
       Tesla.Mock.mock fn
-        %{method: :post, url: @example_endpoint, body: ^body,
-            headers: %{"accept" => "application/sparql-results+json"}} ->
+        env = %{method: :post, url: @example_endpoint, body: ^body} ->
+          assert Tesla.get_header(env, "Accept") == "application/sparql-results+json"
           %Tesla.Env{
                 status: 200,
                 body: """
@@ -144,7 +144,7 @@ defmodule SPARQL.Client.Query.SelectTest do
                     }
                   }
                   """,
-                headers: %{"content-type" => "application/sparql-results+json"}
+                headers: [{"content-type", "application/sparql-results+json"}]
               }
       end
 
@@ -155,12 +155,12 @@ defmodule SPARQL.Client.Query.SelectTest do
   describe "content negotiation" do
     test "with default accept header and best accepted content-type returned (JSON)", %{body: body} do
       Tesla.Mock.mock fn
-        %{method: :post, url: @example_endpoint, body: ^body,
-            headers: %{"accept" => @default_accept_header}} ->
+        env = %{method: :post, url: @example_endpoint, body: ^body} ->
+          assert Tesla.get_header(env, "Accept") == @default_accept_header
           %Tesla.Env{
                 status: 200,
                 body: @json_result,
-                headers: %{"content-type" => Query.Result.JSON.media_type}
+                headers: [{"content-type", Query.Result.JSON.media_type}]
               }
       end
 
@@ -170,12 +170,12 @@ defmodule SPARQL.Client.Query.SelectTest do
 
     test "with default accept header and worst accepted content-type returned (CSV)", %{body: body} do
       Tesla.Mock.mock fn
-        %{method: :post, url: @example_endpoint, body: ^body,
-            headers: %{"accept" => @default_accept_header}} ->
+        env = %{method: :post, url: @example_endpoint, body: ^body} ->
+          assert Tesla.get_header(env, "Accept") == @default_accept_header
           %Tesla.Env{
                 status: 200,
                 body: @csv_result,
-                headers: %{"content-type" => Query.Result.CSV.media_type}
+                headers: [{"content-type", Query.Result.CSV.media_type}]
               }
       end
 
@@ -185,12 +185,12 @@ defmodule SPARQL.Client.Query.SelectTest do
 
     test "different content-type than the accepted", %{body: body} do
       Tesla.Mock.mock fn
-        %{method: :post, url: @example_endpoint, body: ^body,
-            headers: %{"accept" => "text/tab-separated-values"}} ->
+        env = %{method: :post, url: @example_endpoint, body: ^body} ->
+          assert Tesla.get_header(env, "Accept") == "text/tab-separated-values"
           %Tesla.Env{
                 status: 200,
                 body: @json_result,
-                headers: %{"content-type" => "application/sparql-results+json"}
+                headers: [{"content-type", "application/sparql-results+json"}]
               }
       end
 
@@ -206,7 +206,7 @@ defmodule SPARQL.Client.Query.SelectTest do
           %Tesla.Env{
                 status: 200,
                 body: "<html><body>HTML content</body></html>",
-                headers: %{"content-type" => "text/html"}
+                headers: [{"content-type", "text/html"}]
               }
       end
 
@@ -220,7 +220,7 @@ defmodule SPARQL.Client.Query.SelectTest do
           %Tesla.Env{
                 status: 200,
                 body: @tsv_result,
-                headers: %{"content-type" => "text/plain"}
+                headers: [{"content-type", "text/plain"}]
               }
       end
 
@@ -232,12 +232,12 @@ defmodule SPARQL.Client.Query.SelectTest do
   describe "custom accept header" do
     test "with valid format", %{body: body} do
       Tesla.Mock.mock fn
-        %{method: :post, url: @example_endpoint, body: ^body,
-            headers: %{"accept" => "text/tab-separated-values"}} ->
+        env = %{method: :post, url: @example_endpoint, body: ^body} ->
+          assert Tesla.get_header(env, "Accept") == "text/tab-separated-values"
           %Tesla.Env{
                 status: 200,
                 body: @tsv_result,
-                headers: %{"content-type" => "text/tab-separated-values"}
+                headers: [{"content-type", "text/tab-separated-values"}]
               }
       end
 
@@ -248,12 +248,12 @@ defmodule SPARQL.Client.Query.SelectTest do
 
     test "with invalid format and no result_format", %{body: body} do
       Tesla.Mock.mock fn
-        %{method: :post, url: @example_endpoint, body: ^body,
-            headers: %{"accept" => "text/plain"}} ->
+        env = %{method: :post, url: @example_endpoint, body: ^body} ->
+          assert Tesla.get_header(env, "Accept") == "text/plain"
           %Tesla.Env{
                 status: 200,
                 body: @tsv_result,
-                headers: %{"content-type" => "text/plain"}
+                headers: [{"content-type", "text/plain"}]
               }
       end
 
@@ -264,12 +264,12 @@ defmodule SPARQL.Client.Query.SelectTest do
 
     test "with invalid format and result_format", %{body: body} do
       Tesla.Mock.mock fn
-        %{method: :post, url: @example_endpoint, body: ^body,
-            headers: %{"accept" => "text/plain"}} ->
+        env = %{method: :post, url: @example_endpoint, body: ^body} ->
+          assert Tesla.get_header(env, "Accept") == "text/plain"
           %Tesla.Env{
                 status: 200,
                 body: @json_result,
-                headers: %{"content-type" => "text/plain"}
+                headers: [{"content-type", "text/plain"}]
               }
       end
 

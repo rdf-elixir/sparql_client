@@ -3,7 +3,7 @@
     "request": {
       "body": "",
       "headers": {
-        "accept": "application/sparql-results+xml"
+        "Accept": "application/sparql-results+xml"
       },
       "method": "get",
       "options": [],
@@ -14,12 +14,12 @@
       "binary": false,
       "body": "<sparql xmlns=\"http://www.w3.org/2005/sparql-results#\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.w3.org/2001/sw/DataAccess/rf1/result2.xsd\">\n <head>\n  <variable name=\"name\"/>\n  <variable name=\"birth\"/>\n  <variable name=\"death\"/>\n  <variable name=\"person\"/>\n </head>\n <results distinct=\"false\" ordered=\"true\">\n  <result>\n   <binding name=\"name\"><literal xml:lang=\"en\">&quot;Annot&quot; (Annot Jacobi)</literal></binding>\n   <binding name=\"birth\"><literal datatype=\"http://www.w3.org/2001/XMLSchema#date\">1894-12-27</literal></binding>\n   <binding name=\"death\"><literal datatype=\"http://www.w3.org/2001/XMLSchema#date\">1981-10-20</literal></binding>\n   <binding name=\"person\"><uri>http://dbpedia.org/resource/Annot_(artist)</uri></binding>\n  </result>\n  <result>\n   <binding name=\"name\"><literal xml:lang=\"en\">()</literal></binding>\n   <binding name=\"birth\"><literal datatype=\"http://www.w3.org/2001/XMLSchema#date\">1811-10-29</literal></binding>\n   <binding name=\"death\"><literal datatype=\"http://www.w3.org/2001/XMLSchema#date\">1873-06-06</literal></binding>\n   <binding name=\"person\"><uri>http://dbpedia.org/resource/Prince_Adalbert_of_Prussia_(1811–1873)</uri></binding>\n  </result>\n  <result>\n   <binding name=\"name\"><literal xml:lang=\"en\">()</literal></binding>\n   <binding name=\"birth\"><literal datatype=\"http://www.w3.org/2001/XMLSchema#date\">1811-10-29</literal></binding>\n   <binding name=\"death\"><literal datatype=\"http://www.w3.org/2001/XMLSchema#date\">1873-6-6</literal></binding>\n   <binding name=\"person\"><uri>http://dbpedia.org/resource/Prince_Adalbert_of_Prussia_(1811–1873)</uri></binding>\n  </result>\n </results>\n</sparql>",
       "headers": {
-        "Date": "Sun, 18 Mar 2018 21:43:30 GMT",
+        "Date": "Tue, 21 Aug 2018 20:53:21 GMT",
         "Content-Type": "application/sparql-results+xml; charset=UTF-8",
         "Content-Length": "1686",
         "Connection": "keep-alive",
-        "Server": "Virtuoso/07.20.3226 (Linux) i686-generic-linux-glibc212-64  VDB",
-        "Expires": "Sun, 25 Mar 2018 21:43:30 GMT",
+        "Server": "Virtuoso/07.20.3229 (Linux) i686-generic-linux-glibc25-64  VDB",
+        "Expires": "Tue, 28 Aug 2018 20:53:21 GMT",
         "Cache-Control": "max-age=604800",
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Credentials": "true",

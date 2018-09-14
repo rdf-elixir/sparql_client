@@ -3,8 +3,8 @@
     "request": {
       "body": "query=PREFIX+%3A+%3Chttp%3A%2F%2Fdbpedia.org%2Fresource%2F%3E%0APREFIX+dbo%3A+%3Chttp%3A%2F%2Fdbpedia.org%2Fontology%2F%3E%0A%0AASK+WHERE+%7B+%3AKevin_Bacon+a+dbo%3AAgent+%7D%0A",
       "headers": {
-        "accept": "application/sparql-results+json",
-        "content-type": "application/x-www-form-urlencoded"
+        "Accept": "application/sparql-results+json",
+        "Content-Type": "application/x-www-form-urlencoded"
       },
       "method": "post",
       "options": [],
@@ -15,12 +15,12 @@
       "binary": false,
       "body": "{  \"head\": { \"link\": [] }, \"boolean\": true}",
       "headers": {
-        "Date": "Tue, 06 Mar 2018 11:19:53 GMT",
+        "Date": "Tue, 21 Aug 2018 20:53:22 GMT",
         "Content-Type": "application/sparql-results+json",
         "Content-Length": "43",
         "Connection": "keep-alive",
-        "Server": "Virtuoso/07.20.3224 (Linux) i686-generic-linux-glibc212-64  VDB",
-        "Expires": "Tue, 13 Mar 2018 11:19:53 GMT",
+        "Server": "Virtuoso/07.20.3229 (Linux) i686-generic-linux-glibc25-64  VDB",
+        "Expires": "Tue, 28 Aug 2018 20:53:22 GMT",
         "Cache-Control": "max-age=604800",
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Credentials": "true",

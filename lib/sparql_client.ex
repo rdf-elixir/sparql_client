@@ -191,8 +191,7 @@ defmodule SPARQL.Client do
     with {:ok, headers} <- request_headers(query, options) do
       {:ok,
         Tesla.build_client [
-          {Tesla.Middleware.Tuples,  rescue_errors: :all},
-          {Tesla.Middleware.Headers, headers},
+          {Tesla.Middleware.Headers, Map.to_list(headers)},
           {Tesla.Middleware.FollowRedirects,
             max_redirects: Map.get(options, :max_redirects, 5)}
         ]
@@ -296,8 +295,8 @@ defmodule SPARQL.Client do
   defp evaluate_response(_, response, _), do: {:error, response}
 
 
-  defp response_result_format(query_form, %Tesla.Env{headers: %{"content-type" => content_type}}, options)
-  do
+  defp response_result_format(query_form, env, options) do
+    content_type = Tesla.get_header(env, "content-type")
     ( content_type
       |> parse_content_type()
       |> result_format_by_media_type(query_form)

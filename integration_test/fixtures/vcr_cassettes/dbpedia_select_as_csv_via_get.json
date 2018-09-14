@@ -3,7 +3,7 @@
     "request": {
       "body": "",
       "headers": {
-        "accept": "text/csv"
+        "Accept": "text/csv"
       },
       "method": "get",
       "options": [],
@@ -14,12 +14,12 @@
       "binary": false,
       "body": "\"name\",\"birth\",\"death\",\"person\"\n\"\"\"Annot\"\" (Annot Jacobi)\",1894-12-27,1981-10-20,\"http://dbpedia.org/resource/Annot_(artist)\"\n\"()\",1811-10-29,1873-06-06,\"http://dbpedia.org/resource/Prince_Adalbert_of_Prussia_(1811–1873)\"\n\"()\",1811-10-29,\"1873-6-6\",\"http://dbpedia.org/resource/Prince_Adalbert_of_Prussia_(1811–1873)\"\n",
       "headers": {
-        "Date": "Sun, 18 Mar 2018 21:43:32 GMT",
+        "Date": "Tue, 21 Aug 2018 20:53:21 GMT",
         "Content-Type": "text/csv; charset=UTF-8",
         "Content-Length": "322",
         "Connection": "keep-alive",
-        "Server": "Virtuoso/07.20.3226 (Linux) i686-generic-linux-glibc212-64  VDB",
-        "Expires": "Sun, 25 Mar 2018 21:43:32 GMT",
+        "Server": "Virtuoso/07.20.3229 (Linux) i686-generic-linux-glibc25-64  VDB",
+        "Expires": "Tue, 28 Aug 2018 20:53:21 GMT",
         "Cache-Control": "max-age=604800",
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Credentials": "true",

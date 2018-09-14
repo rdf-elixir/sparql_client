@@ -37,7 +37,7 @@ defmodule SPARQL.Client.Mixfile do
       # ExCoveralls
       test_coverage: [tool: ExCoveralls],
       preferred_cli_env: [
-        "coveralls": :test,
+        coveralls: :test,
         "coveralls.detail": :test,
         "coveralls.post": :test,
         "coveralls.html": :test
@@ -73,16 +73,16 @@ defmodule SPARQL.Client.Mixfile do
       {:rdf, "~> 0.4"},
       {:json_ld, "~> 0.2.2"},
 
-      {:tesla, "~> 0.10"},
+      {:tesla, "~> 1.1"},
       {:content_type, "~> 0.1"},
 
       # Development
-      {:hackney, "~> 1.10",  only: [:dev, :test]},
-      {:dialyxir, "~> 0.5",  only: [:dev, :test], runtime: false},
-      {:credo, "~> 0.8",     only: [:dev, :test], runtime: false},
-      {:exvcr, "~> 0.8",     only: [:dev, :test]},
-      {:ex_doc, "~> 0.17.1", only: :dev, runtime: false},
-      {:excoveralls, "~> 0.7", only: :test},
+      {:hackney, "~> 1.10",    only: [:dev, :test]},
+      {:dialyxir, "~> 0.5",    only: [:dev, :test], runtime: false},
+      {:credo, "~> 0.10",      only: [:dev, :test], runtime: false},
+      {:exvcr, "~> 0.10",      only: [:dev, :test]},
+      {:ex_doc, "~> 0.19",     only: :dev, runtime: false},
+      {:excoveralls, "~> 0.9", only: :test},
     ]
   end
 

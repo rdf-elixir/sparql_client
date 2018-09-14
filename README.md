@@ -222,7 +222,7 @@ end
 and add this line to your `config.exs` file (or environment specific configuration):
 
 ```elixir
-config :tesla, :adapter, :hackney
+config :tesla, :adapter, Tesla.Adapter.Hackney
 ```
 
 The ibrowse configuration looks similarly.
@@ -241,7 +241,7 @@ end
 `config.exs`:
 
 ```elixir
-config :tesla, :adapter, :ibrowse
+config :tesla, :adapter, Tesla.Adapter.Ibrowse
 ```
 
 

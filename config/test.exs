@@ -1,3 +1,3 @@
 use Mix.Config
 
-config :tesla, :adapter, :mock
+config :tesla, :adapter, Tesla.Mock
