@@ -5,6 +5,18 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 [Keep a CHANGELOG](http://keepachangelog.com).
 
 
+## 0.2.1 - 2018-09-17
+
+### Fixed
+
+- Update to SPARQL.ex 0.2.1 whose Hex package no longer contains Erlang output
+  files of Leex and Yecc, which caused issues using the SPARQL.ex Hex package on
+  OTP < 21 (because the package was released with OTP 21)
+
+[Compare v0.2.0...v0.2.1](https://github.com/marcelotto/sparql_client/compare/v0.2.0...v0.2.1)
+
+
+
 ## 0.2.0 - 2018-09-17
 
 ### Changed
