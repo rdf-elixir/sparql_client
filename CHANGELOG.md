@@ -10,6 +10,8 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 ### Changed
 
 - adapt to new query result representation in SPARQL.ex 0.2
+- Elixir versions < 1.6 are no longer supported (as a consequence of upgrading
+  to the latest versions of RDF.ex and SPARQL.ex)
 
 
 [Compare v0.1.1...HEAD](https://github.com/marcelotto/sparql_client/compare/v0.1.1...HEAD)
