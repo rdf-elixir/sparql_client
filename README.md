@@ -22,7 +22,7 @@ The [SPARQL.Client] Hex package can be installed as usual, by adding `sparql_cli
 ```elixir
 def deps do
   [
-    {:sparql_client, "~> 0.1"}
+    {:sparql_client, "~> 0.2"}
   ]
 end
 ```

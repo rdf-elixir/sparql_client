@@ -5,7 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 [Keep a CHANGELOG](http://keepachangelog.com).
 
 
-## Unreleased
+## 0.2.0 - 2018-09-17
 
 ### Changed
 
@@ -14,7 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
   to the latest versions of RDF.ex and SPARQL.ex)
 
 
-[Compare v0.1.1...HEAD](https://github.com/marcelotto/sparql_client/compare/v0.1.1...HEAD)
+[Compare v0.1.1...v0.2.0](https://github.com/marcelotto/sparql_client/compare/v0.1.1...v0.2.0)
 
 
 ## v0.1.1 - 2018-08-21
