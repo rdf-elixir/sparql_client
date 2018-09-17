@@ -68,7 +68,7 @@ defmodule SPARQL.Client.Mixfile do
 
   defp deps do
     [
-      {:sparql, "~> 0.2"},
+      {:sparql, "~> 0.2.1"},
       {:rdf, "~> 0.5"},
       {:json_ld, "~> 0.3"},
 
