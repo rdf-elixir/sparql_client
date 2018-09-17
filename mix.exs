@@ -68,21 +68,20 @@ defmodule SPARQL.Client.Mixfile do
 
   defp deps do
     [
-#      {:sparql, "~> 0.2"},
-      {:sparql, git: "https://github.com/marcelotto/sparql-ex", branch: "algebra"}, # TODO: Remove this when SPARQL.ex 0.2 released
-      {:rdf, "~> 0.4"},
-      {:json_ld, "~> 0.2.2"},
+      {:sparql, "~> 0.2"},
+      {:rdf, "~> 0.5"},
+      {:json_ld, "~> 0.3"},
 
       {:tesla, "~> 1.1"},
       {:content_type, "~> 0.1"},
 
       # Development
-      {:hackney, "~> 1.10",    only: [:dev, :test]},
-      {:dialyxir, "~> 0.5",    only: [:dev, :test], runtime: false},
-      {:credo, "~> 0.10",      only: [:dev, :test], runtime: false},
-      {:exvcr, "~> 0.10",      only: [:dev, :test]},
-      {:ex_doc, "~> 0.19",     only: :dev, runtime: false},
-      {:excoveralls, "~> 0.9", only: :test},
+      {:hackney, "~> 1.14",     only: [:dev, :test]},
+      {:dialyxir, "~> 0.5",     only: [:dev, :test], runtime: false},
+      {:credo, "~> 0.10",       only: [:dev, :test], runtime: false},
+      {:exvcr, "~> 0.10",       only: [:dev, :test]},
+      {:ex_doc, "~> 0.19",      only: :dev, runtime: false},
+      {:excoveralls, "~> 0.10", only: :test},
     ]
   end
 
