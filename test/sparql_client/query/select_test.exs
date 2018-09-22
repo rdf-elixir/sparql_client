@@ -63,7 +63,7 @@ defmodule SPARQL.Client.Query.SelectTest do
   @result @json_result |> Query.Result.JSON.decode() |> elem(1)
 
   setup do
-    {:ok, body: URI.encode_query(%{query: @example_query})}
+    {:ok, body: URI.encode_query(%{query: SPARQL.query(@example_query).query_string})}
   end
 
 

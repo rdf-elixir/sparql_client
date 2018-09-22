@@ -1,7 +1,7 @@
 [
   {
     "request": {
-      "body": "query=CONSTRUCT+%7B+%3Chttp%3A%2F%2Fexample.org%2FElixir%3E+%3Fp+%3Fo+%7D%0AWHERE++%7B+%3Chttp%3A%2F%2Fdbpedia.org%2Fresource%2FElixir_%28programming_language%29%3E+%3Fp+%3Fo+%7D%0ALIMIT+3%0A",
+      "body": "query=PREFIX+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0APREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0APREFIX+xsd%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2001%2FXMLSchema%23%3E%0ACONSTRUCT+%7B+%3Chttp%3A%2F%2Fexample.org%2FElixir%3E+%3Fp+%3Fo+%7D%0AWHERE++%7B+%3Chttp%3A%2F%2Fdbpedia.org%2Fresource%2FElixir_%28programming_language%29%3E+%3Fp+%3Fo+%7D%0ALIMIT+3%0A",
       "headers": {
         "Accept": "text/plain",
         "Content-Type": "application/x-www-form-urlencoded"
@@ -13,14 +13,14 @@
     },
     "response": {
       "binary": false,
-      "body": "<http://example.org/Elixir>\t<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>\t<http://dbpedia.org/ontology/Language> .\n<http://example.org/Elixir>\t<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>\t<http://www.w3.org/2002/07/owl#Thing> .\n<http://example.org/Elixir>\t<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>\t<http://www.wikidata.org/entity/Q315> .\n",
+      "body": "<http://example.org/Elixir>\t<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>\t<http://www.w3.org/2002/07/owl#Thing> .\n<http://example.org/Elixir>\t<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>\t<http://dbpedia.org/ontology/Language> .\n<http://example.org/Elixir>\t<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>\t<http://www.wikidata.org/entity/Q315> .\n",
       "headers": {
-        "Date": "Tue, 21 Aug 2018 20:53:20 GMT",
+        "Date": "Sat, 22 Sep 2018 21:22:17 GMT",
         "Content-Type": "text/plain; charset=UTF-8",
         "Content-Length": "355",
         "Connection": "keep-alive",
         "Server": "Virtuoso/07.20.3229 (Linux) i686-generic-linux-glibc25-64  VDB",
-        "Expires": "Tue, 28 Aug 2018 20:53:20 GMT",
+        "Expires": "Sat, 29 Sep 2018 21:22:17 GMT",
         "Cache-Control": "max-age=604800",
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Credentials": "true",

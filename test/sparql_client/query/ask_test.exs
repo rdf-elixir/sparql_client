@@ -8,6 +8,7 @@ defmodule SPARQL.Client.Query.AskTest do
   @default_accept_header SPARQL.Client.default_accept_header(:ask)
 
   @example_query "ASK WHERE { <http://example.org/Foo> a <http://example.org/Bar> }"
+#  @example_query Query.new("ASK WHERE { <http://example.org/Foo> a <http://example.org/Bar> }").query_string |> IO.inspect(label: "@example_query")
 
   @json_result """
     {
@@ -26,7 +27,7 @@ defmodule SPARQL.Client.Query.AskTest do
 
 
   setup do
-    {:ok, body: URI.encode_query(%{query: @example_query})}
+    {:ok, body: URI.encode_query(%{query: Query.new(@example_query).query_string})}
   end
 
   test "JSON result", %{body: body} do

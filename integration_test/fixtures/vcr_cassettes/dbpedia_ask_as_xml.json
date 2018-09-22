@@ -1,7 +1,7 @@
 [
   {
     "request": {
-      "body": "query=PREFIX+%3A+%3Chttp%3A%2F%2Fdbpedia.org%2Fresource%2F%3E%0APREFIX+dbo%3A+%3Chttp%3A%2F%2Fdbpedia.org%2Fontology%2F%3E%0A%0AASK+WHERE+%7B+%3AKevin_Bacon+a+dbo%3AAgent+%7D%0A",
+      "body": "query=PREFIX+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0APREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0APREFIX+xsd%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2001%2FXMLSchema%23%3E%0APREFIX+%3A+%3Chttp%3A%2F%2Fdbpedia.org%2Fresource%2F%3E%0APREFIX+dbo%3A+%3Chttp%3A%2F%2Fdbpedia.org%2Fontology%2F%3E%0A%0AASK+WHERE+%7B+%3AKevin_Bacon+a+dbo%3AAgent+%7D%0A",
       "headers": {
         "Accept": "application/sparql-results+xml",
         "Content-Type": "application/x-www-form-urlencoded"
@@ -15,12 +15,12 @@
       "binary": false,
       "body": "<sparql xmlns=\"http://www.w3.org/2005/sparql-results#\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.w3.org/2001/sw/DataAccess/rf1/result2.xsd\">\n <head></head>\n <boolean>true</boolean>\n</sparql>",
       "headers": {
-        "Date": "Tue, 21 Aug 2018 20:53:22 GMT",
+        "Date": "Sat, 22 Sep 2018 21:22:16 GMT",
         "Content-Type": "application/sparql-results+xml; charset=UTF-8",
         "Content-Length": "233",
         "Connection": "keep-alive",
         "Server": "Virtuoso/07.20.3229 (Linux) i686-generic-linux-glibc25-64  VDB",
-        "Expires": "Tue, 28 Aug 2018 20:53:22 GMT",
+        "Expires": "Sat, 29 Sep 2018 21:22:16 GMT",
         "Cache-Control": "max-age=604800",
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Credentials": "true",

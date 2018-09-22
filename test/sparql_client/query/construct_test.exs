@@ -21,7 +21,7 @@ defmodule SPARQL.Client.Query.ConstructTest do
   @json_ld_result  JSON.LD.write_string!(@result_dataset)
 
   setup do
-    {:ok, body: URI.encode_query(%{query: @example_query})}
+    {:ok, body: URI.encode_query(%{query: SPARQL.query(@example_query).query_string})}
   end
 
 
@@ -57,7 +57,7 @@ defmodule SPARQL.Client.Query.ConstructTest do
   end
 
   test "NTriples result" do
-    url = @example_endpoint <> "?" <> URI.encode_query(%{query: @example_query})
+    url = @example_endpoint <> "?" <> URI.encode_query(%{query: SPARQL.query(@example_query).query_string})
     Tesla.Mock.mock fn
       env = %{method: :get, url: ^url} ->
         assert Tesla.get_header(env, "Accept") == "application/n-triples"
@@ -74,8 +74,9 @@ defmodule SPARQL.Client.Query.ConstructTest do
   end
 
   test "NQuads result" do
+    example_query = SPARQL.query(@example_query).query_string
     Tesla.Mock.mock fn
-      env = %{method: :post, url: @example_endpoint, body: @example_query} ->
+      env = %{method: :post, url: @example_endpoint, body: ^example_query} ->
         assert Tesla.get_header(env, "Accept") == "application/n-quads"
         %Tesla.Env{
               status: 200,

@@ -8,18 +8,18 @@
       "method": "get",
       "options": [],
       "request_body": "",
-      "url": "http://dbpedia.org/sparql?query=PREFIX+xsd%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2001%2FXMLSchema%23%3E%0APREFIX+foaf%3A+%3Chttp%3A%2F%2Fxmlns.com%2Ffoaf%2F0.1%2F%3E%0APREFIX+%3A+%3Chttp%3A%2F%2Fdbpedia.org%2Fresource%2F%3E%0APREFIX+dbo%3A+%3Chttp%3A%2F%2Fdbpedia.org%2Fontology%2F%3E%0A%0ASELECT+%3Fname+%3Fbirth+%3Fdeath+%3Fperson%0AWHERE+%7B%0A++%3Fperson%0A++++foaf%3Aname++++++%3Fname+%3B%0A++++dbo%3AbirthPlace+%3ABerlin+%3B%0A++++dbo%3AbirthDate++%3Fbirth+%3B%0A++++dbo%3AdeathDate++%3Fdeath+.%0A++FILTER+%28%3Fbirth+%3C+%221900-01-01%22%5E%5Exsd%3Adate%29+.%0A%7D%0AORDER+BY+%3Fname%0ALIMIT+3%0A"
+      "url": "http://dbpedia.org/sparql?query=PREFIX+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0APREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0APREFIX+xsd%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2001%2FXMLSchema%23%3E%0APREFIX+xsd%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2001%2FXMLSchema%23%3E%0APREFIX+foaf%3A+%3Chttp%3A%2F%2Fxmlns.com%2Ffoaf%2F0.1%2F%3E%0APREFIX+%3A+%3Chttp%3A%2F%2Fdbpedia.org%2Fresource%2F%3E%0APREFIX+dbo%3A+%3Chttp%3A%2F%2Fdbpedia.org%2Fontology%2F%3E%0A%0ASELECT+%3Fname+%3Fbirth+%3Fdeath+%3Fperson%0AWHERE+%7B%0A++%3Fperson%0A++++foaf%3Aname++++++%3Fname+%3B%0A++++dbo%3AbirthPlace+%3ABerlin+%3B%0A++++dbo%3AbirthDate++%3Fbirth+%3B%0A++++dbo%3AdeathDate++%3Fdeath+.%0A++FILTER+%28%3Fbirth+%3C+%221900-01-01%22%5E%5Exsd%3Adate%29+.%0A%7D%0AORDER+BY+%3Fname%0ALIMIT+3%0A"
     },
     "response": {
       "binary": false,
       "body": "\"name\",\"birth\",\"death\",\"person\"\n\"\"\"Annot\"\" (Annot Jacobi)\",1894-12-27,1981-10-20,\"http://dbpedia.org/resource/Annot_(artist)\"\n\"()\",1811-10-29,1873-06-06,\"http://dbpedia.org/resource/Prince_Adalbert_of_Prussia_(1811–1873)\"\n\"()\",1811-10-29,\"1873-6-6\",\"http://dbpedia.org/resource/Prince_Adalbert_of_Prussia_(1811–1873)\"\n",
       "headers": {
-        "Date": "Tue, 21 Aug 2018 20:53:21 GMT",
+        "Date": "Sat, 22 Sep 2018 21:22:16 GMT",
         "Content-Type": "text/csv; charset=UTF-8",
         "Content-Length": "322",
         "Connection": "keep-alive",
         "Server": "Virtuoso/07.20.3229 (Linux) i686-generic-linux-glibc25-64  VDB",
-        "Expires": "Tue, 28 Aug 2018 20:53:21 GMT",
+        "Expires": "Sat, 29 Sep 2018 21:22:16 GMT",
         "Cache-Control": "max-age=604800",
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Credentials": "true",
