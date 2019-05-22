@@ -136,7 +136,13 @@ defmodule SPARQL.Client do
   ## Other options
 
   - `max_redirects`: the number of redirects to follow before the operation fails (default: `5`)
+  - `request_opts`: will be passed as the `opts` option value to the `Tesla.request/2` function,
+    this allows for example to set the timeout value for the Hackney adapter like this:
 
+  ```elixir
+  SPARQL.Client.query(query, "http://example.com/sparql",
+    request_opts: [adapter: [recv_timeout: 30_000]])
+  ```
   """
   def query(query, endpoint, options \\ %{})
 
@@ -251,7 +257,7 @@ defmodule SPARQL.Client do
   defp do_http_request(client, :get, "1.1", endpoint, query, options) do
     client
     |> get(endpoint <> "?" <> URI.encode_query(
-            [{"query", query.query_string} | graph_params(options)]))
+            [{"query", query.query_string} | graph_params(options)]), tesla_request_opts(options))
   end
 
   defp do_http_request(client, :post, "1.1", endpoint, query, options) do
@@ -262,17 +268,25 @@ defmodule SPARQL.Client do
       end
 
     client
-    |> post(url, query.query_string)
+    |> post(url, query.query_string, tesla_request_opts(options))
   end
 
   defp do_http_request(client, :post, "1.0", endpoint, query, options) do
     client
     |> post(endpoint, URI.encode_query(
-              [{"query", query.query_string} | graph_params(options)]))
+              [{"query", query.query_string} | graph_params(options)]), tesla_request_opts(options))
   end
 
   defp do_http_request(_, request_method, protocol_version, _, _, _),
     do: {:error, "unknown request method: #{inspect request_method} with SPARQL protocol version #{protocol_version}"}
+
+  defp tesla_request_opts(options) do
+    if Map.has_key?(options, :request_opts) do
+      [opts: Map.get(options, :request_opts)]
+    else
+      []
+    end
+  end
 
 
   ############################################################################
