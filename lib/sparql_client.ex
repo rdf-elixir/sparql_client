@@ -143,6 +143,8 @@ defmodule SPARQL.Client do
   SPARQL.Client.query(query, "http://example.com/sparql",
     request_opts: [adapter: [recv_timeout: 30_000]])
   ```
+
+  For a general introduction you may refer to the guides on the [homepage](https://rdf-elixir.dev).
   """
   def query(query, endpoint, options \\ %{})
 
