@@ -1,7 +1,5 @@
 defmodule SPARQL.Client.Query.ConstructTest do
-  use ExUnit.Case
-
-  import RDF.Sigils
+  use SPARQL.Client.Test.Case
 
   @example_endpoint "http://example.org/sparql"
 
@@ -36,8 +34,8 @@ defmodule SPARQL.Client.Query.ConstructTest do
             }
     end
 
-    assert SPARQL.Client.query(@example_query, @example_endpoint, result_format: :turtle) ==
-            {:ok, @result_graph}
+    assert_equal_graph @result_graph,
+      SPARQL.Client.query(@example_query, @example_endpoint, result_format: :turtle)
   end
 
 
@@ -68,9 +66,9 @@ defmodule SPARQL.Client.Query.ConstructTest do
             }
     end
 
-    assert SPARQL.Client.query(@example_query, @example_endpoint, result_format: :ntriples,
-              request_method: :get, protocol_version: "1.1") ==
-            {:ok, @result_graph}
+    assert_equal_graph @result_graph,
+      SPARQL.Client.query(@example_query, @example_endpoint, result_format: :ntriples,
+        request_method: :get, protocol_version: "1.1")
   end
 
   test "NQuads result" do
@@ -102,8 +100,8 @@ defmodule SPARQL.Client.Query.ConstructTest do
               }
       end
 
-      assert SPARQL.Client.query(@example_query, @example_endpoint) ==
-              {:ok, @result_graph}
+      assert_equal_graph @result_graph,
+                         SPARQL.Client.query(@example_query, @example_endpoint)
     end
 
     test "unsupported content-type response and no result_format set", %{body: body} do
@@ -132,8 +130,8 @@ defmodule SPARQL.Client.Query.ConstructTest do
               }
       end
 
-      assert SPARQL.Client.query(@example_query, @example_endpoint, result_format: :turtle) ==
-              {:ok, @result_graph}
+      assert_equal_graph @result_graph,
+        SPARQL.Client.query(@example_query, @example_endpoint, result_format: :turtle)
     end
   end
 
@@ -150,9 +148,9 @@ defmodule SPARQL.Client.Query.ConstructTest do
               }
       end
 
-      assert SPARQL.Client.query(@example_query, @example_endpoint,
-                headers: %{"Accept" => "text/turtle"}) ==
-              {:ok, @result_graph}
+      assert_equal_graph @result_graph,
+        SPARQL.Client.query(@example_query, @example_endpoint,
+          headers: %{"Accept" => "text/turtle"})
     end
 
     test "with invalid format and no result_format", %{body: body} do
@@ -182,10 +180,9 @@ defmodule SPARQL.Client.Query.ConstructTest do
               }
       end
 
-      assert SPARQL.Client.query(@example_query, @example_endpoint, result_format: :ntriples,
-                headers: %{"Accept" => "text/plain"}) ==
-              {:ok, @result_graph}
+      assert_equal_graph @result_graph,
+        SPARQL.Client.query(@example_query, @example_endpoint, result_format: :ntriples,
+          headers: %{"Accept" => "text/plain"})
     end
   end
-
 end
