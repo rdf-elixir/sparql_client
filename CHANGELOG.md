@@ -5,16 +5,18 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 [Keep a CHANGELOG](http://keepachangelog.com).
 
 
-## 0.2.2 - 2019-05-22
+## v0.2.2 - 2019-05-22
 
 ### Added
 
 - the `request_opts` options to `SPARQL.Client.query/3` which will be passed as 
  the `opts` option value to the `Tesla.request/2` function
 
+[Compare v0.2.1...v0.2.2](https://github.com/marcelotto/sparql_client/compare/v0.2.1...v0.2.2)
 
 
-## 0.2.1 - 2018-09-17
+
+## v0.2.1 - 2018-09-17
 
 ### Fixed
 
@@ -26,7 +28,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 
 
 
-## 0.2.0 - 2018-09-17
+## v0.2.0 - 2018-09-17
 
 ### Changed
 
