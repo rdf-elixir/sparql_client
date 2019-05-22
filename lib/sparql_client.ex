@@ -190,7 +190,7 @@ defmodule SPARQL.Client do
   defp client(query, _endpoint, options) do
     with {:ok, headers} <- request_headers(query, options) do
       {:ok,
-        Tesla.build_client [
+        Tesla.client [
           {Tesla.Middleware.Headers, Map.to_list(headers)},
           {Tesla.Middleware.FollowRedirects,
             max_redirects: Map.get(options, :max_redirects, 5)}

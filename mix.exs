@@ -68,20 +68,20 @@ defmodule SPARQL.Client.Mixfile do
 
   defp deps do
     [
-      {:sparql, "~> 0.2.1"},
-      {:rdf, "~> 0.5"},
+      {:sparql, "~> 0.3"},
+      {:rdf, "~> 0.6"},
       {:json_ld, "~> 0.3"},
 
-      {:tesla, "~> 1.1"},
+      {:tesla, "~> 1.2"},
       {:content_type, "~> 0.1"},
 
       # Development
-      {:hackney, "~> 1.14",     only: [:dev, :test]},
+      {:hackney, "~> 1.15",     only: [:dev, :test]},
       {:dialyxir, "~> 0.5",     only: [:dev, :test], runtime: false},
-      {:credo, "~> 0.10",       only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.0",        only: [:dev, :test], runtime: false},
       {:exvcr, "~> 0.10",       only: [:dev, :test]},
-      {:ex_doc, "~> 0.19",      only: :dev, runtime: false},
-      {:excoveralls, "~> 0.10", only: :test},
+      {:ex_doc, "~> 0.20",      only: :dev, runtime: false},
+      {:excoveralls, "~> 0.11", only: :test},
     ]
   end
 
