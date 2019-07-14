@@ -86,7 +86,7 @@ defmodule SPARQL.Client.Mixfile do
       # Development
       {:hackney, "~> 1.15",     only: [:dev, :test]},
       {:dialyxir, "~> 0.5",     only: [:dev, :test], runtime: false},
-      {:credo, "~> 1.0",        only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.1",        only: [:dev, :test], runtime: false},
       {:exvcr, "~> 0.10",       only: [:dev, :test]},
       {:ex_doc, "~> 0.20",      only: :dev, runtime: false},
       {:excoveralls, "~> 0.11", only: :test},
