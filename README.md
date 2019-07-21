@@ -1,3 +1,5 @@
+<img src="sparql-logo.png" align="right" />
+
 # SPARQL.Client
 
 [![Travis](https://img.shields.io/travis/marcelotto/sparql_client.svg?style=flat-square)](https://travis-ci.org/marcelotto/sparql_client)
