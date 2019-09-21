@@ -8,7 +8,7 @@
 
 A [SPARQL protocol](https://www.w3.org/TR/sparql11-protocol/) client for Elixir.
 
-For more about SPARQL.Client and it's related projects, go to <https://rdf-elixir.dev>.
+The API documentation can be found [here](https://hexdocs.pm/sparql_client/). For a guide and more information about SPARQL.Client and it's related projects, go to <https://rdf-elixir.dev>.
 
 
 ## Features
