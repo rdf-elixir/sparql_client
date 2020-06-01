@@ -2,7 +2,7 @@
 
 # SPARQL.Client
 
-[![Travis](https://img.shields.io/travis/marcelotto/sparql_client.svg?style=flat-square)](https://travis-ci.org/marcelotto/sparql_client)
+[![Travis](https://img.shields.io/travis/rdf-elixir/sparql_client.svg?style=flat-square)](https://travis-ci.org/rdf-elixir/sparql_client)
 [![Hex.pm](https://img.shields.io/hexpm/v/sparql_client.svg?style=flat-square)](https://hex.pm/packages/sparql_client)
 
 

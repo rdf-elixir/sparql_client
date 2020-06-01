@@ -91,7 +91,7 @@ defmodule SPARQL.Client do
 
   The `SPARQL.Client` can handle all of the specified result formats for SPARQL
   tuple results (JSON, XML, CSV and TSV) and for `CONSTRUCT` and `DESCRIBE` queries
-  all RDF serialization formats supported by [RDF.ex](https://github.com/marcelotto/rdf-ex)
+  all RDF serialization formats supported by [RDF.ex](https://github.com/rdf-elixir/rdf-ex)
   can be handled.
 
   If no custom `Accept` header is specified, all accepted formats for the resp.

@@ -12,7 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 - the `request_opts` options to `SPARQL.Client.query/3` which will be passed as 
  the `opts` option value to the `Tesla.request/2` function
 
-[Compare v0.2.1...v0.2.2](https://github.com/marcelotto/sparql_client/compare/v0.2.1...v0.2.2)
+[Compare v0.2.1...v0.2.2](https://github.com/rdf-elixir/sparql_client/compare/v0.2.1...v0.2.2)
 
 
 
@@ -24,7 +24,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
   files of Leex and Yecc, which caused issues using the SPARQL.ex Hex package on
   OTP < 21 (because the package was released with OTP 21)
 
-[Compare v0.2.0...v0.2.1](https://github.com/marcelotto/sparql_client/compare/v0.2.0...v0.2.1)
+[Compare v0.2.0...v0.2.1](https://github.com/rdf-elixir/sparql_client/compare/v0.2.0...v0.2.1)
 
 
 
@@ -37,14 +37,14 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
   to the latest versions of RDF.ex and SPARQL.ex)
 
 
-[Compare v0.1.1...v0.2.0](https://github.com/marcelotto/sparql_client/compare/v0.1.1...v0.2.0)
+[Compare v0.1.1...v0.2.0](https://github.com/rdf-elixir/sparql_client/compare/v0.1.1...v0.2.0)
 
 
 ## v0.1.1 - 2018-08-21
 
 - Upgrade to Tesla 1.1
 
-[Compare v0.1.0...v0.1.1](https://github.com/marcelotto/sparql_client/compare/v0.1.0...v0.1.1)
+[Compare v0.1.0...v0.1.1](https://github.com/rdf-elixir/sparql_client/compare/v0.1.0...v0.1.1)
 
 
 

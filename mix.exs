@@ -1,7 +1,7 @@
 defmodule SPARQL.Client.Mixfile do
   use Mix.Project
 
-  @repo_url "https://github.com/marcelotto/sparql_client"
+  @repo_url "https://github.com/rdf-elixir/sparql_client"
 
   @version File.read!("VERSION") |> String.trim
 
