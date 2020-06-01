@@ -32,7 +32,7 @@ If you need help with your Elixir and Linked Data projects, just contact <info@c
 
 ## License and Copyright
 
-(c) 2018 Marcel Otto. MIT Licensed, see [LICENSE](LICENSE.md) for details.
+(c) 2018-2020 Marcel Otto. MIT Licensed, see [LICENSE](LICENSE.md) for details.
 
 
 [SPARQL.Client]:        https://hex.pm/packages/sparql_client
