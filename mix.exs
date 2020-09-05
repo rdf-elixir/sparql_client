@@ -3,16 +3,15 @@ defmodule SPARQL.Client.Mixfile do
 
   @repo_url "https://github.com/rdf-elixir/sparql_client"
 
-  @version File.read!("VERSION") |> String.trim
-
+  @version File.read!("VERSION") |> String.trim()
 
   def project do
     [
       app: :sparql_client,
       version: @version,
       elixir: "~> 1.6",
-      build_embedded: Mix.env == :prod,
-      start_permanent: Mix.env == :prod,
+      build_embedded: Mix.env() == :prod,
+      start_permanent: Mix.env() == :prod,
       deps: deps(),
       aliases: aliases(),
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -27,12 +26,15 @@ defmodule SPARQL.Client.Mixfile do
         main: "SPARQL.Client",
         source_url: @repo_url,
         source_ref: "v#{@version}",
-        extras: ["CHANGELOG.md"],
+        extras: ["CHANGELOG.md"]
       ],
 
       # ExVCR
       preferred_cli_env: [
-        vcr: :dev, "vcr.delete": :dev, "vcr.check": :dev, "vcr.show": :dev
+        vcr: :dev,
+        "vcr.delete": :dev,
+        "vcr.check": :dev,
+        "vcr.show": :dev
       ],
 
       # ExCoveralls
@@ -42,7 +44,7 @@ defmodule SPARQL.Client.Mixfile do
         "coveralls.detail": :test,
         "coveralls.post": :test,
         "coveralls.html": :test
-      ],
+      ]
     ]
   end
 
@@ -59,7 +61,7 @@ defmodule SPARQL.Client.Mixfile do
       links: %{
         "Homepage" => "https://rdf-elixir.dev",
         "GitHub" => @repo_url,
-        "Changelog" => @repo_url <> "/blob/master/CHANGELOG.md",
+        "Changelog" => @repo_url <> "/blob/master/CHANGELOG.md"
       },
       files: ~w[lib mix.exs README.md CHANGELOG.md LICENSE.md VERSION]
     ]
@@ -67,32 +69,31 @@ defmodule SPARQL.Client.Mixfile do
 
   def application do
     [
-      extra_applications: [:logger],
+      extra_applications: [:logger]
     ]
   end
 
   defp elixirc_paths(:test), do: ["lib", "test/support"]
-  defp elixirc_paths(_),     do: ["lib"]
+  defp elixirc_paths(_), do: ["lib"]
 
   defp deps do
     [
       {:sparql, "~> 0.3"},
       {:rdf, "~> 0.6"},
       {:json_ld, "~> 0.3"},
-
       {:tesla, "~> 1.2"},
       {:content_type, "~> 0.1"},
 
       # Development
-      {:hackney, "~> 1.15",     only: [:dev, :test]},
-      {:gun, "~> 1.3",          only: [:dev, :test]},
-      {:mint, "~> 1.1",         only: [:dev, :test]},
-      {:castore, "~> 0.1.0",    only: [:dev, :test]},
-      {:dialyxir, "~> 1.0",     only: [:dev, :test], runtime: false},
-      {:credo, "~> 1.4",        only: [:dev, :test], runtime: false},
-      {:exvcr, "~> 0.11",       only: [:dev, :test]},
-      {:ex_doc, "~> 0.22",      only: :dev, runtime: false},
-      {:excoveralls, "~> 0.13", only: :test},
+      {:hackney, "~> 1.15", only: [:dev, :test]},
+      {:gun, "~> 1.3", only: [:dev, :test]},
+      {:mint, "~> 1.1", only: [:dev, :test]},
+      {:castore, "~> 0.1.0", only: [:dev, :test]},
+      {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.4", only: [:dev, :test], runtime: false},
+      {:exvcr, "~> 0.11", only: [:dev, :test]},
+      {:ex_doc, "~> 0.22", only: :dev, runtime: false},
+      {:excoveralls, "~> 0.13", only: :test}
     ]
   end
 
@@ -103,7 +104,7 @@ defmodule SPARQL.Client.Mixfile do
   end
 
   defp integration_test(_) do
-    System.put_env "MIX_ENV", "dev"
-    Mix.Task.run :test, ["integration_test"]
+    System.put_env("MIX_ENV", "dev")
+    Mix.Task.run(:test, ["integration_test"])
   end
 end
