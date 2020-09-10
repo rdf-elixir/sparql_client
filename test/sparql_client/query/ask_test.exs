@@ -5,7 +5,7 @@ defmodule SPARQL.Client.Query.AskTest do
 
   @example_endpoint "http://example.org/sparql"
 
-  @default_accept_header SPARQL.Client.default_accept_header(:ask)
+  @default_accept_header SPARQL.Client.Query.default_accept_header(:ask)
 
   @example_query "ASK WHERE { <http://example.org/Foo> a <http://example.org/Bar> }"
   #  @example_query Query.new("ASK WHERE { <http://example.org/Foo> a <http://example.org/Bar> }").query_string |> IO.inspect(label: "@example_query")
@@ -93,7 +93,7 @@ defmodule SPARQL.Client.Query.AskTest do
       end)
 
       assert SPARQL.Client.query(@example_query, @example_endpoint) ==
-               {:error, ~s[unsupported result format for ask query: "text/plain"]}
+               {:error, "unsupported result format: text/plain"}
     end
 
     test "when result_format set it's decoder is used", %{body: body} do

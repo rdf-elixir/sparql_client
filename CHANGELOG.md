@@ -5,6 +5,17 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 [Keep a CHANGELOG](http://keepachangelog.com).
 
 
+## Unreleased
+
+### Changed
+
+- the default request method for queries when using SPARQL protocol version 1.1 is now `:get` 
+
+
+[Compare v0.2.1...HEAD](https://github.com/rdf-elixir/sparql_client/compare/v0.2.1...HEAD)
+
+
+
 ## v0.2.2 - 2019-05-22
 
 ### Added

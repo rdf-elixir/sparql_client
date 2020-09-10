@@ -3,7 +3,7 @@ defmodule SPARQL.Client.Query.DescribeTest do
 
   @example_endpoint "http://example.org/sparql"
 
-  @default_accept_header SPARQL.Client.default_accept_header(:describe)
+  @default_accept_header SPARQL.Client.Query.default_accept_header(:describe)
 
   @example_query "DESCRIBE <http://example.org/S>"
 
@@ -133,7 +133,7 @@ defmodule SPARQL.Client.Query.DescribeTest do
       end)
 
       assert SPARQL.Client.query(@example_query, @example_endpoint) ==
-               {:error, ~s[unsupported result format for describe query: "text/plain"]}
+               {:error, "unsupported result format: text/plain"}
     end
   end
 
@@ -191,7 +191,7 @@ defmodule SPARQL.Client.Query.DescribeTest do
       assert SPARQL.Client.query(@example_query, @example_endpoint,
                headers: %{"Accept" => "text/plain"}
              ) ==
-               {:error, ~s[unsupported result format for describe query: "text/plain"]}
+               {:error, "unsupported result format: text/plain"}
     end
 
     test "with invalid format and result_format", %{body: body} do

@@ -155,16 +155,17 @@ defmodule SPARQL.Client.QueryTest do
                 "unknown request method: :unknown_method with SPARQL protocol version 1.1"}
 
       assert SPARQL.Client.query(@example_query, @example_endpoint,
-               request_method: :post,
-               protocol_version: "1.23"
-             ) ==
-               {:error, "unknown request method: :post with SPARQL protocol version 1.23"}
-
-      assert SPARQL.Client.query(@example_query, @example_endpoint,
                request_method: :get,
                protocol_version: "1.0"
              ) ==
                {:error, "unknown request method: :get with SPARQL protocol version 1.0"}
+
+      assert_raise RuntimeError, "invalid SPARQL protocol version: 1.23", fn ->
+        SPARQL.Client.query(@example_query, @example_endpoint,
+          request_method: :post,
+          protocol_version: "1.23"
+        )
+      end
     end
   end
 
@@ -272,8 +273,8 @@ defmodule SPARQL.Client.QueryTest do
       assert SPARQL.Client.query(@example_query, @example_endpoint,
                request_method: :get,
                protocol_version: "1.1",
-               named_graph: [@graph_uri <> "2", @graph_uri <> "3"],
-               default_graph: @graph_uri <> "1"
+               default_graph: @graph_uri <> "1",
+               named_graph: [@graph_uri <> "2", @graph_uri <> "3"]
              ) ==
                {:ok, @success_result}
     end
@@ -296,8 +297,8 @@ defmodule SPARQL.Client.QueryTest do
       assert SPARQL.Client.query(@example_query, @example_endpoint,
                request_method: :post,
                protocol_version: "1.0",
-               named_graph: [@graph_uri <> "2", @graph_uri <> "3"],
-               default_graph: @graph_uri <> "1"
+               default_graph: @graph_uri <> "1",
+               named_graph: [@graph_uri <> "2", @graph_uri <> "3"]
              ) ==
                {:ok, @success_result}
     end
@@ -323,8 +324,8 @@ defmodule SPARQL.Client.QueryTest do
       assert SPARQL.Client.query(@example_query, @example_endpoint,
                request_method: :post,
                protocol_version: "1.1",
-               named_graph: [@graph_uri <> "2", @graph_uri <> "3"],
-               default_graph: @graph_uri <> "1"
+               default_graph: @graph_uri <> "1",
+               named_graph: [@graph_uri <> "2", @graph_uri <> "3"]
              ) ==
                {:ok, @success_result}
     end
@@ -338,15 +339,15 @@ defmodule SPARQL.Client.QueryTest do
     test "4XX response" do
       Tesla.Mock.mock(fn _ -> %Tesla.Env{status: 400, body: "error"} end)
 
-      assert SPARQL.Client.query(@example_query, @example_endpoint) ==
-               {:error, %Tesla.Env{status: 400, body: "error"}}
+      assert {:error, %SPARQL.Client.HTTPError{status: 400, request: %SPARQL.Client.Request{}}} =
+               SPARQL.Client.query(@example_query, @example_endpoint)
     end
 
     test "5XX response" do
       Tesla.Mock.mock(fn _ -> %Tesla.Env{status: 500, body: "error"} end)
 
-      assert SPARQL.Client.query(@example_query, @example_endpoint) ==
-               {:error, %Tesla.Env{status: 500, body: "error"}}
+      assert {:error, %SPARQL.Client.HTTPError{status: 500, request: %SPARQL.Client.Request{}}} =
+               SPARQL.Client.query(@example_query, @example_endpoint)
     end
   end
 end

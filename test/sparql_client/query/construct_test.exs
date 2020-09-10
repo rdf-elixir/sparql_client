@@ -3,7 +3,7 @@ defmodule SPARQL.Client.Query.ConstructTest do
 
   @example_endpoint "http://example.org/sparql"
 
-  @default_accept_header SPARQL.Client.default_accept_header(:construct)
+  @default_accept_header SPARQL.Client.Query.default_accept_header(:construct)
 
   @example_query """
   CONSTRUCT { <http://example.org/S> ?p ?o }
@@ -136,7 +136,7 @@ defmodule SPARQL.Client.Query.ConstructTest do
       end)
 
       assert SPARQL.Client.query(@example_query, @example_endpoint) ==
-               {:error, ~s[unsupported result format for construct query: "text/plain"]}
+               {:error, "unsupported result format: text/plain"}
     end
   end
 
@@ -194,7 +194,7 @@ defmodule SPARQL.Client.Query.ConstructTest do
       assert SPARQL.Client.query(@example_query, @example_endpoint,
                headers: %{"Accept" => "text/plain"}
              ) ==
-               {:error, ~s[unsupported result format for construct query: "text/plain"]}
+               {:error, "unsupported result format: text/plain"}
     end
 
     test "with invalid format and result_format", %{body: body} do

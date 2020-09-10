@@ -6,7 +6,7 @@ defmodule SPARQL.Client.Query.SelectTest do
 
   @example_endpoint "http://example.org/sparql"
 
-  @default_accept_header SPARQL.Client.default_accept_header(:select)
+  @default_accept_header SPARQL.Client.Query.default_accept_header(:select)
 
   @example_query "SELECT * WHERE { ?s ?p ?o }"
 
@@ -222,7 +222,7 @@ defmodule SPARQL.Client.Query.SelectTest do
       end)
 
       assert SPARQL.Client.query(@example_query, @example_endpoint) ==
-               {:error, ~s[unsupported result format for select query: "text/html"]}
+               {:error, "unsupported result format: text/html"}
     end
 
     test "when result_format set it's decoder is used", %{body: body} do
@@ -274,7 +274,7 @@ defmodule SPARQL.Client.Query.SelectTest do
       assert SPARQL.Client.query(@example_query, @example_endpoint,
                headers: %{"Accept" => "text/plain"}
              ) ==
-               {:error, ~s[unsupported result format for select query: "text/plain"]}
+               {:error, "unsupported result format: text/plain"}
     end
 
     test "with invalid format and result_format", %{body: body} do
