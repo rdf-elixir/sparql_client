@@ -57,13 +57,6 @@ defmodule SPARQL.Client.Tesla do
     )
   end
 
-  defp do_http_request(_, request_method, protocol_version, _, _, _, _) do
-    {:error,
-     "unknown request method: #{inspect(request_method)} with SPARQL protocol version #{
-       protocol_version
-     }"}
-  end
-
   defp tesla_request_opts(opts) do
     if Keyword.has_key?(opts, :request_opts) do
       [opts: Keyword.get(opts, :request_opts)]

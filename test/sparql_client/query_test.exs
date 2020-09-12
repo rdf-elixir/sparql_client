@@ -152,20 +152,19 @@ defmodule SPARQL.Client.QueryTest do
                protocol_version: "1.1"
              ) ==
                {:error,
-                "unknown request method: :unknown_method with SPARQL protocol version 1.1"}
+                "expected :request_method to be one of [:get, :post], got: :unknown_method"}
 
       assert SPARQL.Client.query(@example_query, @example_endpoint,
                request_method: :get,
                protocol_version: "1.0"
              ) ==
-               {:error, "unknown request method: :get with SPARQL protocol version 1.0"}
+               {:error, ~S(request_method :get is not supported with protocol_version "1.0")}
 
-      assert_raise RuntimeError, "invalid SPARQL protocol version: 1.23", fn ->
-        SPARQL.Client.query(@example_query, @example_endpoint,
-          request_method: :post,
-          protocol_version: "1.23"
-        )
-      end
+      assert SPARQL.Client.query(@example_query, @example_endpoint,
+               request_method: :post,
+               protocol_version: "1.23"
+             ) ==
+               {:error, ~S(expected :protocol_version to be one of ["1.0", "1.1"], got: "1.23")}
     end
   end
 

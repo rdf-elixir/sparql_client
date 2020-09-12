@@ -12,6 +12,47 @@ defmodule SPARQL.Client do
 
   alias SPARQL.Client.Request
 
+  @query_options_schema [
+    request_method: [
+      type: {:one_of, [:get, :post]},
+      subsection: "Specifying the request method"
+    ],
+    protocol_version: [
+      type: {:one_of, ["1.0", "1.1"]},
+      default: "1.0",
+      subsection: "Specifying the request method"
+    ],
+    accept_header: [
+      type: :string
+    ],
+    headers: [
+      type: {:custom, __MODULE__, :validate_headers, []},
+      subsection: "Specifying custom headers"
+    ],
+    result_format: [
+      type:
+        {:one_of,
+         (SPARQL.result_formats() ++ RDF.Serialization.formats())
+         |> Enum.map(fn format -> format.name end)},
+      subsection: "Specifying the response format"
+    ],
+    default_graph: [
+      subsection: "Specifying an RDF Dataset"
+    ],
+    named_graph: [
+      subsection: "Specifying an RDF Dataset"
+    ],
+    request_opts: [
+      type: :keyword_list,
+      subsection: "Specifying Tesla adapter specific options"
+    ],
+    max_redirects: [
+      type: :pos_integer,
+      default: 5,
+      doc: "The number of redirects to follow before the HTTP request fails."
+    ]
+  ]
+
   @doc """
   The query operation is used to send a SPARQL query to a service endpoint and receive the results of the query.
 
@@ -20,6 +61,10 @@ defmodule SPARQL.Client do
       with %SPARQL.Query{} = query <- SPARQL.Query.new("SELECT * WHERE { ?s ?p ?o }") do
         SPARQL.Client.query(query, "http://dbpedia.org/sparql")
       end
+
+  The result is in the success case returned in a `:ok` tuple or in error cases in an `:error`
+  tuple with an error message or in case of a non-200 response by the SPARQL service with a
+  `SPARQL.Client.HTTPError`.
 
   The type of the result returned depends on the query form:
 
@@ -93,8 +138,8 @@ defmodule SPARQL.Client do
   ## Specifying an RDF Dataset
 
   The RDF dataset to be queried can be specified [as described in the spec](https://www.w3.org/TR/sparql11-protocol/#dataset)
-  via the the `default_graph` and `named_graph` options and either a single dataset
-  names or lists of datasets.
+  via the the `default_graph` and `named_graph` options and either a single graph
+  name or lists of graphs.
 
       SPARQL.Client.query(query, "http://some.company.org/private/sparql",
         default_graph: "http://www.example/sparql/",
@@ -104,16 +149,21 @@ defmodule SPARQL.Client do
         ])
 
 
-  ## Other options
+  ## Specifying Tesla adapter specific options
 
-  - `max_redirects`: the number of redirects to follow before the operation fails (default: `5`)
-  - `request_opts`: will be passed as the `opts` option value to the `Tesla.request/2` function,
-    this allows for example to set the timeout value for the Hackney adapter like this:
+  The keyword list provided under the  `request_opts` options, will be passed as the `opts` option
+  value to the `Tesla.request/2` function.
+  This allows for example to set the timeout value for the Hackney adapter like this:
 
   ```elixir
   SPARQL.Client.query(query, "http://example.com/sparql",
     request_opts: [adapter: [recv_timeout: 30_000]])
   ```
+
+
+  ## Other options
+
+  - `max_redirects`: the number of redirects to follow before the operation fails (default: `5`)
 
   For a general introduction you may refer to the guides on the [homepage](https://rdf-elixir.dev).
   """
@@ -121,9 +171,13 @@ defmodule SPARQL.Client do
   def query(query, endpoint, options \\ [])
 
   def query(%SPARQL.Query{} = query, endpoint, options) do
-    with {:ok, request} <- Request.build(query, endpoint, options),
+    with {:ok, options} <- NimbleOptions.validate(options, @query_options_schema),
+         {:ok, request} <- Request.build(query, endpoint, options),
          {:ok, request} <- Request.call(request, options) do
       {:ok, request.result}
+    else
+      {:error, %NimbleOptions.ValidationError{message: message}} -> {:error, message}
+      error -> error
     end
   end
 
@@ -132,4 +186,10 @@ defmodule SPARQL.Client do
       query(query, endpoint, options)
     end
   end
+
+  @doc false
+  def validate_headers(map) when is_map(map), do: {:ok, map}
+
+  def validate_headers(other),
+    do: {:error, "expected :headers to be a map, got: #{inspect(other)}"}
 end

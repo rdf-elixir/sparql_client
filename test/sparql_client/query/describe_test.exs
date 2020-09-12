@@ -133,7 +133,8 @@ defmodule SPARQL.Client.Query.DescribeTest do
       end)
 
       assert SPARQL.Client.query(@example_query, @example_endpoint) ==
-               {:error, "unsupported result format: text/plain"}
+               {:error,
+                "SPARQL service responded with text/plain content which can't be interpreted. Try specifying one of the supported result formats with the :result_format option."}
     end
   end
 
@@ -191,7 +192,8 @@ defmodule SPARQL.Client.Query.DescribeTest do
       assert SPARQL.Client.query(@example_query, @example_endpoint,
                headers: %{"Accept" => "text/plain"}
              ) ==
-               {:error, "unsupported result format: text/plain"}
+               {:error,
+                "SPARQL service responded with text/plain content which can't be interpreted. Try specifying one of the supported result formats with the :result_format option."}
     end
 
     test "with invalid format and result_format", %{body: body} do

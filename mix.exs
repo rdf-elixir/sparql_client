@@ -83,6 +83,7 @@ defmodule SPARQL.Client.Mixfile do
       {:json_ld, "~> 0.3"},
       {:tesla, "~> 1.2"},
       {:content_type, "~> 0.1"},
+      {:nimble_options, "~> 0.3"},
 
       # Development
       {:hackney, "~> 1.15", only: [:dev, :test]},

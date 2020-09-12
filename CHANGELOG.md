@@ -9,7 +9,8 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 
 ### Changed
 
-- the default request method for queries when using SPARQL protocol version 1.1 is now `:get` 
+- the default request method for queries when using SPARQL protocol version 1.1 is now `:get`
+- improved error handling
 
 
 [Compare v0.2.1...HEAD](https://github.com/rdf-elixir/sparql_client/compare/v0.2.1...HEAD)

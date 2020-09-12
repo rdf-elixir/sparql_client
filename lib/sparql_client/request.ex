@@ -19,35 +19,21 @@ defmodule SPARQL.Client.Request do
     :result
   ]
 
-  @default_protocol_version "1.0"
-
   def build(operation, endpoint, opts \\ [])
 
   def build(operation, endpoint, opts) do
-    {:ok,
-     %__MODULE__{
-       sparql_endpoint: endpoint,
-       sparql_operation: operation
-     }
-     |> init(opts)
-     |> init_operation(operation, opts)}
-  end
-
-  defp init(request, opts) do
-    %{
-      request
-      | sparql_protocol_version: opts |> Keyword.get(:protocol_version) |> protocol_version,
-        sparql_graph_params: graph_params(opts)
+    %__MODULE__{
+      sparql_endpoint: endpoint,
+      sparql_operation: operation,
+      sparql_protocol_version: Keyword.get(opts, :protocol_version),
+      sparql_graph_params: graph_params(opts)
     }
+    |> init_operation(operation, opts)
   end
 
   defp init_operation(request, %SPARQL.Query{} = query, opts) do
     SPARQL.Client.Query.init(request, query, opts)
   end
-
-  defp protocol_version(nil), do: @default_protocol_version
-  defp protocol_version(version) when version in ~w[1.0 1.1], do: version
-  defp protocol_version(version), do: raise("invalid SPARQL protocol version: #{version}")
 
   defp graph_params(opts) do
     opts

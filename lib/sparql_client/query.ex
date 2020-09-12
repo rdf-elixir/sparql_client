@@ -29,44 +29,65 @@ defmodule SPARQL.Client.Query do
                              |> Enum.join(", ")
 
   def init(request, query, opts) do
-    %{
-      request
-      | sparql_operation_type: __MODULE__,
-        sparql_operation_form: query.form,
-        # TODO: It should be validated if the combination makes sense (1.0 with get is invalid)
-        http_method: Keyword.get(opts, :request_method, default_request_method(request))
-    }
-    |> add_content_type_header(opts)
-    |> add_accept_header(opts)
-    |> add_headers(opts)
+    with {:ok, request_method} <-
+           opts |> Keyword.get(:request_method) |> request_method(request),
+         {:ok, accept_header} <-
+           accept_header(query.form, opts) do
+      {:ok,
+       %{
+         request
+         | sparql_operation_type: __MODULE__,
+           sparql_operation_form: query.form,
+           http_method: request_method,
+           http_content_type_header:
+             content_type(request.sparql_protocol_version, request_method),
+           http_accept_header: accept_header
+       }
+       |> add_headers(opts)}
+    end
   end
 
-  defp default_request_method(%{sparql_protocol_version: "1.0"}), do: :post
-  defp default_request_method(%{sparql_protocol_version: "1.1"}), do: :get
+  defp request_method(nil, %{sparql_protocol_version: "1.0"}), do: {:ok, :post}
+  defp request_method(nil, %{sparql_protocol_version: "1.1"}), do: {:ok, :get}
+  defp request_method(:post, _), do: {:ok, :post}
+  defp request_method(:get, %{sparql_protocol_version: "1.1"}), do: {:ok, :get}
 
-  defp add_content_type_header(
-         %{sparql_protocol_version: "1.1", http_method: :post} = request,
-         _opts
-       ),
-       do: %{request | http_content_type_header: "application/sparql-query"}
-
-  defp add_content_type_header(
-         %{sparql_protocol_version: "1.0", http_method: :post} = request,
-         _opts
-       ),
-       do: %{request | http_content_type_header: "application/x-www-form-urlencoded"}
-
-  defp add_content_type_header(request, _), do: request
-
-  defp add_accept_header(request, opts) do
-    %{
-      request
-      | http_accept_header:
-          Keyword.get(opts, :accept_header) ||
-            result_media_type(Keyword.get(opts, :result_format), request.sparql_operation_form) ||
-            default_accept_header(request.sparql_operation_form)
-    }
+  defp request_method(request_method, request) do
+    {:error,
+     "request_method #{inspect(request_method)} is not supported with protocol_version #{
+       inspect(request.sparql_protocol_version)
+     }"}
   end
+
+  defp content_type("1.1", :post), do: "application/sparql-query"
+  defp content_type("1.0", :post), do: "application/x-www-form-urlencoded"
+  defp content_type(_, _), do: nil
+
+  defp accept_header(query_form, opts) do
+    cond do
+      accept_header = Keyword.get(opts, :accept_header) ->
+        {:ok, accept_header}
+
+      result_format = Keyword.get(opts, :result_format) ->
+        result_media_type(query_form, result_format)
+
+      true ->
+        {:ok, default_accept_header(query_form)}
+    end
+  end
+
+  defp result_media_type(query_form, result_format) do
+    if format = ResultFormat.by_name(result_format, query_form) do
+      {:ok, format.media_type}
+    else
+      {:error, "#{result_format} is not a valid result format for #{query_form} queries"}
+    end
+  end
+
+  def default_accept_header(:select), do: @default_select_accept_header
+  def default_accept_header(:ask), do: @default_ask_accept_header
+  def default_accept_header(:describe), do: @default_rdf_accept_header
+  def default_accept_header(:construct), do: @default_rdf_accept_header
 
   defp add_headers(request, opts) do
     %{
@@ -80,21 +101,6 @@ defmodule SPARQL.Client.Query do
     }
   end
 
-  defp result_media_type(nil, _), do: nil
-
-  defp result_media_type(result_format, query_form) do
-    if format = ResultFormat.by_name(result_format, query_form) do
-      format.media_type
-    else
-      raise "#{result_format} is not a valid result format for #{query_form} queries"
-    end
-  end
-
-  def default_accept_header(:select), do: @default_select_accept_header
-  def default_accept_header(:ask), do: @default_ask_accept_header
-  def default_accept_header(:describe), do: @default_rdf_accept_header
-  def default_accept_header(:construct), do: @default_rdf_accept_header
-
   def evaluate_response(request, opts) do
     with {:ok, result_format} <-
            response_result_format(request, opts),
@@ -105,16 +111,20 @@ defmodule SPARQL.Client.Query do
   end
 
   defp response_result_format(request, opts) do
-    with {:ok, media_type} <-
-           parse_content_type(request.http_response_content_type),
-         query_form = request.sparql_operation_form,
-         format when not is_nil(format) <-
-           ResultFormat.by_media_type(media_type, query_form) ||
-             ResultFormat.by_name(Keyword.get(opts, :result_format), query_form) do
-      {:ok, format}
-    else
-      nil ->
-        {:error, "unsupported result format: #{request.http_response_content_type}"}
+    with {:ok, media_type} <- parse_content_type(request.http_response_content_type) do
+      query_form = request.sparql_operation_form
+
+      cond do
+        format = ResultFormat.by_media_type(media_type, query_form) ->
+          {:ok, format}
+
+        format = opts |> Keyword.get(:result_format) |> ResultFormat.by_name(query_form) ->
+          {:ok, format}
+
+        true ->
+          {:error,
+           "SPARQL service responded with #{media_type} content which can't be interpreted. Try specifying one of the supported result formats with the :result_format option."}
+      end
     end
   end
 
