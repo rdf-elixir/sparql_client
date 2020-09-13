@@ -1,7 +1,7 @@
 defmodule SPARQL.Client.Query do
   @doc false
 
-  alias SPARQL.Client.ResultFormat
+  alias SPARQL.Client.Query.ResultFormat
 
   @default_select_accept_header [
                                   SPARQL.Query.Result.JSON.media_type(),

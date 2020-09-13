@@ -1,4 +1,4 @@
-defmodule SPARQL.Client.ResultFormat do
+defmodule SPARQL.Client.Query.ResultFormat do
   @moduledoc false
 
   def by_name(nil, _), do: nil
