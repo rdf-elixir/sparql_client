@@ -10,6 +10,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 ### Added
 
 - support for `INSERT DATA` updates with `SPARQL.Client.insert_data/3`
+- support for `DELETE DATA` updates with `SPARQL.Client.delete_data/3`
 
 ### Changed
 

@@ -52,33 +52,33 @@ defmodule SPARQL.Client.UpdateData do
 
   def to_sparql(update_form, data, opts \\ [])
 
-  def to_sparql(:insert, data, opts) do
+  def to_sparql(update_form, data, opts) do
     with {:ok, prologue} <-
            Turtle.write_string(
              data,
              Keyword.merge(opts, only: :directives, directive_style: :sparql)
            ),
          {:ok, triples} <-
-           to_sparql_triples(data, Keyword.get(opts, :merge_graphs, false), opts) do
+           to_sparql_triples(update_form, data, Keyword.get(opts, :merge_graphs, false), opts) do
       {:ok,
        """
        #{prologue}
-       INSERT DATA {
+       #{sparql_update_keyword(update_form)} DATA {
        #{triples}
        }
        """}
     end
   end
 
-  defp to_sparql_triples(%RDF.Dataset{} = dataset, false, opts) do
+  defp to_sparql_triples(update_form, %RDF.Dataset{} = dataset, false, opts) do
     dataset
     |> RDF.Dataset.graphs()
     |> map_join_while_ok("\n", fn
       %RDF.Graph{name: nil} = default_graph ->
-        to_sparql_triples(default_graph, false, opts)
+        to_sparql_triples(update_form, default_graph, false, opts)
 
       named_graph ->
-        with {:ok, triples} <- to_sparql_triples(named_graph, false, opts) do
+        with {:ok, triples} <- to_sparql_triples(update_form, named_graph, false, opts) do
           {:ok,
            """
            GRAPH <#{named_graph.name}> {
@@ -89,9 +89,12 @@ defmodule SPARQL.Client.UpdateData do
     end)
   end
 
-  defp to_sparql_triples(data, _, opts) do
+  defp to_sparql_triples(_, data, _, opts) do
     Turtle.write_string(data, Keyword.merge(opts, only: :triples))
   end
+
+  defp sparql_update_keyword(:insert), do: "INSERT"
+  defp sparql_update_keyword(:delete), do: "DELETE"
 
   @impl true
   def evaluate_response(_, _), do: :ok

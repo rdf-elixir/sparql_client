@@ -15,7 +15,7 @@ defmodule SPARQL.Client.UpdateDataTest do
                    |> RDF.Dataset.add({EX.Other, EX.p(), "string", EX.NamedGraph})
 
   describe "to_sparql/2" do
-    test "with description" do
+    test "insert with description" do
       assert {:ok,
               """
               PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -31,7 +31,7 @@ defmodule SPARQL.Client.UpdateDataTest do
               """} = UpdateData.to_sparql(:insert, @example_description)
     end
 
-    test "with graph" do
+    test "insert with graph" do
       assert {:ok,
               """
               PREFIX ex: <http://example.com/sparql-cient-test#>
@@ -48,7 +48,7 @@ defmodule SPARQL.Client.UpdateDataTest do
               """} = UpdateData.to_sparql(:insert, @example_graph)
     end
 
-    test "with dataset" do
+    test "insert with dataset" do
       assert {:ok,
               """
               PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -70,7 +70,7 @@ defmodule SPARQL.Client.UpdateDataTest do
               """} = UpdateData.to_sparql(:insert, @example_dataset)
     end
 
-    test "with dataset and merge_graphs: true" do
+    test "insert with dataset and merge_graphs: true" do
       assert {:ok,
               """
               PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -87,6 +87,28 @@ defmodule SPARQL.Client.UpdateDataTest do
 
               }
               """} = UpdateData.to_sparql(:insert, @example_dataset, merge_graphs: true)
+    end
+
+    test "delete with dataset" do
+      assert {:ok,
+              """
+              PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+              PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+              PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+
+              DELETE DATA {
+              <http://example.com/sparql-cient-test#Foo>
+                  <http://example.com/sparql-cient-test#bar> <http://example.com/sparql-cient-test#Baz> .
+
+              GRAPH <http://example.com/sparql-cient-test#NamedGraph> {
+              <http://example.com/sparql-cient-test#Other>
+                  <http://example.com/sparql-cient-test#p> "string" .
+
+              }
+
+              }
+              """} = UpdateData.to_sparql(:delete, @example_dataset)
     end
 
     test "with additional prefixes" do
@@ -132,6 +154,39 @@ defmodule SPARQL.Client.UpdateDataTest do
       mock_update_request(:url_encoded, :insert, @example_dataset)
 
       assert SPARQL.Client.insert_data(@example_dataset, @example_endpoint,
+               request_method: :url_encoded
+             ) == :ok
+    end
+  end
+
+  describe "delete_data/3" do
+    test "direct POST" do
+      mock_update_request(:direct, :delete, @example_description)
+      assert SPARQL.Client.delete_data(@example_description, @example_endpoint) == :ok
+
+      mock_update_request(:direct, :delete, @example_graph)
+      assert SPARQL.Client.delete_data(@example_graph, @example_endpoint) == :ok
+
+      mock_update_request(:direct, :delete, @example_dataset)
+      assert SPARQL.Client.delete_data(@example_dataset, @example_endpoint) == :ok
+    end
+
+    test "URL-encoded POST" do
+      mock_update_request(:url_encoded, :delete, @example_description)
+
+      assert SPARQL.Client.delete_data(@example_description, @example_endpoint,
+               request_method: :url_encoded
+             ) == :ok
+
+      mock_update_request(:url_encoded, :delete, @example_graph)
+
+      assert SPARQL.Client.delete_data(@example_graph, @example_endpoint,
+               request_method: :url_encoded
+             ) == :ok
+
+      mock_update_request(:url_encoded, :delete, @example_dataset)
+
+      assert SPARQL.Client.delete_data(@example_dataset, @example_endpoint,
                request_method: :url_encoded
              ) == :ok
     end

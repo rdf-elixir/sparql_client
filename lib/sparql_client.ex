@@ -191,7 +191,7 @@ defmodule SPARQL.Client do
     end
   end
 
-  @insert_data_options_schema @general_options_schema ++
+  @update_data_options_schema @general_options_schema ++
                                 [
                                   request_method: [
                                     type: {:one_of, [:direct, :url_encoded]},
@@ -201,8 +201,16 @@ defmodule SPARQL.Client do
                                 ]
 
   def insert_data(data, endpoint, options \\ []) do
-    with {:ok, options} <- NimbleOptions.validate(options, @insert_data_options_schema),
-         {:ok, request} <- Request.build({:insert, data}, endpoint, options),
+    update_data(:insert, data, endpoint, options)
+  end
+
+  def delete_data(data, endpoint, options \\ []) do
+    update_data(:delete, data, endpoint, options)
+  end
+
+  defp update_data(form, data, endpoint, options) do
+    with {:ok, options} <- NimbleOptions.validate(options, @update_data_options_schema),
+         {:ok, request} <- Request.build({form, data}, endpoint, options),
          {:ok, _request} <- Request.call(request, options) do
       :ok
     else

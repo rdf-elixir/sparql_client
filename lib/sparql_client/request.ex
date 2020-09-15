@@ -54,7 +54,8 @@ defmodule SPARQL.Client.Request do
     SPARQL.Client.Query.init(request, query, opts)
   end
 
-  defp init_operation(request, {:insert, _} = update_data, opts) do
+  defp init_operation(request, {update_data_form, _} = update_data, opts)
+       when update_data_form in ~w[insert delete]a do
     SPARQL.Client.UpdateData.init(request, update_data, opts)
   end
 
