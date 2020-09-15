@@ -12,39 +12,10 @@ defmodule SPARQL.Client do
 
   alias SPARQL.Client.Request
 
-  @query_options_schema [
-    request_method: [
-      type: {:one_of, [:get, :post]},
-      subsection: "Specifying the request method"
-    ],
-    protocol_version: [
-      type: {:one_of, ["1.0", "1.1"]},
-      default: "1.0",
-      subsection: "Specifying the request method"
-    ],
-    accept_header: [
-      type: :string
-    ],
+  @general_options_schema [
     headers: [
       type: {:custom, __MODULE__, :validate_headers, []},
       subsection: "Specifying custom headers"
-    ],
-    result_format: [
-      type:
-        {:one_of,
-         (SPARQL.result_formats() ++ RDF.Serialization.formats())
-         |> Enum.map(fn format -> format.name end)},
-      subsection: "Specifying the response format"
-    ],
-    default_graph: [
-      subsection: "Specifying an RDF Dataset"
-    ],
-    named_graph: [
-      subsection: "Specifying an RDF Dataset"
-    ],
-    request_opts: [
-      type: :keyword_list,
-      subsection: "Specifying Tesla adapter specific options"
     ],
     max_redirects: [
       type: :pos_integer,
@@ -52,6 +23,39 @@ defmodule SPARQL.Client do
       doc: "The number of redirects to follow before the HTTP request fails."
     ]
   ]
+
+  @query_options_schema @general_options_schema ++
+                          [
+                            protocol_version: [
+                              type: {:one_of, ["1.0", "1.1"]},
+                              subsection: "Specifying the request method"
+                            ],
+                            request_method: [
+                              type: {:one_of, [:get, :post]},
+                              default: :post,
+                              subsection: "Specifying the request method"
+                            ],
+                            accept_header: [
+                              type: :string
+                            ],
+                            result_format: [
+                              type:
+                                {:one_of,
+                                 (SPARQL.result_formats() ++ RDF.Serialization.formats())
+                                 |> Enum.map(fn format -> format.name end)},
+                              subsection: "Specifying the response format"
+                            ],
+                            default_graph: [
+                              subsection: "Specifying an RDF Dataset"
+                            ],
+                            named_graph: [
+                              subsection: "Specifying an RDF Dataset"
+                            ],
+                            request_opts: [
+                              type: :keyword_list,
+                              subsection: "Specifying Tesla adapter specific options"
+                            ]
+                          ]
 
   @doc """
   The query operation is used to send a SPARQL query to a service endpoint and receive the results of the query.
@@ -184,6 +188,26 @@ defmodule SPARQL.Client do
   def query(query_string, endpoint, options) do
     with %SPARQL.Query{} = query <- SPARQL.Query.new(query_string) do
       query(query, endpoint, options)
+    end
+  end
+
+  @insert_data_options_schema @general_options_schema ++
+                                [
+                                  request_method: [
+                                    type: {:one_of, [:direct, :url_encoded]},
+                                    default: :direct,
+                                    subsection: "Specifying the request method"
+                                  ]
+                                ]
+
+  def insert_data(data, endpoint, options \\ []) do
+    with {:ok, options} <- NimbleOptions.validate(options, @insert_data_options_schema),
+         {:ok, request} <- Request.build({:insert, data}, endpoint, options),
+         {:ok, _request} <- Request.call(request, options) do
+      :ok
+    else
+      {:error, %NimbleOptions.ValidationError{message: message}} -> {:error, message}
+      error -> error
     end
   end
 

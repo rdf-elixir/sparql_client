@@ -158,7 +158,8 @@ defmodule SPARQL.Client.QueryTest do
                request_method: :get,
                protocol_version: "1.0"
              ) ==
-               {:error, ~S(request_method :get is not supported with protocol_version "1.0")}
+               {:error,
+                "request_method :get is not supported with a query and protocol_version 1.0"}
 
       assert SPARQL.Client.query(@example_query, @example_endpoint,
                request_method: :post,

@@ -19,13 +19,32 @@ defmodule SPARQL.Client.Request do
     :result
   ]
 
+  @type protocol_version :: String.t()
+  @type http_method :: :get | :post
+
+  @type t :: %__MODULE__{
+          sparql_operation: SPARQL.Query.t() | RDF.Data.t(),
+          sparql_operation_type: module,
+          sparql_operation_form: atom,
+          sparql_endpoint: String.t(),
+          sparql_protocol_version: protocol_version,
+          sparql_graph_params: list,
+          http_method: http_method,
+          http_headers: map,
+          http_content_type_header: String.t(),
+          http_accept_header: String.t(),
+          http_body: String.t() | nil,
+          http_status: pos_integer,
+          http_response_content_type: String.t(),
+          http_response_body: String.t(),
+          result: SPARQL.Query.Result.t() | RDF.Data.t()
+        }
+
   def build(operation, endpoint, opts \\ [])
 
   def build(operation, endpoint, opts) do
     %__MODULE__{
       sparql_endpoint: endpoint,
-      sparql_operation: operation,
-      sparql_protocol_version: Keyword.get(opts, :protocol_version),
       sparql_graph_params: graph_params(opts)
     }
     |> init_operation(operation, opts)
@@ -33,6 +52,18 @@ defmodule SPARQL.Client.Request do
 
   defp init_operation(request, %SPARQL.Query{} = query, opts) do
     SPARQL.Client.Query.init(request, query, opts)
+  end
+
+  defp init_operation(request, {:insert, _} = update_data, opts) do
+    SPARQL.Client.UpdateData.init(request, update_data, opts)
+  end
+
+  def operation_string(request, opts \\ []) do
+    request.sparql_operation_type.operation_string(request, opts)
+  end
+
+  def query_parameter_key(request) do
+    request.sparql_operation_type.query_parameter_key()
   end
 
   defp graph_params(opts) do

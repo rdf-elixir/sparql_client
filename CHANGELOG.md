@@ -7,6 +7,10 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 
 ## Unreleased
 
+### Added
+
+- support for `INSERT DATA` updates with `SPARQL.Client.insert_data/3`
+
 ### Changed
 
 - the default request method for queries when using SPARQL protocol version 1.1 is now `:get`

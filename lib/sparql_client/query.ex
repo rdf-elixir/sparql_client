@@ -1,6 +1,8 @@
 defmodule SPARQL.Client.Query do
   @doc false
 
+  @behaviour SPARQL.Client.Operation
+
   alias SPARQL.Client.Query.ResultFormat
 
   @default_select_accept_header [
@@ -28,34 +30,44 @@ defmodule SPARQL.Client.Query do
                              ]
                              |> Enum.join(", ")
 
+  @impl true
+  def query_parameter_key, do: "query"
+
+  @impl true
   def init(request, query, opts) do
-    with {:ok, request_method} <-
-           opts |> Keyword.get(:request_method) |> request_method(request),
+    with {:ok, protocol_version, request_method} <-
+           request_method(
+             Keyword.get(opts, :protocol_version),
+             Keyword.get(opts, :request_method)
+           ),
          {:ok, accept_header} <-
            accept_header(query.form, opts) do
       {:ok,
        %{
          request
          | sparql_operation_type: __MODULE__,
+           sparql_operation: query,
            sparql_operation_form: query.form,
+           sparql_protocol_version: protocol_version,
            http_method: request_method,
-           http_content_type_header:
-             content_type(request.sparql_protocol_version, request_method),
+           http_content_type_header: content_type(protocol_version, request_method),
            http_accept_header: accept_header
        }
        |> add_headers(opts)}
     end
   end
 
-  defp request_method(nil, %{sparql_protocol_version: "1.0"}), do: {:ok, :post}
-  defp request_method(nil, %{sparql_protocol_version: "1.1"}), do: {:ok, :get}
-  defp request_method(:post, _), do: {:ok, :post}
-  defp request_method(:get, %{sparql_protocol_version: "1.1"}), do: {:ok, :get}
+  defp request_method("1.0", nil), do: {:ok, "1.0", :post}
+  defp request_method("1.1", nil), do: {:ok, "1.1", :get}
+  defp request_method(nil, :get), do: {:ok, "1.1", :get}
+  defp request_method(nil, :post), do: {:ok, "1.0", :post}
+  defp request_method("1.1", :get), do: {:ok, "1.1", :get}
+  defp request_method(version, :post), do: {:ok, version, :post}
 
-  defp request_method(request_method, request) do
+  defp request_method(sparql_protocol_version, request_method) do
     {:error,
-     "request_method #{inspect(request_method)} is not supported with protocol_version #{
-       inspect(request.sparql_protocol_version)
+     "request_method #{inspect(request_method)} is not supported with a query and protocol_version #{
+       sparql_protocol_version
      }"}
   end
 
@@ -101,6 +113,7 @@ defmodule SPARQL.Client.Query do
     }
   end
 
+  @impl true
   def evaluate_response(request, opts) do
     with {:ok, result_format} <-
            response_result_format(request, opts),
@@ -133,4 +146,7 @@ defmodule SPARQL.Client.Query do
       {:ok, type <> "/" <> subtype}
     end
   end
+
+  @impl true
+  def operation_string(request, _), do: {:ok, request.sparql_operation.query_string}
 end

@@ -3,6 +3,8 @@ defmodule SPARQL.Client.Tesla do
 
   use Tesla, docs: false
 
+  alias SPARQL.Client.Request
+
   def call(request, opts) do
     with {:ok, client} <- client(request, opts),
          {:ok, response} <- http_request(client, request, opts) do
@@ -19,26 +21,29 @@ defmodule SPARQL.Client.Tesla do
   end
 
   defp http_request(client, request, opts) do
-    do_http_request(
-      client,
-      request.http_method,
-      request.sparql_protocol_version,
-      request.sparql_endpoint,
-      request.sparql_operation.query_string,
-      request.sparql_graph_params,
-      opts
-    )
+    with {:ok, operation} <- Request.operation_string(request, opts) do
+      do_http_request(
+        client,
+        request.http_method,
+        request.sparql_protocol_version,
+        request.sparql_endpoint,
+        operation,
+        Request.query_parameter_key(request),
+        request.sparql_graph_params,
+        opts
+      )
+    end
   end
 
-  defp do_http_request(client, :get, "1.1", endpoint, query, graph_params, opts) do
+  defp do_http_request(client, :get, "1.1", endpoint, query, query_param_key, graph_params, opts) do
     get(
       client,
-      endpoint <> "?" <> URI.encode_query([{"query", query} | graph_params]),
+      endpoint <> "?" <> URI.encode_query([{query_param_key, query} | graph_params]),
       tesla_request_opts(opts)
     )
   end
 
-  defp do_http_request(client, :post, "1.1", endpoint, query, graph_params, opts) do
+  defp do_http_request(client, :post, "1.1", endpoint, query, _, graph_params, opts) do
     url =
       case graph_params do
         [] -> endpoint
@@ -48,11 +53,11 @@ defmodule SPARQL.Client.Tesla do
     post(client, url, query, tesla_request_opts(opts))
   end
 
-  defp do_http_request(client, :post, "1.0", endpoint, query, graph_params, opts) do
+  defp do_http_request(client, :post, "1.0", endpoint, query, query_param_key, graph_params, opts) do
     post(
       client,
       endpoint,
-      URI.encode_query([{"query", query} | graph_params]),
+      URI.encode_query([{query_param_key, query} | graph_params]),
       tesla_request_opts(opts)
     )
   end
