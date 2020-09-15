@@ -8,16 +8,16 @@ defmodule SPARQL.Client.Query do
   @default_select_accept_header [
                                   SPARQL.Query.Result.JSON.media_type(),
                                   SPARQL.Query.Result.XML.media_type(),
-                                  "#{SPARQL.Query.Result.TSV.media_type()};p=0.8",
-                                  "#{SPARQL.Query.Result.CSV.media_type()};p=0.2",
-                                  "*/*;p=0.1"
+                                  "#{SPARQL.Query.Result.TSV.media_type()};q=0.8",
+                                  "#{SPARQL.Query.Result.CSV.media_type()};q=0.2",
+                                  "*/*;q=0.1"
                                 ]
                                 |> Enum.join(", ")
 
   @default_ask_accept_header [
                                SPARQL.Query.Result.JSON.media_type(),
                                SPARQL.Query.Result.XML.media_type(),
-                               "*/*;p=0.1"
+                               "*/*;q=0.1"
                              ]
                              |> Enum.join(", ")
 
@@ -26,7 +26,7 @@ defmodule SPARQL.Client.Query do
                                RDF.NTriples.media_type(),
                                RDF.NQuads.media_type(),
                                JSON.LD.media_type(),
-                               "*/*;p=0.1"
+                               "*/*;q=0.1"
                              ]
                              |> Enum.join(", ")
 

@@ -17,6 +17,11 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 - the default request method for queries when using SPARQL protocol version 1.1 is now `:get`
 - improved error handling
 
+### Fixed
+
+- the default HTTP `Accept` header used when no `:result_form` was provided on 
+  `SPARQL.Client.select/3` contained a typo
+
 
 [Compare v0.2.1...HEAD](https://github.com/rdf-elixir/sparql_client/compare/v0.2.1...HEAD)
 
