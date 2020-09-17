@@ -16,16 +16,13 @@ defmodule SPARQL.Client.UpdateData do
   def query_parameter_key, do: "update"
 
   @impl true
-  def init(request, {update_type, data}, opts) do
+  def init(request, opts) do
     with {:ok, protocol_version, request_method} <-
            opts |> Keyword.get(:request_method, default_request_method()) |> request_method() do
       {:ok,
        %{
          request
-         | sparql_operation_type: __MODULE__,
-           sparql_operation: data,
-           sparql_operation_form: update_type,
-           sparql_protocol_version: protocol_version,
+         | sparql_protocol_version: protocol_version,
            http_method: request_method,
            http_content_type_header: content_type(protocol_version, request_method)
        }}
@@ -46,7 +43,7 @@ defmodule SPARQL.Client.UpdateData do
 
   @impl true
   def operation_string(request, opts) do
-    to_sparql(request.sparql_operation_form, request.sparql_operation, opts)
+    to_sparql(request.sparql_operation_form, request.sparql_operation_payload, opts)
   end
 
   def to_sparql(update_form, data, opts \\ [])

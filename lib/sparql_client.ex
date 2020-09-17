@@ -28,7 +28,8 @@ defmodule SPARQL.Client do
         },
         http_headers: %{"Authorization" => "Basic YWxhZGRpbjpvcGVuc2VzYW1l"},
         tesla_request_opts: [adapter: [recv_timeout: 30_000]],
-        max_redirects: 3
+        max_redirects: 3,
+        raw_mode: true
 
   The `http_headers` can also be set to a function receiving the `SPARQL.Client.Request`
   struct and the computed default headers:
@@ -47,7 +48,12 @@ defmodule SPARQL.Client do
 
   """
 
+  alias __MODULE__
   alias SPARQL.Client.Request
+
+  def default_raw_mode do
+    Application.get_env(:sparql_client, :raw_mode, false)
+  end
 
   @general_options_schema [
     headers: [
@@ -61,6 +67,11 @@ defmodule SPARQL.Client do
     max_redirects: [
       type: :pos_integer,
       doc: "The number of redirects to follow before the HTTP request fails."
+    ],
+    raw_mode: [
+      type: :boolean,
+      doc:
+        "Allows disabling of the processing of query strings, passing them through as-is to the SPARQL endpoint."
     ]
   ]
 
@@ -210,19 +221,56 @@ defmodule SPARQL.Client do
   def query(query, endpoint, options \\ [])
 
   def query(%SPARQL.Query{} = query, endpoint, options) do
+    do_query(query.form, query.query_string, endpoint, options)
+  end
+
+  def query(query_string, endpoint, options) do
+    if Keyword.get(options, :raw_mode) do
+      raise """
+      The generic SPARQL.Client.query/3 function can not be used in raw-mode since
+      it needs to parse the query to determine the query form.
+      Please use one of the dedicated functions like SPARQL.Client.select/3 etc.
+      """
+    end
+
+    with %SPARQL.Query{} = query <- SPARQL.Query.new(query_string) do
+      query(query, endpoint, options)
+    end
+  end
+
+  SPARQL.Client.Query.forms()
+  |> Enum.each(fn query_form ->
+    def unquote(query_form)(query, endpoint, options \\ [])
+
+    def unquote(query_form)(%SPARQL.Query{form: unquote(query_form)} = query, endpoint, options) do
+      do_query(unquote(query_form), query.query_string, endpoint, options)
+    end
+
+    def unquote(query_form)(%SPARQL.Query{form: form}, _, _) do
+      raise "expected a #{unquote(query_form) |> to_string() |> String.upcase()} query, got: #{
+              form |> to_string() |> String.upcase()
+            } query"
+    end
+
+    def unquote(query_form)(query_string, endpoint, options) do
+      if Keyword.get(options, :raw_mode, default_raw_mode()) do
+        do_query(unquote(query_form), query_string, endpoint, options)
+      else
+        with %SPARQL.Query{} = query <- SPARQL.Query.new(query_string) do
+          unquote(query_form)(query, endpoint, options)
+        end
+      end
+    end
+  end)
+
+  defp do_query(form, query, endpoint, options) do
     with {:ok, options} <- NimbleOptions.validate(options, @query_options_schema),
-         {:ok, request} <- Request.build(query, endpoint, options),
+         {:ok, request} <- Request.build(Client.Query, form, query, endpoint, options),
          {:ok, request} <- Request.call(request, options) do
       {:ok, request.result}
     else
       {:error, %NimbleOptions.ValidationError{message: message}} -> {:error, message}
       error -> error
-    end
-  end
-
-  def query(query_string, endpoint, options) do
-    with %SPARQL.Query{} = query <- SPARQL.Query.new(query_string) do
-      query(query, endpoint, options)
     end
   end
 
@@ -244,7 +292,7 @@ defmodule SPARQL.Client do
 
   defp update_data(form, data, endpoint, options) do
     with {:ok, options} <- NimbleOptions.validate(options, @update_data_options_schema),
-         {:ok, request} <- Request.build({form, data}, endpoint, options),
+         {:ok, request} <- Request.build(Client.UpdateData, form, data, endpoint, options),
          {:ok, _request} <- Request.call(request, options) do
       :ok
     else

@@ -9,8 +9,11 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 
 ### Added
 
-- support for `INSERT DATA` updates with `SPARQL.Client.insert_data/3`
-- support for `DELETE DATA` updates with `SPARQL.Client.delete_data/3`
+- raw-mode with the `:raw_mode` option, which allows disabling of the processing of query strings, 
+  passing them through as-is to the SPARQL endpoint
+- support for `INSERT DATA` and `DELETE DATA` updates with `SPARQL.Client.insert_data/3` and 
+  `SPARQL.Client.delete_data/3` which are able to handle all types RDF.ex datastructures 
+  (`RDF.Description`, `RDF.Graph`, `RDF.Dataset`) directly 
 - the defaults for several options can now be configured globally via the application  
   environment; please refer to the `SPARQL.Client` documentation for more information
 

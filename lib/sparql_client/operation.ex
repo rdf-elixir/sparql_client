@@ -1,7 +1,7 @@
 defmodule SPARQL.Client.Operation do
   @moduledoc false
 
-  @callback init(SPARQL.Client.Request.t(), any, keyword | nil) ::
+  @callback init(SPARQL.Client.Request.t(), keyword | nil) ::
               {:ok, SPARQL.Client.Request.t()} | {:error, any}
 
   @callback evaluate_response(SPARQL.Client.Request.t(), keyword | nil) ::

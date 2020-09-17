@@ -1,8 +1,8 @@
 defmodule SPARQL.Client.Request do
   defstruct [
-    :sparql_operation,
     :sparql_operation_type,
     :sparql_operation_form,
+    :sparql_operation_payload,
     :sparql_endpoint,
     :sparql_protocol_version,
     :sparql_graph_params,
@@ -21,7 +21,7 @@ defmodule SPARQL.Client.Request do
   @type http_method :: :get | :post
 
   @type t :: %__MODULE__{
-          sparql_operation: SPARQL.Query.t() | RDF.Data.t(),
+          sparql_operation_payload: String.t() | RDF.Data.t(),
           sparql_operation_type: module,
           sparql_operation_form: atom,
           sparql_endpoint: String.t(),
@@ -38,24 +38,20 @@ defmodule SPARQL.Client.Request do
           result: SPARQL.Query.Result.t() | RDF.Data.t()
         }
 
-  def build(operation, endpoint, opts \\ [])
-
-  def build(operation, endpoint, opts) do
+  def build(type, form, payload, endpoint, opts \\ []) do
     %__MODULE__{
       sparql_endpoint: endpoint,
+      sparql_operation_type: type,
+      sparql_operation_form: form,
+      sparql_operation_payload: payload,
       sparql_graph_params: graph_params(opts)
     }
-    |> init_operation(operation, opts)
+    |> init_operation(opts)
     |> add_http_headers(opts)
   end
 
-  defp init_operation(request, %SPARQL.Query{} = query, opts) do
-    SPARQL.Client.Query.init(request, query, opts)
-  end
-
-  defp init_operation(request, {update_data_form, _} = update_data, opts)
-       when update_data_form in ~w[insert delete]a do
-    SPARQL.Client.UpdateData.init(request, update_data, opts)
+  defp init_operation(request, opts) do
+    request.sparql_operation_type.init(request, opts)
   end
 
   def operation_string(request, opts \\ []) do

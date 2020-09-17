@@ -41,7 +41,7 @@ defmodule SPARQL.Client.Query.AskTest do
         }
     end)
 
-    assert SPARQL.Client.query(@example_query, @example_endpoint, result_format: :json) ==
+    assert SPARQL.Client.ask(@example_query, @example_endpoint, result_format: :json) ==
              {:ok, @result}
   end
 
@@ -57,7 +57,7 @@ defmodule SPARQL.Client.Query.AskTest do
         }
     end)
 
-    assert SPARQL.Client.query(@example_query, @example_endpoint, result_format: :xml) ==
+    assert SPARQL.Client.ask(@example_query, @example_endpoint, result_format: :xml) ==
              {:ok, @result}
   end
 
@@ -76,7 +76,7 @@ defmodule SPARQL.Client.Query.AskTest do
           }
       end)
 
-      assert SPARQL.Client.query(@example_query, @example_endpoint) ==
+      assert SPARQL.Client.ask(@example_query, @example_endpoint) ==
                {:ok, @result}
     end
   end
@@ -92,7 +92,7 @@ defmodule SPARQL.Client.Query.AskTest do
           }
       end)
 
-      assert SPARQL.Client.query(@example_query, @example_endpoint) ==
+      assert SPARQL.Client.ask(@example_query, @example_endpoint) ==
                {:error,
                 "SPARQL service responded with text/plain content which can't be interpreted. Try specifying one of the supported result formats with the :result_format option."}
     end
@@ -107,7 +107,7 @@ defmodule SPARQL.Client.Query.AskTest do
           }
       end)
 
-      assert SPARQL.Client.query(@example_query, @example_endpoint, result_format: :json) ==
+      assert SPARQL.Client.ask(@example_query, @example_endpoint, result_format: :json) ==
                {:ok, @result}
     end
   end

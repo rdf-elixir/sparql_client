@@ -33,7 +33,7 @@ defmodule SPARQL.Client.Query.DescribeTest do
 
     assert_equal_graph(
       @result_graph,
-      SPARQL.Client.query(@example_query, @example_endpoint, result_format: :turtle)
+      SPARQL.Client.describe(@example_query, @example_endpoint, result_format: :turtle)
     )
   end
 
@@ -49,7 +49,7 @@ defmodule SPARQL.Client.Query.DescribeTest do
         }
     end)
 
-    assert SPARQL.Client.query(@example_query, @example_endpoint, result_format: :jsonld) ==
+    assert SPARQL.Client.describe(@example_query, @example_endpoint, result_format: :jsonld) ==
              {:ok, @result_dataset}
   end
 
@@ -71,7 +71,7 @@ defmodule SPARQL.Client.Query.DescribeTest do
 
     assert_equal_graph(
       @result_graph,
-      SPARQL.Client.query(@example_query, @example_endpoint,
+      SPARQL.Client.describe(@example_query, @example_endpoint,
         result_format: :ntriples,
         request_method: :get,
         protocol_version: "1.1"
@@ -93,7 +93,7 @@ defmodule SPARQL.Client.Query.DescribeTest do
         }
     end)
 
-    assert SPARQL.Client.query(@example_query, @example_endpoint,
+    assert SPARQL.Client.describe(@example_query, @example_endpoint,
              result_format: :nquads,
              request_method: :post,
              protocol_version: "1.1"
@@ -118,7 +118,7 @@ defmodule SPARQL.Client.Query.DescribeTest do
 
       assert_equal_graph(
         @result_graph,
-        SPARQL.Client.query(@example_query, @example_endpoint)
+        SPARQL.Client.describe(@example_query, @example_endpoint)
       )
     end
 
@@ -132,7 +132,7 @@ defmodule SPARQL.Client.Query.DescribeTest do
           }
       end)
 
-      assert SPARQL.Client.query(@example_query, @example_endpoint) ==
+      assert SPARQL.Client.describe(@example_query, @example_endpoint) ==
                {:error,
                 "SPARQL service responded with text/plain content which can't be interpreted. Try specifying one of the supported result formats with the :result_format option."}
     end
@@ -151,7 +151,7 @@ defmodule SPARQL.Client.Query.DescribeTest do
 
       assert_equal_graph(
         @result_graph,
-        SPARQL.Client.query(@example_query, @example_endpoint, result_format: :turtle)
+        SPARQL.Client.describe(@example_query, @example_endpoint, result_format: :turtle)
       )
     end
   end
@@ -171,7 +171,7 @@ defmodule SPARQL.Client.Query.DescribeTest do
 
       assert_equal_graph(
         @result_graph,
-        SPARQL.Client.query(@example_query, @example_endpoint,
+        SPARQL.Client.describe(@example_query, @example_endpoint,
           headers: %{"Accept" => "text/turtle"}
         )
       )
@@ -189,7 +189,7 @@ defmodule SPARQL.Client.Query.DescribeTest do
           }
       end)
 
-      assert SPARQL.Client.query(@example_query, @example_endpoint,
+      assert SPARQL.Client.describe(@example_query, @example_endpoint,
                headers: %{"Accept" => "text/plain"}
              ) ==
                {:error,
@@ -210,7 +210,7 @@ defmodule SPARQL.Client.Query.DescribeTest do
 
       assert_equal_graph(
         @result_graph,
-        SPARQL.Client.query(@example_query, @example_endpoint,
+        SPARQL.Client.describe(@example_query, @example_endpoint,
           result_format: :ntriples,
           headers: %{"Accept" => "text/plain"}
         )

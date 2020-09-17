@@ -5,6 +5,10 @@ defmodule SPARQL.Client.Query do
 
   alias SPARQL.Client.Query.ResultFormat
 
+  @forms ~w[select construct ask describe]a
+
+  def forms, do: @forms
+
   @default_select_accept_header [
                                   SPARQL.Query.Result.JSON.media_type(),
                                   SPARQL.Query.Result.XML.media_type(),
@@ -50,21 +54,18 @@ defmodule SPARQL.Client.Query do
   def query_parameter_key, do: "query"
 
   @impl true
-  def init(request, query, opts) do
+  def init(request, opts) do
     with {:ok, protocol_version, request_method} <-
            request_method(
              Keyword.get(opts, :protocol_version, default_protocol_version()),
              Keyword.get(opts, :request_method, default_request_method())
            ),
          {:ok, accept_header} <-
-           accept_header(query.form, opts) do
+           accept_header(request.sparql_operation_form, opts) do
       {:ok,
        %{
          request
-         | sparql_operation_type: __MODULE__,
-           sparql_operation: query,
-           sparql_operation_form: query.form,
-           sparql_protocol_version: protocol_version,
+         | sparql_protocol_version: protocol_version,
            http_method: request_method,
            http_content_type_header: content_type(protocol_version, request_method),
            http_accept_header: accept_header
@@ -164,5 +165,5 @@ defmodule SPARQL.Client.Query do
   end
 
   @impl true
-  def operation_string(request, _), do: {:ok, request.sparql_operation.query_string}
+  def operation_string(request, _), do: {:ok, request.sparql_operation_payload}
 end

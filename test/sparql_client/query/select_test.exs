@@ -78,7 +78,7 @@ defmodule SPARQL.Client.Query.SelectTest do
         }
     end)
 
-    assert SPARQL.Client.query(@example_query, @example_endpoint, result_format: :json) ==
+    assert SPARQL.Client.select(@example_query, @example_endpoint, result_format: :json) ==
              {:ok, @result}
   end
 
@@ -94,7 +94,7 @@ defmodule SPARQL.Client.Query.SelectTest do
         }
     end)
 
-    assert SPARQL.Client.query(@example_query, @example_endpoint, result_format: :xml) ==
+    assert SPARQL.Client.select(@example_query, @example_endpoint, result_format: :xml) ==
              {:ok, @result}
   end
 
@@ -110,7 +110,7 @@ defmodule SPARQL.Client.Query.SelectTest do
         }
     end)
 
-    assert SPARQL.Client.query(@example_query, @example_endpoint, result_format: :tsv) ==
+    assert SPARQL.Client.select(@example_query, @example_endpoint, result_format: :tsv) ==
              {:ok, @result}
   end
 
@@ -126,7 +126,7 @@ defmodule SPARQL.Client.Query.SelectTest do
         }
     end)
 
-    assert SPARQL.Client.query(@example_query, @example_endpoint, result_format: :csv) ==
+    assert SPARQL.Client.select(@example_query, @example_endpoint, result_format: :csv) ==
              Query.Result.CSV.decode(@csv_result)
   end
 
@@ -152,7 +152,7 @@ defmodule SPARQL.Client.Query.SelectTest do
         }
     end)
 
-    assert SPARQL.Client.query(@example_query, @example_endpoint, result_format: :json) ==
+    assert SPARQL.Client.select(@example_query, @example_endpoint, result_format: :json) ==
              {:ok, %Query.Result{results: [%{"name" => ~L"東京"jp}]}}
   end
 
@@ -171,7 +171,7 @@ defmodule SPARQL.Client.Query.SelectTest do
           }
       end)
 
-      assert SPARQL.Client.query(@example_query, @example_endpoint) ==
+      assert SPARQL.Client.select(@example_query, @example_endpoint) ==
                {:ok, @result}
     end
 
@@ -189,7 +189,7 @@ defmodule SPARQL.Client.Query.SelectTest do
           }
       end)
 
-      assert SPARQL.Client.query(@example_query, @example_endpoint) ==
+      assert SPARQL.Client.select(@example_query, @example_endpoint) ==
                Query.Result.CSV.decode(@csv_result)
     end
 
@@ -205,7 +205,7 @@ defmodule SPARQL.Client.Query.SelectTest do
           }
       end)
 
-      assert SPARQL.Client.query(@example_query, @example_endpoint, result_format: :tsv) ==
+      assert SPARQL.Client.select(@example_query, @example_endpoint, result_format: :tsv) ==
                {:ok, @result}
     end
   end
@@ -221,7 +221,7 @@ defmodule SPARQL.Client.Query.SelectTest do
           }
       end)
 
-      assert SPARQL.Client.query(@example_query, @example_endpoint) ==
+      assert SPARQL.Client.select(@example_query, @example_endpoint) ==
                {:error,
                 "SPARQL service responded with text/html content which can't be interpreted. Try specifying one of the supported result formats with the :result_format option."}
     end
@@ -236,7 +236,7 @@ defmodule SPARQL.Client.Query.SelectTest do
           }
       end)
 
-      assert SPARQL.Client.query(@example_query, @example_endpoint, result_format: :tsv) ==
+      assert SPARQL.Client.select(@example_query, @example_endpoint, result_format: :tsv) ==
                {:ok, @result}
     end
   end
@@ -254,7 +254,7 @@ defmodule SPARQL.Client.Query.SelectTest do
           }
       end)
 
-      assert SPARQL.Client.query(@example_query, @example_endpoint,
+      assert SPARQL.Client.select(@example_query, @example_endpoint,
                headers: %{"Accept" => "text/tab-separated-values"}
              ) ==
                {:ok, @result}
@@ -272,7 +272,7 @@ defmodule SPARQL.Client.Query.SelectTest do
           }
       end)
 
-      assert SPARQL.Client.query(@example_query, @example_endpoint,
+      assert SPARQL.Client.select(@example_query, @example_endpoint,
                headers: %{"Accept" => "text/plain"}
              ) ==
                {:error,
@@ -291,11 +291,35 @@ defmodule SPARQL.Client.Query.SelectTest do
           }
       end)
 
-      assert SPARQL.Client.query(@example_query, @example_endpoint,
+      assert SPARQL.Client.select(@example_query, @example_endpoint,
                result_format: :json,
                headers: %{"Accept" => "text/plain"}
              ) ==
                {:ok, @result}
     end
+  end
+
+  test "when called with another type of query" do
+    assert_raise RuntimeError, "expected a SELECT query, got: DESCRIBE query", fn ->
+      SPARQL.Client.select("DESCRIBE <http://example.org/S>", @example_endpoint)
+    end
+  end
+
+  test "raw mode" do
+    body = URI.encode_query(%{query: @example_query})
+
+    Tesla.Mock.mock(fn
+      env = %{method: :post, url: @example_endpoint, body: ^body} ->
+        assert Tesla.get_header(env, "Accept") == @default_accept_header
+
+        %Tesla.Env{
+          status: 200,
+          body: @json_result,
+          headers: [{"content-type", Query.Result.JSON.media_type()}]
+        }
+    end)
+
+    assert SPARQL.Client.select(@example_query, @example_endpoint, raw_mode: true) ==
+             {:ok, @result}
   end
 end
