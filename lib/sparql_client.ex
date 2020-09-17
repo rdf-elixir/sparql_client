@@ -3,11 +3,48 @@ defmodule SPARQL.Client do
   A SPARQL protocol client.
 
   The [SPARQL Protocol](https://www.w3.org/TR/sparql11-protocol/) consists of
-  two HTTP operations:
+  HTTP operations:
 
   - a query operation for performing SPARQL 1.0 and 1.1 Query Language queries
   - an update operation for performing SPARQL Update Language requests, which is
-    not implemented yet
+    not fully implemented yet
+
+  # Configuration
+
+  Several default values for options of the operations can be configured via the
+  Mix application environment.
+
+  Here's an example configuration showing all available configuration options:
+
+      config :sparql_client,
+        protocol_version: "1.1",
+        query_request_method: :get,
+        update_request_method: :directly,
+        query_result_format: %{
+          select: :json,
+          ask: :json,
+          construct: :turtle,
+          describe: :turtle
+        },
+        http_headers: %{"Authorization" => "Basic YWxhZGRpbjpvcGVuc2VzYW1l"},
+        tesla_request_opts: [adapter: [recv_timeout: 30_000]],
+        max_redirects: 3
+
+  The `http_headers` can also be set to a function receiving the `SPARQL.Client.Request`
+  struct and the computed default headers:
+
+      defmodule SomeModule do
+        def http_header_config(request, _headers) do
+          if request.sparql_operation_type == SPARQL.Client.UpdateData do
+            %{"Authorization" => "Basic YWxhZGRpbjpvcGVuc2VzYW1l"}
+          else
+            %{}
+          end
+      end
+
+      config :sparql_client,
+        http_headers: &SomeModule.http_header_config/2,
+
   """
 
   alias SPARQL.Client.Request
@@ -17,9 +54,12 @@ defmodule SPARQL.Client do
       type: {:custom, __MODULE__, :validate_headers, []},
       subsection: "Specifying custom headers"
     ],
+    request_opts: [
+      type: :keyword_list,
+      subsection: "Specifying Tesla adapter specific options"
+    ],
     max_redirects: [
       type: :pos_integer,
-      default: 5,
       doc: "The number of redirects to follow before the HTTP request fails."
     ]
   ]
@@ -32,7 +72,6 @@ defmodule SPARQL.Client do
                             ],
                             request_method: [
                               type: {:one_of, [:get, :post]},
-                              default: :post,
                               subsection: "Specifying the request method"
                             ],
                             accept_header: [
@@ -50,10 +89,6 @@ defmodule SPARQL.Client do
                             ],
                             named_graph: [
                               subsection: "Specifying an RDF Dataset"
-                            ],
-                            request_opts: [
-                              type: :keyword_list,
-                              subsection: "Specifying Tesla adapter specific options"
                             ]
                           ]
 
@@ -195,7 +230,6 @@ defmodule SPARQL.Client do
                                 [
                                   request_method: [
                                     type: {:one_of, [:direct, :url_encoded]},
-                                    default: :direct,
                                     subsection: "Specifying the request method"
                                   ]
                                 ]

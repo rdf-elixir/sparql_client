@@ -1,6 +1,4 @@
 defmodule SPARQL.Client.Request do
-  @doc false
-
   defstruct [
     :sparql_operation,
     :sparql_operation_type,
@@ -48,6 +46,7 @@ defmodule SPARQL.Client.Request do
       sparql_graph_params: graph_params(opts)
     }
     |> init_operation(operation, opts)
+    |> add_http_headers(opts)
   end
 
   defp init_operation(request, %SPARQL.Query{} = query, opts) do
@@ -63,8 +62,36 @@ defmodule SPARQL.Client.Request do
     request.sparql_operation_type.operation_string(request, opts)
   end
 
+  def operation_http_headers(request, opts \\ []) do
+    request.sparql_operation_type.http_headers(request, opts)
+  end
+
   def query_parameter_key(request) do
     request.sparql_operation_type.query_parameter_key()
+  end
+
+  defp add_http_headers({:ok, request}, opts) do
+    with {:ok, headers} <- operation_http_headers(request, opts) do
+      {:ok,
+       %{
+         request
+         | http_headers: Map.merge(headers, default_http_headers(request, headers, opts))
+       }}
+    end
+  end
+
+  defp add_http_headers(error, _opts), do: error
+
+  def default_http_headers do
+    Application.get_env(:sparql_client, :http_headers)
+  end
+
+  defp default_http_headers(request, headers, opts) do
+    case Keyword.get(opts, :headers, default_http_headers()) do
+      fun when is_function(fun) -> fun.(request, headers)
+      nil -> %{}
+      default_headers -> default_headers
+    end
   end
 
   defp graph_params(opts) do

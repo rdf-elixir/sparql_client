@@ -1,10 +1,16 @@
 defmodule SPARQL.Client.UpdateData do
-  @doc false
+  @moduledoc false
 
   @behaviour SPARQL.Client.Operation
 
   alias RDF.Turtle
   import SPARQL.Client.Utils
+
+  @default_request_method :direct
+
+  def default_request_method do
+    Application.get_env(:sparql_client, :query_request_method, @default_request_method)
+  end
 
   @impl true
   def query_parameter_key, do: "update"
@@ -12,7 +18,7 @@ defmodule SPARQL.Client.UpdateData do
   @impl true
   def init(request, {update_type, data}, opts) do
     with {:ok, protocol_version, request_method} <-
-           opts |> Keyword.get(:request_method) |> request_method() do
+           opts |> Keyword.get(:request_method, default_request_method()) |> request_method() do
       {:ok,
        %{
          request
@@ -22,8 +28,7 @@ defmodule SPARQL.Client.UpdateData do
            sparql_protocol_version: protocol_version,
            http_method: request_method,
            http_content_type_header: content_type(protocol_version, request_method)
-       }
-       |> add_headers(opts)}
+       }}
     end
   end
 
@@ -34,15 +39,9 @@ defmodule SPARQL.Client.UpdateData do
   defp content_type("1.0", :post), do: "application/x-www-form-urlencoded"
   defp content_type(_, _), do: nil
 
-  defp add_headers(request, opts) do
-    %{
-      request
-      | http_headers:
-          %{
-            "Content-Type" => request.http_content_type_header
-          }
-          |> Map.merge(Keyword.get(opts, :headers, %{}))
-    }
+  @impl true
+  def http_headers(request, _opts) do
+    {:ok, %{"Content-Type" => request.http_content_type_header}}
   end
 
   @impl true

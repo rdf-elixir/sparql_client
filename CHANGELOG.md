@@ -11,6 +11,8 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 
 - support for `INSERT DATA` updates with `SPARQL.Client.insert_data/3`
 - support for `DELETE DATA` updates with `SPARQL.Client.delete_data/3`
+- the defaults for several options can now be configured globally via the application  
+  environment; please refer to the `SPARQL.Client` documentation for more information
 
 ### Changed
 
@@ -20,7 +22,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 ### Fixed
 
 - the default HTTP `Accept` header used when no `:result_form` was provided on 
-  `SPARQL.Client.select/3` contained a typo
+  `SPARQL.Client.query/3` contained a typo
 
 
 [Compare v0.2.1...HEAD](https://github.com/rdf-elixir/sparql_client/compare/v0.2.1...HEAD)

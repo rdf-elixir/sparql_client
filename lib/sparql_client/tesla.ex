@@ -1,9 +1,19 @@
 defmodule SPARQL.Client.Tesla do
-  @doc false
+  @moduledoc false
 
   use Tesla, docs: false
 
   alias SPARQL.Client.Request
+
+  @default_max_redirects 5
+
+  def default_max_redirects do
+    Application.get_env(:sparql_client, :max_redirects, @default_max_redirects)
+  end
+
+  def default_request_opts do
+    Application.get_env(:sparql_client, :tesla_request_opts)
+  end
 
   def call(request, opts) do
     with {:ok, client} <- client(request, opts),
@@ -16,7 +26,8 @@ defmodule SPARQL.Client.Tesla do
     {:ok,
      Tesla.client([
        {Tesla.Middleware.Headers, Map.to_list(request.http_headers)},
-       {Tesla.Middleware.FollowRedirects, max_redirects: Keyword.get(opts, :max_redirects, 5)}
+       {Tesla.Middleware.FollowRedirects,
+        max_redirects: Keyword.get(opts, :max_redirects, default_max_redirects())}
      ])}
   end
 
@@ -63,8 +74,8 @@ defmodule SPARQL.Client.Tesla do
   end
 
   defp tesla_request_opts(opts) do
-    if Keyword.has_key?(opts, :request_opts) do
-      [opts: Keyword.get(opts, :request_opts)]
+    if request_opts = Keyword.get(opts, :request_opts, default_request_opts()) do
+      [opts: request_opts]
     else
       []
     end

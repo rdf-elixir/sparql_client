@@ -1,5 +1,5 @@
 defmodule SPARQL.Client.Query do
-  @doc false
+  @moduledoc false
 
   @behaviour SPARQL.Client.Operation
 
@@ -30,6 +30,22 @@ defmodule SPARQL.Client.Query do
                              ]
                              |> Enum.join(", ")
 
+  @default_request_method :post
+
+  def default_request_method do
+    Application.get_env(:sparql_client, :query_request_method, @default_request_method)
+  end
+
+  def default_protocol_version do
+    Application.get_env(:sparql_client, :protocol_version)
+  end
+
+  def default_result_format(query_form) do
+    if formats = Application.get_env(:sparql_client, :query_result_format) do
+      formats[query_form]
+    end
+  end
+
   @impl true
   def query_parameter_key, do: "query"
 
@@ -37,8 +53,8 @@ defmodule SPARQL.Client.Query do
   def init(request, query, opts) do
     with {:ok, protocol_version, request_method} <-
            request_method(
-             Keyword.get(opts, :protocol_version),
-             Keyword.get(opts, :request_method)
+             Keyword.get(opts, :protocol_version, default_protocol_version()),
+             Keyword.get(opts, :request_method, default_request_method())
            ),
          {:ok, accept_header} <-
            accept_header(query.form, opts) do
@@ -52,8 +68,7 @@ defmodule SPARQL.Client.Query do
            http_method: request_method,
            http_content_type_header: content_type(protocol_version, request_method),
            http_accept_header: accept_header
-       }
-       |> add_headers(opts)}
+       }}
     end
   end
 
@@ -62,7 +77,8 @@ defmodule SPARQL.Client.Query do
   defp request_method(nil, :get), do: {:ok, "1.1", :get}
   defp request_method(nil, :post), do: {:ok, "1.0", :post}
   defp request_method("1.1", :get), do: {:ok, "1.1", :get}
-  defp request_method(version, :post), do: {:ok, version, :post}
+  defp request_method("1.0", :post), do: {:ok, "1.0", :post}
+  defp request_method("1.1", :post), do: {:ok, "1.1", :post}
 
   defp request_method(sparql_protocol_version, request_method) do
     {:error,
@@ -80,7 +96,7 @@ defmodule SPARQL.Client.Query do
       accept_header = Keyword.get(opts, :accept_header) ->
         {:ok, accept_header}
 
-      result_format = Keyword.get(opts, :result_format) ->
+      result_format = Keyword.get(opts, :result_format, default_result_format(query_form)) ->
         result_media_type(query_form, result_format)
 
       true ->
@@ -101,16 +117,13 @@ defmodule SPARQL.Client.Query do
   def default_accept_header(:describe), do: @default_rdf_accept_header
   def default_accept_header(:construct), do: @default_rdf_accept_header
 
-  defp add_headers(request, opts) do
-    %{
-      request
-      | http_headers:
-          %{
-            "Content-Type" => request.http_content_type_header,
-            "Accept" => request.http_accept_header
-          }
-          |> Map.merge(Keyword.get(opts, :headers, %{}))
-    }
+  @impl true
+  def http_headers(request, _opts) do
+    {:ok,
+     %{
+       "Content-Type" => request.http_content_type_header,
+       "Accept" => request.http_accept_header
+     }}
   end
 
   @impl true
@@ -131,7 +144,10 @@ defmodule SPARQL.Client.Query do
         format = ResultFormat.by_media_type(media_type, query_form) ->
           {:ok, format}
 
-        format = opts |> Keyword.get(:result_format) |> ResultFormat.by_name(query_form) ->
+        format =
+            opts
+            |> Keyword.get(:result_format, default_result_format(request.sparql_operation_form))
+            |> ResultFormat.by_name(query_form) ->
           {:ok, format}
 
         true ->
