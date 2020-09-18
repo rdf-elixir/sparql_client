@@ -32,18 +32,16 @@ defmodule SPARQL.Client.Tesla do
   end
 
   defp http_request(client, request, opts) do
-    with {:ok, operation} <- Request.operation_string(request, opts) do
-      do_http_request(
-        client,
-        request.http_method,
-        request.sparql_protocol_version,
-        request.sparql_endpoint,
-        operation,
-        Request.query_parameter_key(request),
-        request.sparql_graph_params,
-        opts
-      )
-    end
+    do_http_request(
+      client,
+      request.http_method,
+      request.sparql_protocol_version,
+      request.sparql_endpoint,
+      request.sparql_operation_payload,
+      Request.query_parameter_key(request),
+      request.sparql_graph_params,
+      opts
+    )
   end
 
   defp do_http_request(client, :get, "1.1", endpoint, query, query_param_key, graph_params, opts) do

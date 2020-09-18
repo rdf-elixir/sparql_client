@@ -51,10 +51,6 @@ defmodule SPARQL.Client do
   alias __MODULE__
   alias SPARQL.Client.Request
 
-  def default_raw_mode do
-    Application.get_env(:sparql_client, :raw_mode, false)
-  end
-
   @general_options_schema [
     headers: [
       type: {:custom, __MODULE__, :validate_headers, []},
@@ -218,14 +214,14 @@ defmodule SPARQL.Client do
   For a general introduction you may refer to the guides on the [homepage](https://rdf-elixir.dev).
   """
 
-  def query(query, endpoint, options \\ [])
+  def query(query, endpoint, opts \\ [])
 
-  def query(%SPARQL.Query{} = query, endpoint, options) do
-    do_query(query.form, query.query_string, endpoint, options)
+  def query(%SPARQL.Query{} = query, endpoint, opts) do
+    do_query(query.form, query.query_string, endpoint, opts)
   end
 
-  def query(query_string, endpoint, options) do
-    if Keyword.get(options, :raw_mode) do
+  def query(query_string, endpoint, opts) do
+    if Keyword.get(opts, :raw_mode) do
       raise """
       The generic SPARQL.Client.query/3 function can not be used in raw-mode since
       it needs to parse the query to determine the query form.
@@ -234,16 +230,16 @@ defmodule SPARQL.Client do
     end
 
     with %SPARQL.Query{} = query <- SPARQL.Query.new(query_string) do
-      query(query, endpoint, options)
+      query(query, endpoint, opts)
     end
   end
 
   SPARQL.Client.Query.forms()
   |> Enum.each(fn query_form ->
-    def unquote(query_form)(query, endpoint, options \\ [])
+    def unquote(query_form)(query, endpoint, opts \\ [])
 
-    def unquote(query_form)(%SPARQL.Query{form: unquote(query_form)} = query, endpoint, options) do
-      do_query(unquote(query_form), query.query_string, endpoint, options)
+    def unquote(query_form)(%SPARQL.Query{form: unquote(query_form)} = query, endpoint, opts) do
+      do_query(unquote(query_form), query.query_string, endpoint, opts)
     end
 
     def unquote(query_form)(%SPARQL.Query{form: form}, _, _) do
@@ -252,19 +248,19 @@ defmodule SPARQL.Client do
             } query"
     end
 
-    def unquote(query_form)(query_string, endpoint, options) do
-      if Keyword.get(options, :raw_mode, default_raw_mode()) do
-        do_query(unquote(query_form), query_string, endpoint, options)
+    def unquote(query_form)(query_string, endpoint, opts) do
+      if raw_mode?(opts) do
+        do_query(unquote(query_form), query_string, endpoint, opts)
       else
         with %SPARQL.Query{} = query <- SPARQL.Query.new(query_string) do
-          unquote(query_form)(query, endpoint, options)
+          unquote(query_form)(query, endpoint, opts)
         end
       end
     end
   end)
 
-  defp do_query(form, query, endpoint, options) do
-    with {:ok, options} <- NimbleOptions.validate(options, @query_options_schema),
+  defp do_query(form, query, endpoint, opts) do
+    with {:ok, options} <- NimbleOptions.validate(opts, @query_options_schema),
          {:ok, request} <- Request.build(Client.Query, form, query, endpoint, options),
          {:ok, request} <- Request.call(request, options) do
       {:ok, request.result}
@@ -282,17 +278,35 @@ defmodule SPARQL.Client do
                              ]
                            ]
 
-  def insert_data(data, endpoint, options \\ []) do
-    update(:insert_data, data, endpoint, options)
+  def insert_data(data, endpoint, opts \\ []) do
+    update_data(:insert_data, data, endpoint, opts)
   end
 
-  def delete_data(data, endpoint, options \\ []) do
-    update(:delete_data, data, endpoint, options)
+  def delete_data(data, endpoint, opts \\ []) do
+    update_data(:delete_data, data, endpoint, opts)
   end
 
-  defp update(form, data, endpoint, options) do
-    with {:ok, options} <- NimbleOptions.validate(options, @update_options_schema),
-         {:ok, request} <- Request.build(Client.Update, form, data, endpoint, options),
+  defp update_data(form, %rdf{} = data, endpoint, opts)
+       when rdf in [RDF.Graph, RDF.Description, RDF.Dataset] do
+    with {:ok, update_string} <- Client.Update.Builder.update_data(form, data, opts) do
+      update(form, update_string, endpoint, opts)
+    end
+  end
+
+  defp update_data(form, update, endpoint, opts) when is_binary(update) do
+    unless raw_mode?(opts) do
+      raise """
+      An update options is passed directly as a string. Validation of updates is not implemented yet.
+      Please run them in raw-mode, by providing the raw_mode: true option.
+      """
+    end
+
+    update(form, update, endpoint, opts)
+  end
+
+  defp update(form, update_string, endpoint, opts) do
+    with {:ok, options} <- NimbleOptions.validate(opts, @update_options_schema),
+         {:ok, request} <- Request.build(Client.Update, form, update_string, endpoint, options),
          {:ok, _request} <- Request.call(request, options) do
       :ok
     else
@@ -306,4 +320,12 @@ defmodule SPARQL.Client do
 
   def validate_headers(other),
     do: {:error, "expected :headers to be a map, got: #{inspect(other)}"}
+
+  defp default_raw_mode do
+    Application.get_env(:sparql_client, :raw_mode, false)
+  end
+
+  defp raw_mode?(opts) do
+    Keyword.get(opts, :raw_mode, default_raw_mode())
+  end
 end

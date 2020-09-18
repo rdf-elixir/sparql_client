@@ -163,7 +163,4 @@ defmodule SPARQL.Client.Query do
       {:ok, type <> "/" <> subtype}
     end
   end
-
-  @impl true
-  def operation_string(request, _), do: {:ok, request.sparql_operation_payload}
 end

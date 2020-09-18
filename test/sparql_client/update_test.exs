@@ -1,10 +1,7 @@
 defmodule SPARQL.Client.UpdateTest do
-  use ExUnit.Case
+  use SPARQL.Client.Test.Case
 
   alias SPARQL.Client.Update
-
-  use RDF.Vocabulary.Namespace
-  defvocab EX, base_iri: "http://example.com/sparql-cient-test#", terms: [], strict: false
 
   @example_endpoint "http://example.com/sparql"
 
@@ -13,118 +10,6 @@ defmodule SPARQL.Client.UpdateTest do
                  |> RDF.Graph.add(EX.Other |> EX.p("string"))
   @example_dataset RDF.Dataset.new(@example_description)
                    |> RDF.Dataset.add({EX.Other, EX.p(), "string", EX.NamedGraph})
-
-  describe "to_sparql/2" do
-    test "insert with description" do
-      assert {:ok,
-              """
-              PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-              PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-              PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-
-
-              INSERT DATA {
-              <http://example.com/sparql-cient-test#Foo>
-                  <http://example.com/sparql-cient-test#bar> <http://example.com/sparql-cient-test#Baz> .
-
-              }
-              """} = Update.to_sparql(:insert_data, @example_description)
-    end
-
-    test "insert with graph" do
-      assert {:ok,
-              """
-              PREFIX ex: <http://example.com/sparql-cient-test#>
-
-
-              INSERT DATA {
-              ex:Foo
-                  ex:bar ex:Baz .
-
-              ex:Other
-                  ex:p "string" .
-
-              }
-              """} = Update.to_sparql(:insert_data, @example_graph)
-    end
-
-    test "insert with dataset" do
-      assert {:ok,
-              """
-              PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-              PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-              PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-
-
-              INSERT DATA {
-              <http://example.com/sparql-cient-test#Foo>
-                  <http://example.com/sparql-cient-test#bar> <http://example.com/sparql-cient-test#Baz> .
-
-              GRAPH <http://example.com/sparql-cient-test#NamedGraph> {
-              <http://example.com/sparql-cient-test#Other>
-                  <http://example.com/sparql-cient-test#p> "string" .
-
-              }
-
-              }
-              """} = Update.to_sparql(:insert_data, @example_dataset)
-    end
-
-    test "insert with dataset and merge_graphs: true" do
-      assert {:ok,
-              """
-              PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-              PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-              PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-
-
-              INSERT DATA {
-              <http://example.com/sparql-cient-test#Foo>
-                  <http://example.com/sparql-cient-test#bar> <http://example.com/sparql-cient-test#Baz> .
-
-              <http://example.com/sparql-cient-test#Other>
-                  <http://example.com/sparql-cient-test#p> "string" .
-
-              }
-              """} = Update.to_sparql(:insert_data, @example_dataset, merge_graphs: true)
-    end
-
-    test "delete with dataset" do
-      assert {:ok,
-              """
-              PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-              PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-              PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-
-
-              DELETE DATA {
-              <http://example.com/sparql-cient-test#Foo>
-                  <http://example.com/sparql-cient-test#bar> <http://example.com/sparql-cient-test#Baz> .
-
-              GRAPH <http://example.com/sparql-cient-test#NamedGraph> {
-              <http://example.com/sparql-cient-test#Other>
-                  <http://example.com/sparql-cient-test#p> "string" .
-
-              }
-
-              }
-              """} = Update.to_sparql(:delete_data, @example_dataset)
-    end
-
-    test "with additional prefixes" do
-      assert {:ok,
-              """
-              PREFIX ex: <http://example.com/sparql-cient-test#>
-
-
-              INSERT DATA {
-              ex:Foo
-                  ex:bar ex:Baz .
-
-              }
-              """} = Update.to_sparql(:insert_data, @example_description, prefixes: %{ex: EX})
-    end
-  end
 
   describe "insert_data/3" do
     test "direct POST" do
@@ -156,6 +41,22 @@ defmodule SPARQL.Client.UpdateTest do
       assert SPARQL.Client.insert_data(@example_dataset, @example_endpoint,
                request_method: :url_encoded
              ) == :ok
+    end
+
+    test "with passing an update string directly in raw-mode" do
+      {:ok, update} = Update.Builder.update_data(:insert_data, @example_graph)
+      mock_update_request(:direct, :insert_data, @example_graph)
+      assert SPARQL.Client.insert_data(update, @example_endpoint, raw_mode: true) == :ok
+
+      {:ok, update} = Update.Builder.update_data(:insert_data, @example_dataset)
+
+      mock_update_request(:url_encoded, :insert_data, @example_dataset)
+
+      assert SPARQL.Client.insert_data(update, @example_endpoint,
+               request_method: :url_encoded,
+               raw_mode: true
+             ) ==
+               :ok
     end
   end
 
@@ -190,12 +91,28 @@ defmodule SPARQL.Client.UpdateTest do
                request_method: :url_encoded
              ) == :ok
     end
+
+    test "with passing an update string directly in raw-mode" do
+      {:ok, update} = Update.Builder.update_data(:delete_data, @example_graph)
+      mock_update_request(:direct, :delete_data, @example_graph)
+      assert SPARQL.Client.delete_data(update, @example_endpoint, raw_mode: true) == :ok
+
+      {:ok, update} = Update.Builder.update_data(:delete_data, @example_description)
+
+      mock_update_request(:url_encoded, :delete_data, @example_description)
+
+      assert SPARQL.Client.delete_data(update, @example_endpoint,
+               request_method: :url_encoded,
+               raw_mode: true
+             ) ==
+               :ok
+    end
   end
 
   def mock_update_request(request_method, update_form, data, opts \\ [])
 
   def mock_update_request(:direct, update_form, data, opts) do
-    {:ok, update} = Update.to_sparql(update_form, data, opts)
+    {:ok, update} = Update.Builder.update_data(update_form, data, opts)
     endpoint = Keyword.get(opts, :endpoint, @example_endpoint)
 
     Tesla.Mock.mock(fn
@@ -210,7 +127,7 @@ defmodule SPARQL.Client.UpdateTest do
   end
 
   def mock_update_request(:url_encoded, update_form, data, opts) do
-    {:ok, update} = Update.to_sparql(update_form, data, opts)
+    {:ok, update} = Update.Builder.update_data(update_form, data, opts)
     update_query_param = URI.encode_query(%{update: update})
     endpoint = Keyword.get(opts, :endpoint, @example_endpoint)
 

@@ -1,8 +1,5 @@
 defmodule SPARQL.Client.ConfigTest do
-  use ExUnit.Case
-
-  use RDF.Vocabulary.Namespace
-  defvocab EX, base_iri: "http://example.com/sparql-cient-test#", terms: [], strict: false
+  use SPARQL.Client.Test.Case
 
   @example_endpoint "http://example.com/sparql"
   @example_data EX.S |> EX.p(EX.O)

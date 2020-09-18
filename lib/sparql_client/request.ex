@@ -21,9 +21,9 @@ defmodule SPARQL.Client.Request do
   @type http_method :: :get | :post
 
   @type t :: %__MODULE__{
-          sparql_operation_payload: String.t() | RDF.Data.t(),
           sparql_operation_type: module,
           sparql_operation_form: atom,
+          sparql_operation_payload: String.t(),
           sparql_endpoint: String.t(),
           sparql_protocol_version: protocol_version,
           sparql_graph_params: list,
@@ -52,10 +52,6 @@ defmodule SPARQL.Client.Request do
 
   defp init_operation(request, opts) do
     request.sparql_operation_type.init(request, opts)
-  end
-
-  def operation_string(request, opts \\ []) do
-    request.sparql_operation_type.operation_string(request, opts)
   end
 
   def operation_http_headers(request, opts \\ []) do
