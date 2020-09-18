@@ -1,4 +1,4 @@
-defmodule SPARQL.Client.UpdateData do
+defmodule SPARQL.Client.Update do
   @moduledoc false
 
   @behaviour SPARQL.Client.Operation
@@ -59,7 +59,7 @@ defmodule SPARQL.Client.UpdateData do
       {:ok,
        """
        #{prologue}
-       #{sparql_update_keyword(update_form)} DATA {
+       #{sparql_update_data_keyword(update_form)} DATA {
        #{triples}
        }
        """}
@@ -89,8 +89,8 @@ defmodule SPARQL.Client.UpdateData do
     Turtle.write_string(data, Keyword.merge(opts, only: :triples))
   end
 
-  defp sparql_update_keyword(:insert), do: "INSERT"
-  defp sparql_update_keyword(:delete), do: "DELETE"
+  defp sparql_update_data_keyword(:insert_data), do: "INSERT"
+  defp sparql_update_data_keyword(:delete_data), do: "DELETE"
 
   @impl true
   def evaluate_response(_, _), do: :ok

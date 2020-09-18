@@ -36,7 +36,7 @@ defmodule SPARQL.Client do
 
       defmodule SomeModule do
         def http_header_config(request, _headers) do
-          if request.sparql_operation_type == SPARQL.Client.UpdateData do
+          if request.sparql_operation_type == SPARQL.Client.Update do
             %{"Authorization" => "Basic YWxhZGRpbjpvcGVuc2VzYW1l"}
           else
             %{}
@@ -274,25 +274,25 @@ defmodule SPARQL.Client do
     end
   end
 
-  @update_data_options_schema @general_options_schema ++
-                                [
-                                  request_method: [
-                                    type: {:one_of, [:direct, :url_encoded]},
-                                    subsection: "Specifying the request method"
-                                  ]
-                                ]
+  @update_options_schema @general_options_schema ++
+                           [
+                             request_method: [
+                               type: {:one_of, [:direct, :url_encoded]},
+                               subsection: "Specifying the request method"
+                             ]
+                           ]
 
   def insert_data(data, endpoint, options \\ []) do
-    update_data(:insert, data, endpoint, options)
+    update(:insert_data, data, endpoint, options)
   end
 
   def delete_data(data, endpoint, options \\ []) do
-    update_data(:delete, data, endpoint, options)
+    update(:delete_data, data, endpoint, options)
   end
 
-  defp update_data(form, data, endpoint, options) do
-    with {:ok, options} <- NimbleOptions.validate(options, @update_data_options_schema),
-         {:ok, request} <- Request.build(Client.UpdateData, form, data, endpoint, options),
+  defp update(form, data, endpoint, options) do
+    with {:ok, options} <- NimbleOptions.validate(options, @update_options_schema),
+         {:ok, request} <- Request.build(Client.Update, form, data, endpoint, options),
          {:ok, _request} <- Request.call(request, options) do
       :ok
     else

@@ -1,7 +1,7 @@
-defmodule SPARQL.Client.UpdateDataTest do
+defmodule SPARQL.Client.UpdateTest do
   use ExUnit.Case
 
-  alias SPARQL.Client.UpdateData
+  alias SPARQL.Client.Update
 
   use RDF.Vocabulary.Namespace
   defvocab EX, base_iri: "http://example.com/sparql-cient-test#", terms: [], strict: false
@@ -28,7 +28,7 @@ defmodule SPARQL.Client.UpdateDataTest do
                   <http://example.com/sparql-cient-test#bar> <http://example.com/sparql-cient-test#Baz> .
 
               }
-              """} = UpdateData.to_sparql(:insert, @example_description)
+              """} = Update.to_sparql(:insert_data, @example_description)
     end
 
     test "insert with graph" do
@@ -45,7 +45,7 @@ defmodule SPARQL.Client.UpdateDataTest do
                   ex:p "string" .
 
               }
-              """} = UpdateData.to_sparql(:insert, @example_graph)
+              """} = Update.to_sparql(:insert_data, @example_graph)
     end
 
     test "insert with dataset" do
@@ -67,7 +67,7 @@ defmodule SPARQL.Client.UpdateDataTest do
               }
 
               }
-              """} = UpdateData.to_sparql(:insert, @example_dataset)
+              """} = Update.to_sparql(:insert_data, @example_dataset)
     end
 
     test "insert with dataset and merge_graphs: true" do
@@ -86,7 +86,7 @@ defmodule SPARQL.Client.UpdateDataTest do
                   <http://example.com/sparql-cient-test#p> "string" .
 
               }
-              """} = UpdateData.to_sparql(:insert, @example_dataset, merge_graphs: true)
+              """} = Update.to_sparql(:insert_data, @example_dataset, merge_graphs: true)
     end
 
     test "delete with dataset" do
@@ -108,7 +108,7 @@ defmodule SPARQL.Client.UpdateDataTest do
               }
 
               }
-              """} = UpdateData.to_sparql(:delete, @example_dataset)
+              """} = Update.to_sparql(:delete_data, @example_dataset)
     end
 
     test "with additional prefixes" do
@@ -122,36 +122,36 @@ defmodule SPARQL.Client.UpdateDataTest do
                   ex:bar ex:Baz .
 
               }
-              """} = UpdateData.to_sparql(:insert, @example_description, prefixes: %{ex: EX})
+              """} = Update.to_sparql(:insert_data, @example_description, prefixes: %{ex: EX})
     end
   end
 
   describe "insert_data/3" do
     test "direct POST" do
-      mock_update_request(:direct, :insert, @example_description)
+      mock_update_request(:direct, :insert_data, @example_description)
       assert SPARQL.Client.insert_data(@example_description, @example_endpoint) == :ok
 
-      mock_update_request(:direct, :insert, @example_graph)
+      mock_update_request(:direct, :insert_data, @example_graph)
       assert SPARQL.Client.insert_data(@example_graph, @example_endpoint) == :ok
 
-      mock_update_request(:direct, :insert, @example_dataset)
+      mock_update_request(:direct, :insert_data, @example_dataset)
       assert SPARQL.Client.insert_data(@example_dataset, @example_endpoint) == :ok
     end
 
     test "URL-encoded POST" do
-      mock_update_request(:url_encoded, :insert, @example_description)
+      mock_update_request(:url_encoded, :insert_data, @example_description)
 
       assert SPARQL.Client.insert_data(@example_description, @example_endpoint,
                request_method: :url_encoded
              ) == :ok
 
-      mock_update_request(:url_encoded, :insert, @example_graph)
+      mock_update_request(:url_encoded, :insert_data, @example_graph)
 
       assert SPARQL.Client.insert_data(@example_graph, @example_endpoint,
                request_method: :url_encoded
              ) == :ok
 
-      mock_update_request(:url_encoded, :insert, @example_dataset)
+      mock_update_request(:url_encoded, :insert_data, @example_dataset)
 
       assert SPARQL.Client.insert_data(@example_dataset, @example_endpoint,
                request_method: :url_encoded
@@ -161,30 +161,30 @@ defmodule SPARQL.Client.UpdateDataTest do
 
   describe "delete_data/3" do
     test "direct POST" do
-      mock_update_request(:direct, :delete, @example_description)
+      mock_update_request(:direct, :delete_data, @example_description)
       assert SPARQL.Client.delete_data(@example_description, @example_endpoint) == :ok
 
-      mock_update_request(:direct, :delete, @example_graph)
+      mock_update_request(:direct, :delete_data, @example_graph)
       assert SPARQL.Client.delete_data(@example_graph, @example_endpoint) == :ok
 
-      mock_update_request(:direct, :delete, @example_dataset)
+      mock_update_request(:direct, :delete_data, @example_dataset)
       assert SPARQL.Client.delete_data(@example_dataset, @example_endpoint) == :ok
     end
 
     test "URL-encoded POST" do
-      mock_update_request(:url_encoded, :delete, @example_description)
+      mock_update_request(:url_encoded, :delete_data, @example_description)
 
       assert SPARQL.Client.delete_data(@example_description, @example_endpoint,
                request_method: :url_encoded
              ) == :ok
 
-      mock_update_request(:url_encoded, :delete, @example_graph)
+      mock_update_request(:url_encoded, :delete_data, @example_graph)
 
       assert SPARQL.Client.delete_data(@example_graph, @example_endpoint,
                request_method: :url_encoded
              ) == :ok
 
-      mock_update_request(:url_encoded, :delete, @example_dataset)
+      mock_update_request(:url_encoded, :delete_data, @example_dataset)
 
       assert SPARQL.Client.delete_data(@example_dataset, @example_endpoint,
                request_method: :url_encoded
@@ -195,7 +195,7 @@ defmodule SPARQL.Client.UpdateDataTest do
   def mock_update_request(request_method, update_form, data, opts \\ [])
 
   def mock_update_request(:direct, update_form, data, opts) do
-    {:ok, update} = UpdateData.to_sparql(update_form, data, opts)
+    {:ok, update} = Update.to_sparql(update_form, data, opts)
     endpoint = Keyword.get(opts, :endpoint, @example_endpoint)
 
     Tesla.Mock.mock(fn
@@ -210,7 +210,7 @@ defmodule SPARQL.Client.UpdateDataTest do
   end
 
   def mock_update_request(:url_encoded, update_form, data, opts) do
-    {:ok, update} = UpdateData.to_sparql(update_form, data, opts)
+    {:ok, update} = Update.to_sparql(update_form, data, opts)
     update_query_param = URI.encode_query(%{update: update})
     endpoint = Keyword.get(opts, :endpoint, @example_endpoint)
 
