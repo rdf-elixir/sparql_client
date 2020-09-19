@@ -278,6 +278,14 @@ defmodule SPARQL.Client do
                              ]
                            ]
 
+  def insert(update, endpoint, opts \\ []) do
+    unvalidated_update(:insert, update, endpoint, opts)
+  end
+
+  def delete(update, endpoint, opts \\ []) do
+    unvalidated_update(:delete, update, endpoint, opts)
+  end
+
   def insert_data(data, endpoint, opts \\ []) do
     update_data(:insert_data, data, endpoint, opts)
   end
@@ -289,11 +297,15 @@ defmodule SPARQL.Client do
   defp update_data(form, %rdf{} = data, endpoint, opts)
        when rdf in [RDF.Graph, RDF.Description, RDF.Dataset] do
     with {:ok, update_string} <- Client.Update.Builder.update_data(form, data, opts) do
-      update(form, update_string, endpoint, opts)
+      do_update(form, update_string, endpoint, opts)
     end
   end
 
   defp update_data(form, update, endpoint, opts) when is_binary(update) do
+    unvalidated_update(form, update, endpoint, opts)
+  end
+
+  defp unvalidated_update(form, update, endpoint, opts) do
     unless raw_mode?(opts) do
       raise """
       An update options is passed directly as a string. Validation of updates is not implemented yet.
@@ -301,10 +313,10 @@ defmodule SPARQL.Client do
       """
     end
 
-    update(form, update, endpoint, opts)
+    do_update(form, update, endpoint, opts)
   end
 
-  defp update(form, update_string, endpoint, opts) do
+  defp do_update(form, update_string, endpoint, opts) do
     with {:ok, options} <- NimbleOptions.validate(opts, @update_options_schema),
          {:ok, request} <- Request.build(Client.Update, form, update_string, endpoint, options),
          {:ok, _request} <- Request.call(request, options) do

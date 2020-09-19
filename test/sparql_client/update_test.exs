@@ -13,30 +13,30 @@ defmodule SPARQL.Client.UpdateTest do
 
   describe "insert_data/3" do
     test "direct POST" do
-      mock_update_request(:direct, :insert_data, @example_description)
+      mock_update_data_request(:direct, :insert_data, @example_description)
       assert SPARQL.Client.insert_data(@example_description, @example_endpoint) == :ok
 
-      mock_update_request(:direct, :insert_data, @example_graph)
+      mock_update_data_request(:direct, :insert_data, @example_graph)
       assert SPARQL.Client.insert_data(@example_graph, @example_endpoint) == :ok
 
-      mock_update_request(:direct, :insert_data, @example_dataset)
+      mock_update_data_request(:direct, :insert_data, @example_dataset)
       assert SPARQL.Client.insert_data(@example_dataset, @example_endpoint) == :ok
     end
 
     test "URL-encoded POST" do
-      mock_update_request(:url_encoded, :insert_data, @example_description)
+      mock_update_data_request(:url_encoded, :insert_data, @example_description)
 
       assert SPARQL.Client.insert_data(@example_description, @example_endpoint,
                request_method: :url_encoded
              ) == :ok
 
-      mock_update_request(:url_encoded, :insert_data, @example_graph)
+      mock_update_data_request(:url_encoded, :insert_data, @example_graph)
 
       assert SPARQL.Client.insert_data(@example_graph, @example_endpoint,
                request_method: :url_encoded
              ) == :ok
 
-      mock_update_request(:url_encoded, :insert_data, @example_dataset)
+      mock_update_data_request(:url_encoded, :insert_data, @example_dataset)
 
       assert SPARQL.Client.insert_data(@example_dataset, @example_endpoint,
                request_method: :url_encoded
@@ -45,12 +45,12 @@ defmodule SPARQL.Client.UpdateTest do
 
     test "with passing an update string directly in raw-mode" do
       {:ok, update} = Update.Builder.update_data(:insert_data, @example_graph)
-      mock_update_request(:direct, :insert_data, @example_graph)
+      mock_update_data_request(:direct, :insert_data, @example_graph)
       assert SPARQL.Client.insert_data(update, @example_endpoint, raw_mode: true) == :ok
 
       {:ok, update} = Update.Builder.update_data(:insert_data, @example_dataset)
 
-      mock_update_request(:url_encoded, :insert_data, @example_dataset)
+      mock_update_data_request(:url_encoded, :insert_data, @example_dataset)
 
       assert SPARQL.Client.insert_data(update, @example_endpoint,
                request_method: :url_encoded,
@@ -62,30 +62,30 @@ defmodule SPARQL.Client.UpdateTest do
 
   describe "delete_data/3" do
     test "direct POST" do
-      mock_update_request(:direct, :delete_data, @example_description)
+      mock_update_data_request(:direct, :delete_data, @example_description)
       assert SPARQL.Client.delete_data(@example_description, @example_endpoint) == :ok
 
-      mock_update_request(:direct, :delete_data, @example_graph)
+      mock_update_data_request(:direct, :delete_data, @example_graph)
       assert SPARQL.Client.delete_data(@example_graph, @example_endpoint) == :ok
 
-      mock_update_request(:direct, :delete_data, @example_dataset)
+      mock_update_data_request(:direct, :delete_data, @example_dataset)
       assert SPARQL.Client.delete_data(@example_dataset, @example_endpoint) == :ok
     end
 
     test "URL-encoded POST" do
-      mock_update_request(:url_encoded, :delete_data, @example_description)
+      mock_update_data_request(:url_encoded, :delete_data, @example_description)
 
       assert SPARQL.Client.delete_data(@example_description, @example_endpoint,
                request_method: :url_encoded
              ) == :ok
 
-      mock_update_request(:url_encoded, :delete_data, @example_graph)
+      mock_update_data_request(:url_encoded, :delete_data, @example_graph)
 
       assert SPARQL.Client.delete_data(@example_graph, @example_endpoint,
                request_method: :url_encoded
              ) == :ok
 
-      mock_update_request(:url_encoded, :delete_data, @example_dataset)
+      mock_update_data_request(:url_encoded, :delete_data, @example_dataset)
 
       assert SPARQL.Client.delete_data(@example_dataset, @example_endpoint,
                request_method: :url_encoded
@@ -94,12 +94,12 @@ defmodule SPARQL.Client.UpdateTest do
 
     test "with passing an update string directly in raw-mode" do
       {:ok, update} = Update.Builder.update_data(:delete_data, @example_graph)
-      mock_update_request(:direct, :delete_data, @example_graph)
+      mock_update_data_request(:direct, :delete_data, @example_graph)
       assert SPARQL.Client.delete_data(update, @example_endpoint, raw_mode: true) == :ok
 
       {:ok, update} = Update.Builder.update_data(:delete_data, @example_description)
 
-      mock_update_request(:url_encoded, :delete_data, @example_description)
+      mock_update_data_request(:url_encoded, :delete_data, @example_description)
 
       assert SPARQL.Client.delete_data(update, @example_endpoint,
                request_method: :url_encoded,
@@ -109,10 +109,45 @@ defmodule SPARQL.Client.UpdateTest do
     end
   end
 
-  def mock_update_request(request_method, update_form, data, opts \\ [])
+  describe "insert/3" do
+    test "with passing an update string directly in raw-mode" do
+      update = """
+      PREFIX dc:  <http://purl.org/dc/elements/1.1/>
+      PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
-  def mock_update_request(:direct, update_form, data, opts) do
-    {:ok, update} = Update.Builder.update_data(update_form, data, opts)
+      INSERT
+      { GRAPH <http://example/bookStore2> { ?book ?p ?v } }
+      WHERE
+      { GRAPH  <http://example/bookStore>
+       { ?book dc:date ?date .
+         FILTER ( ?date > "1970-01-01T00:00:00-02:00"^^xsd:dateTime )
+         ?book ?p ?v
+      } }
+      """
+
+      mock_update_request(:direct, update)
+      assert SPARQL.Client.insert(update, @example_endpoint, raw_mode: true) == :ok
+    end
+  end
+
+  describe "delete/3" do
+    test "with passing an update string directly in raw-mode" do
+      update = """
+      PREFIX foaf:  <http://xmlns.com/foaf/0.1/>
+
+      WITH <http://example/addresses>
+      DELETE { ?person ?property ?value }
+      WHERE { ?person ?property ?value ; foaf:givenName 'Fred' }
+      """
+
+      mock_update_request(:direct, update)
+      assert SPARQL.Client.delete(update, @example_endpoint, raw_mode: true) == :ok
+    end
+  end
+
+  def mock_update_request(request_method, update, opts \\ [])
+
+  def mock_update_request(:direct, update, opts) do
     endpoint = Keyword.get(opts, :endpoint, @example_endpoint)
 
     Tesla.Mock.mock(fn
@@ -126,8 +161,7 @@ defmodule SPARQL.Client.UpdateTest do
     end)
   end
 
-  def mock_update_request(:url_encoded, update_form, data, opts) do
-    {:ok, update} = Update.Builder.update_data(update_form, data, opts)
+  def mock_update_request(:url_encoded, update, opts) do
     update_query_param = URI.encode_query(%{update: update})
     endpoint = Keyword.get(opts, :endpoint, @example_endpoint)
 
@@ -140,5 +174,10 @@ defmodule SPARQL.Client.UpdateTest do
           body: Keyword.get(opts, :response, "")
         }
     end)
+  end
+
+  def mock_update_data_request(request_method, update_form, data, opts \\ []) do
+    {:ok, update} = Update.Builder.update_data(update_form, data, opts)
+    mock_update_request(request_method, update, opts)
   end
 end
