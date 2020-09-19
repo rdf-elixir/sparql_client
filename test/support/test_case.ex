@@ -11,9 +11,9 @@ defmodule SPARQL.Client.Test.Case do
   using do
     quote do
       import RDF.Sigils
-
       import unquote(__MODULE__)
 
+      alias RDF.IRI
       alias unquote(__MODULE__).EX
 
       @compile {:no_warn_undefined, SPARQL.Client.Test.Case.EX}

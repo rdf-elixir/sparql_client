@@ -120,4 +120,40 @@ defmodule SPARQL.Client.Update.BuilderTest do
               """} = Builder.update_data(:insert_data, @example_description, prefixes: %{ex: EX})
     end
   end
+
+  describe "clear/2" do
+    test "with :default as graph" do
+      assert Builder.clear(:default, false) == {:ok, "CLEAR DEFAULT"}
+    end
+
+    test "with :named as graph" do
+      assert Builder.clear(:named, false) == {:ok, "CLEAR NAMED"}
+    end
+
+    test "with :all as graph" do
+      assert Builder.clear(:all, false) == {:ok, "CLEAR ALL"}
+    end
+
+    test "with IRI string as graph" do
+      assert Builder.clear(IRI.to_string(EX.Graph), false) ==
+               {:ok, "CLEAR GRAPH <#{IRI.to_string(EX.Graph)}>"}
+    end
+
+    test "with RDF.IRI as graph" do
+      assert Builder.clear(RDF.iri(EX.Graph), false) ==
+               {:ok, "CLEAR GRAPH <#{IRI.to_string(EX.Graph)}>"}
+    end
+
+    test "with vocabulary term as graph" do
+      assert Builder.clear(EX.Graph, false) ==
+               {:ok, "CLEAR GRAPH <#{IRI.to_string(EX.Graph)}>"}
+    end
+
+    test "with silent flag" do
+      assert Builder.clear(:default, true) == {:ok, "CLEAR SILENT DEFAULT"}
+
+      assert Builder.clear(EX.Graph, true) ==
+               {:ok, "CLEAR SILENT GRAPH <#{IRI.to_string(EX.Graph)}>"}
+    end
+  end
 end

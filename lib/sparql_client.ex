@@ -309,6 +309,24 @@ defmodule SPARQL.Client do
     unvalidated_update(form, update, endpoint, opts)
   end
 
+  def clear(endpoint, opts) when is_list(opts) do
+    {graph, opts} = Keyword.pop!(opts, :graph)
+    {silent, opts} = Keyword.pop(opts, :silent)
+
+    with {:ok, update_string} <- Client.Update.Builder.clear(graph, silent) do
+      do_update(:clear, update_string, endpoint, opts)
+    end
+  end
+
+  def clear(update, endpoint, opts) do
+    if Keyword.has_key?(opts, :graph) or Keyword.has_key?(opts, :silent) do
+      raise ArgumentError,
+            "clear/3 does not support the :graph and :silent options; use clear/2 instead"
+    end
+
+    update_data(:clear, update, endpoint, opts)
+  end
+
   defp unvalidated_update(form, update, endpoint, opts) do
     unless raw_mode?(opts) do
       raise """

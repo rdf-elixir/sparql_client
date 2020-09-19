@@ -166,6 +166,39 @@ defmodule SPARQL.Client.UpdateTest do
     end
   end
 
+  describe "clear/2" do
+    test "with :graph option" do
+      update = "CLEAR GRAPH <http://example.com/sparql-client-test#Graph>"
+
+      mock_update_request(:direct, update)
+      assert SPARQL.Client.clear(@example_endpoint, graph: EX.Graph) == :ok
+    end
+
+    test "with :silent option" do
+      mock_update_request(:direct, "CLEAR SILENT DEFAULT")
+      assert SPARQL.Client.clear(@example_endpoint, graph: :default, silent: true) == :ok
+    end
+  end
+
+  describe "clear/3" do
+    test "with :graph or :silent option and a query" do
+      assert_raise ArgumentError,
+                   "clear/3 does not support the :graph and :silent options; use clear/2 instead",
+                   fn -> SPARQL.Client.clear("CLEAR ALL", @example_endpoint, graph: :default) end
+
+      assert_raise ArgumentError,
+                   "clear/3 does not support the :graph and :silent options; use clear/2 instead",
+                   fn -> SPARQL.Client.clear("CLEAR ALL", @example_endpoint, silent: true) end
+    end
+
+    test "with passing an update string directly in raw-mode" do
+      update = "CLEAR GRAPH <http://example.com/Graph>"
+
+      mock_update_request(:direct, update)
+      assert SPARQL.Client.clear(update, @example_endpoint, raw_mode: true) == :ok
+    end
+  end
+
   def mock_update_request(request_method, update, opts \\ [])
 
   def mock_update_request(:direct, update, opts) do

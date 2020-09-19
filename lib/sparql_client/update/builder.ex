@@ -2,7 +2,8 @@ defmodule SPARQL.Client.Update.Builder do
   @moduledoc false
 
   import SPARQL.Client.Utils
-  alias RDF.Turtle
+  import RDF.Guards
+  alias RDF.{IRI, Turtle}
 
   def update_data(update_form, data, opts \\ []) do
     with {:ok, prologue} <-
@@ -47,4 +48,20 @@ defmodule SPARQL.Client.Update.Builder do
 
   defp sparql_update_data_keyword(:insert_data), do: "INSERT"
   defp sparql_update_data_keyword(:delete_data), do: "DELETE"
+
+  def clear(graph_iri, silent) do
+    {:ok, "CLEAR " <> clear_silent_fragment(silent) <> clear_graph_fragment(graph_iri)}
+  end
+
+  defp clear_graph_fragment(iri) when is_binary(iri), do: "GRAPH <#{iri}>"
+  defp clear_graph_fragment(:default), do: "DEFAULT"
+  defp clear_graph_fragment(:named), do: "NAMED"
+  defp clear_graph_fragment(:all), do: "ALL"
+  defp clear_graph_fragment(%IRI{} = iri), do: iri |> IRI.to_string() |> clear_graph_fragment()
+
+  defp clear_graph_fragment(term) when maybe_ns_term(term),
+    do: term |> IRI.to_string() |> clear_graph_fragment()
+
+  defp clear_silent_fragment(true), do: "SILENT "
+  defp clear_silent_fragment(_), do: ""
 end
