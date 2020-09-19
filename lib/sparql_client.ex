@@ -278,6 +278,10 @@ defmodule SPARQL.Client do
                              ]
                            ]
 
+  def update(update, endpoint, opts \\ []) do
+    unvalidated_update(nil, update, endpoint, opts)
+  end
+
   def insert(update, endpoint, opts \\ []) do
     unvalidated_update(:insert, update, endpoint, opts)
   end

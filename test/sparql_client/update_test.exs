@@ -11,6 +11,63 @@ defmodule SPARQL.Client.UpdateTest do
   @example_dataset RDF.Dataset.new(@example_description)
                    |> RDF.Dataset.add({EX.Other, EX.p(), "string", EX.NamedGraph})
 
+  describe "update/3" do
+    test "with passing an update string directly in raw-mode" do
+      update = """
+      PREFIX dc:  <http://purl.org/dc/elements/1.1/>
+      PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+      INSERT
+      { GRAPH <http://example/bookStore2> { ?book ?p ?v } }
+      WHERE
+      { GRAPH  <http://example/bookStore>
+       { ?book dc:date ?date .
+         FILTER ( ?date > "1970-01-01T00:00:00-02:00"^^xsd:dateTime )
+         ?book ?p ?v
+      } }
+      """
+
+      mock_update_request(:direct, update)
+      assert SPARQL.Client.update(update, @example_endpoint, raw_mode: true) == :ok
+    end
+  end
+
+  describe "insert/3" do
+    test "with passing an update string directly in raw-mode" do
+      update = """
+      PREFIX dc:  <http://purl.org/dc/elements/1.1/>
+      PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+      INSERT
+      { GRAPH <http://example/bookStore2> { ?book ?p ?v } }
+      WHERE
+      { GRAPH  <http://example/bookStore>
+       { ?book dc:date ?date .
+         FILTER ( ?date > "1970-01-01T00:00:00-02:00"^^xsd:dateTime )
+         ?book ?p ?v
+      } }
+      """
+
+      mock_update_request(:direct, update)
+      assert SPARQL.Client.insert(update, @example_endpoint, raw_mode: true) == :ok
+    end
+  end
+
+  describe "delete/3" do
+    test "with passing an update string directly in raw-mode" do
+      update = """
+      PREFIX foaf:  <http://xmlns.com/foaf/0.1/>
+
+      WITH <http://example/addresses>
+      DELETE { ?person ?property ?value }
+      WHERE { ?person ?property ?value ; foaf:givenName 'Fred' }
+      """
+
+      mock_update_request(:direct, update)
+      assert SPARQL.Client.delete(update, @example_endpoint, raw_mode: true) == :ok
+    end
+  end
+
   describe "insert_data/3" do
     test "direct POST" do
       mock_update_data_request(:direct, :insert_data, @example_description)
@@ -106,42 +163,6 @@ defmodule SPARQL.Client.UpdateTest do
                raw_mode: true
              ) ==
                :ok
-    end
-  end
-
-  describe "insert/3" do
-    test "with passing an update string directly in raw-mode" do
-      update = """
-      PREFIX dc:  <http://purl.org/dc/elements/1.1/>
-      PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-
-      INSERT
-      { GRAPH <http://example/bookStore2> { ?book ?p ?v } }
-      WHERE
-      { GRAPH  <http://example/bookStore>
-       { ?book dc:date ?date .
-         FILTER ( ?date > "1970-01-01T00:00:00-02:00"^^xsd:dateTime )
-         ?book ?p ?v
-      } }
-      """
-
-      mock_update_request(:direct, update)
-      assert SPARQL.Client.insert(update, @example_endpoint, raw_mode: true) == :ok
-    end
-  end
-
-  describe "delete/3" do
-    test "with passing an update string directly in raw-mode" do
-      update = """
-      PREFIX foaf:  <http://xmlns.com/foaf/0.1/>
-
-      WITH <http://example/addresses>
-      DELETE { ?person ?property ?value }
-      WHERE { ?person ?property ?value ; foaf:givenName 'Fred' }
-      """
-
-      mock_update_request(:direct, update)
-      assert SPARQL.Client.delete(update, @example_endpoint, raw_mode: true) == :ok
     end
   end
 
