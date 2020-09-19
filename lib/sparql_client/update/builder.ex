@@ -49,19 +49,26 @@ defmodule SPARQL.Client.Update.Builder do
   defp sparql_update_data_keyword(:insert_data), do: "INSERT"
   defp sparql_update_data_keyword(:delete_data), do: "DELETE"
 
-  def clear(graph_iri, silent) do
-    {:ok, "CLEAR " <> clear_silent_fragment(silent) <> clear_graph_fragment(graph_iri)}
+  def load(from, to, silent) do
+    {:ok, "LOAD " <> silent_fragment(silent) <> iri_ref(from) <> into_graph_fragment(to)}
   end
 
-  defp clear_graph_fragment(iri) when is_binary(iri), do: "GRAPH <#{iri}>"
+  def clear(graph_iri, silent) do
+    {:ok, "CLEAR " <> silent_fragment(silent) <> clear_graph_fragment(graph_iri)}
+  end
+
+  defp into_graph_fragment(nil), do: ""
+  defp into_graph_fragment(iri), do: " INTO GRAPH #{iri_ref(iri)}"
+
   defp clear_graph_fragment(:default), do: "DEFAULT"
   defp clear_graph_fragment(:named), do: "NAMED"
   defp clear_graph_fragment(:all), do: "ALL"
-  defp clear_graph_fragment(%IRI{} = iri), do: iri |> IRI.to_string() |> clear_graph_fragment()
+  defp clear_graph_fragment(iri), do: "GRAPH #{iri_ref(iri)}"
 
-  defp clear_graph_fragment(term) when maybe_ns_term(term),
-    do: term |> IRI.to_string() |> clear_graph_fragment()
+  defp silent_fragment(true), do: "SILENT "
+  defp silent_fragment(_), do: ""
 
-  defp clear_silent_fragment(true), do: "SILENT "
-  defp clear_silent_fragment(_), do: ""
+  defp iri_ref(iri) when is_binary(iri), do: "<#{iri}>"
+  defp iri_ref(%IRI{} = iri), do: iri |> IRI.to_string() |> iri_ref()
+  defp iri_ref(term) when maybe_ns_term(term), do: term |> IRI.to_string() |> iri_ref()
 end

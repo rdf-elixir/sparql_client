@@ -121,6 +121,40 @@ defmodule SPARQL.Client.Update.BuilderTest do
     end
   end
 
+  describe "load/2" do
+    test "from IRI in string" do
+      assert Builder.load(IRI.to_string(EX.Resource), nil, false) ==
+               {:ok, "LOAD <#{IRI.to_string(EX.Resource)}>"}
+    end
+
+    test "from RDF.IRI" do
+      assert Builder.load(RDF.iri(EX.Resource), nil, false) ==
+               {:ok, "LOAD <#{IRI.to_string(EX.Resource)}>"}
+    end
+
+    test "from IRI as vocabulary term" do
+      assert Builder.load(EX.Resource, nil, false) ==
+               {:ok, "LOAD <#{IRI.to_string(EX.Resource)}>"}
+    end
+
+    test "into graph" do
+      assert Builder.load(EX.Resource, EX.Graph, false) ==
+               {:ok,
+                "LOAD <#{IRI.to_string(EX.Resource)}> INTO GRAPH <#{IRI.to_string(EX.Graph)}>"}
+    end
+
+    test "with silent flag" do
+      assert Builder.load(EX.Resource, nil, true) ==
+               {:ok, "LOAD SILENT <#{IRI.to_string(EX.Resource)}>"}
+
+      assert Builder.load(EX.Resource, EX.Graph, true) ==
+               {:ok,
+                "LOAD SILENT <#{IRI.to_string(EX.Resource)}> INTO GRAPH <#{
+                  IRI.to_string(EX.Graph)
+                }>"}
+    end
+  end
+
   describe "clear/2" do
     test "with :default as graph" do
       assert Builder.clear(:default, false) == {:ok, "CLEAR DEFAULT"}

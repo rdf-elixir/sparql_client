@@ -14,6 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 - support for `INSERT DATA` and `DELETE DATA` updates with `SPARQL.Client.insert_data/3` and 
   `SPARQL.Client.delete_data/3` which are able to handle all types RDF.ex datastructures 
   (`RDF.Description`, `RDF.Graph`, `RDF.Dataset`) directly 
+- support for `LOAD` updates with `SPARQL.Client.load/2` 
 - support for `CLEAR` updates with `SPARQL.Client.clear/2` 
 - the defaults for several options can now be configured globally via the application  
   environment; please refer to the `SPARQL.Client` documentation for more information

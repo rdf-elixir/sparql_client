@@ -166,6 +166,49 @@ defmodule SPARQL.Client.UpdateTest do
     end
   end
 
+  describe "load/2" do
+    test "with :from option" do
+      update = "LOAD <http://example.com/sparql-client-test#Resource>"
+
+      mock_update_request(:direct, update)
+      assert SPARQL.Client.load(@example_endpoint, from: EX.Resource) == :ok
+    end
+
+    test "with :to option" do
+      update =
+        "LOAD <http://example.com/sparql-client-test#Resource> INTO GRAPH <http://example.com/sparql-client-test#Graph>"
+
+      mock_update_request(:direct, update)
+      assert SPARQL.Client.load(@example_endpoint, from: EX.Resource, to: EX.Graph) == :ok
+    end
+
+    test "with :silent option" do
+      mock_update_request(:direct, "LOAD SILENT <http://example.com/sparql-client-test#Resource>")
+      assert SPARQL.Client.load(@example_endpoint, from: EX.Resource, silent: true) == :ok
+    end
+  end
+
+  describe "load/3" do
+    test "with :from, :to or :silent option and a query" do
+      assert_raise ArgumentError,
+                   "load/3 does not support the :from, :to and :silent options; use load/2 instead",
+                   fn ->
+                     SPARQL.Client.load("LOAD <foo>", @example_endpoint, from: EX.Resource)
+                   end
+
+      assert_raise ArgumentError,
+                   "load/3 does not support the :from, :to and :silent options; use load/2 instead",
+                   fn -> SPARQL.Client.load("CLEAR ALL", @example_endpoint, silent: true) end
+    end
+
+    test "with passing an update string directly in raw-mode" do
+      update = "LOAD <http://example.com/Resource>"
+
+      mock_update_request(:direct, update)
+      assert SPARQL.Client.load(update, @example_endpoint, raw_mode: true) == :ok
+    end
+  end
+
   describe "clear/2" do
     test "with :graph option" do
       update = "CLEAR GRAPH <http://example.com/sparql-client-test#Graph>"
