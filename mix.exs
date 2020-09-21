@@ -9,7 +9,7 @@ defmodule SPARQL.Client.Mixfile do
     [
       app: :sparql_client,
       version: @version,
-      elixir: "~> 1.6",
+      elixir: "~> 1.8",
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -78,15 +78,16 @@ defmodule SPARQL.Client.Mixfile do
 
   defp deps do
     [
-      {:sparql, "~> 0.3"},
-      {:rdf, "~> 0.6"},
+      {:sparql, "~> 0.3.6"},
+      {:rdf, "~> 0.8.2"},
       {:json_ld, "~> 0.3"},
       {:tesla, "~> 1.2"},
       {:content_type, "~> 0.1"},
       {:nimble_options, "~> 0.3"},
 
       # Development
-      {:hackney, "~> 1.15", only: [:dev, :test]},
+      # We now have Hackney as a hard dependency through JSON-LD.ex; we should re-enable this once we got rid of this hard-dependency
+      # {:hackney, "~> 1.15", only: [:dev, :test]},
       {:gun, "~> 1.3", only: [:dev, :test]},
       {:mint, "~> 1.1", only: [:dev, :test]},
       {:castore, "~> 0.1.0", only: [:dev, :test]},
