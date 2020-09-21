@@ -242,6 +242,182 @@ defmodule SPARQL.Client.UpdateTest do
     end
   end
 
+  describe "drop/2" do
+    test "with :graph option" do
+      update = "DROP GRAPH <http://example.com/sparql-client-test#Graph>"
+
+      mock_update_request(:direct, update)
+      assert SPARQL.Client.drop(@example_endpoint, graph: EX.Graph) == :ok
+    end
+
+    test "with :silent option" do
+      mock_update_request(:direct, "DROP SILENT DEFAULT")
+      assert SPARQL.Client.drop(@example_endpoint, graph: :default, silent: true) == :ok
+    end
+  end
+
+  describe "drop/3" do
+    test "with :graph or :silent option and a query" do
+      assert_raise ArgumentError,
+                   "drop/3 does not support the :graph and :silent options; use drop/2 instead",
+                   fn -> SPARQL.Client.drop("DROP ALL", @example_endpoint, graph: :default) end
+
+      assert_raise ArgumentError,
+                   "drop/3 does not support the :graph and :silent options; use drop/2 instead",
+                   fn -> SPARQL.Client.drop("DROP ALL", @example_endpoint, silent: true) end
+    end
+
+    test "with passing an update string directly in raw-mode" do
+      update = "DROP GRAPH <http://example.com/Graph>"
+
+      mock_update_request(:direct, update)
+      assert SPARQL.Client.drop(update, @example_endpoint, raw_mode: true) == :ok
+    end
+  end
+
+  describe "create/2" do
+    test "with :graph option" do
+      update = "CREATE GRAPH <http://example.com/sparql-client-test#Graph>"
+
+      mock_update_request(:direct, update)
+      assert SPARQL.Client.create(@example_endpoint, graph: EX.Graph) == :ok
+    end
+
+    test "with :silent option" do
+      mock_update_request(
+        :direct,
+        "CREATE SILENT GRAPH <http://example.com/sparql-client-test#Graph>"
+      )
+
+      assert SPARQL.Client.create(@example_endpoint, graph: EX.Graph, silent: true) == :ok
+    end
+  end
+
+  describe "create/3" do
+    test "with :graph or :silent option and a query" do
+      assert_raise ArgumentError,
+                   "create/3 does not support the :graph and :silent options; use create/2 instead",
+                   fn -> SPARQL.Client.create("CREATE", @example_endpoint, graph: :default) end
+
+      assert_raise ArgumentError,
+                   "create/3 does not support the :graph and :silent options; use create/2 instead",
+                   fn -> SPARQL.Client.create("CREATE", @example_endpoint, silent: true) end
+    end
+
+    test "with passing an update string directly in raw-mode" do
+      update = "CREATE GRAPH <http://example.com/Graph>"
+
+      mock_update_request(:direct, update)
+      assert SPARQL.Client.create(update, @example_endpoint, raw_mode: true) == :ok
+    end
+  end
+
+  describe "copy/2" do
+    test "with :from and :to option" do
+      update = "COPY GRAPH <http://example.com/sparql-client-test#Graph1> TO DEFAULT"
+
+      mock_update_request(:direct, update)
+      assert SPARQL.Client.copy(@example_endpoint, from: EX.Graph1, to: :default) == :ok
+    end
+
+    test "with :silent option" do
+      update = "COPY SILENT DEFAULT TO GRAPH <http://example.com/sparql-client-test#Graph>"
+      mock_update_request(:direct, update)
+
+      assert SPARQL.Client.copy(@example_endpoint, from: :default, to: EX.Graph, silent: true) ==
+               :ok
+    end
+  end
+
+  describe "copy/3" do
+    test "with :from, :to or :silent option and a query" do
+      assert_raise ArgumentError,
+                   "copy/3 does not support the :from, :to and :silent options; use copy/2 instead",
+                   fn ->
+                     SPARQL.Client.copy("COPY", @example_endpoint, from: EX.Graph1, to: EX.Graph2)
+                   end
+
+      assert_raise ArgumentError,
+                   "copy/3 does not support the :from, :to and :silent options; use copy/2 instead",
+                   fn -> SPARQL.Client.copy("COPY", @example_endpoint, silent: true) end
+    end
+
+    test "with passing an update string directly in raw-mode" do
+      update = "COPY GRAPH <http://example.com/sparql-client-test#Graph1> TO DEFAULT"
+
+      mock_update_request(:direct, update)
+      assert SPARQL.Client.copy(update, @example_endpoint, raw_mode: true) == :ok
+    end
+  end
+
+  describe "move/2" do
+    test "with :from and :to option" do
+      update = "MOVE GRAPH <http://example.com/sparql-client-test#Graph1> TO DEFAULT"
+
+      mock_update_request(:direct, update)
+      assert SPARQL.Client.move(@example_endpoint, from: EX.Graph1, to: :default) == :ok
+    end
+
+    test "with :silent option" do
+      update = "MOVE SILENT DEFAULT TO GRAPH <http://example.com/sparql-client-test#Graph>"
+      mock_update_request(:direct, update)
+
+      assert SPARQL.Client.move(@example_endpoint, from: :default, to: EX.Graph, silent: true) ==
+               :ok
+    end
+  end
+
+  describe "move/3" do
+    test "with :from, :to or :silent option and a query" do
+      assert_raise ArgumentError,
+                   "move/3 does not support the :from, :to and :silent options; use move/2 instead",
+                   fn ->
+                     SPARQL.Client.move("MOVE", @example_endpoint, from: EX.Graph1, to: EX.Graph2)
+                   end
+    end
+
+    test "with passing an update string directly in raw-mode" do
+      update = "MOVE GRAPH <http://example.com/sparql-client-test#Graph1> TO DEFAULT"
+
+      mock_update_request(:direct, update)
+      assert SPARQL.Client.move(update, @example_endpoint, raw_mode: true) == :ok
+    end
+  end
+
+  describe "add/2" do
+    test "with :from and :to option" do
+      update = "ADD GRAPH <http://example.com/sparql-client-test#Graph1> TO DEFAULT"
+
+      mock_update_request(:direct, update)
+      assert SPARQL.Client.add(@example_endpoint, from: EX.Graph1, to: :default) == :ok
+    end
+
+    test "with :silent option" do
+      update = "ADD SILENT DEFAULT TO GRAPH <http://example.com/sparql-client-test#Graph>"
+      mock_update_request(:direct, update)
+
+      assert SPARQL.Client.add(@example_endpoint, from: :default, to: EX.Graph, silent: true) ==
+               :ok
+    end
+  end
+
+  describe "add/3" do
+    test "with :from, :to or :silent option and a query" do
+      assert_raise ArgumentError,
+                   "add/3 does not support the :from, :to and :silent options; use add/2 instead",
+                   fn ->
+                     SPARQL.Client.add("ADD", @example_endpoint, from: EX.Graph1, to: EX.Graph2)
+                   end
+    end
+
+    test "with passing an update string directly in raw-mode" do
+      update = "ADD GRAPH <http://example.com/sparql-client-test#Graph1> TO DEFAULT"
+
+      mock_update_request(:direct, update)
+      assert SPARQL.Client.add(update, @example_endpoint, raw_mode: true) == :ok
+    end
+  end
+
   def mock_update_request(request_method, update, opts \\ [])
 
   def mock_update_request(:direct, update, opts) do

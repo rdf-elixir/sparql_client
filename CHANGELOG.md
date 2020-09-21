@@ -16,6 +16,12 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
   (`RDF.Description`, `RDF.Graph`, `RDF.Dataset`) directly 
 - support for `LOAD` updates with `SPARQL.Client.load/2` 
 - support for `CLEAR` updates with `SPARQL.Client.clear/2` 
+- support for all graph management operations with 
+  - `SPARQL.Client.create/2` 
+  - `SPARQL.Client.drop/2` 
+  - `SPARQL.Client.copy/2` 
+  - `SPARQL.Client.move/2` 
+  - `SPARQL.Client.add/2` 
 - the defaults for several options can now be configured globally via the application  
   environment; please refer to the `SPARQL.Client` documentation for more information
 

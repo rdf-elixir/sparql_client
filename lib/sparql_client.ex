@@ -329,23 +329,53 @@ defmodule SPARQL.Client do
     update_data(:load, update, endpoint, opts)
   end
 
-  def clear(endpoint, opts) when is_list(opts) do
-    {graph, opts} = Keyword.pop!(opts, :graph)
-    {silent, opts} = Keyword.pop(opts, :silent)
+  ~w[create clear drop]a
+  |> Enum.each(fn form ->
+    def unquote(form)(endpoint, opts) when is_list(opts) do
+      {graph, opts} = Keyword.pop!(opts, :graph)
+      {silent, opts} = Keyword.pop(opts, :silent)
 
-    with {:ok, update_string} <- Client.Update.Builder.clear(graph, silent) do
-      do_update(:clear, update_string, endpoint, opts)
-    end
-  end
-
-  def clear(update, endpoint, opts) do
-    if Keyword.has_key?(opts, :graph) or Keyword.has_key?(opts, :silent) do
-      raise ArgumentError,
-            "clear/3 does not support the :graph and :silent options; use clear/2 instead"
+      with {:ok, update_string} <- apply(Client.Update.Builder, unquote(form), [graph, silent]) do
+        do_update(unquote(form), update_string, endpoint, opts)
+      end
     end
 
-    update_data(:clear, update, endpoint, opts)
-  end
+    def unquote(form)(update, endpoint, opts) do
+      if Keyword.has_key?(opts, :graph) or Keyword.has_key?(opts, :silent) do
+        raise ArgumentError,
+              "#{unquote(form)}/3 does not support the :graph and :silent options; use #{
+                unquote(form)
+              }/2 instead"
+      end
+
+      update_data(unquote(form), update, endpoint, opts)
+    end
+  end)
+
+  ~w[copy move add]a
+  |> Enum.each(fn form ->
+    def unquote(form)(endpoint, opts) when is_list(opts) do
+      {from, opts} = Keyword.pop!(opts, :from)
+      {to, opts} = Keyword.pop!(opts, :to)
+      {silent, opts} = Keyword.pop(opts, :silent)
+
+      with {:ok, update_string} <- apply(Client.Update.Builder, unquote(form), [from, to, silent]) do
+        do_update(unquote(form), update_string, endpoint, opts)
+      end
+    end
+
+    def unquote(form)(update, endpoint, opts) do
+      if Keyword.has_key?(opts, :from) or Keyword.has_key?(opts, :to) or
+           Keyword.has_key?(opts, :silent) do
+        raise ArgumentError,
+              "#{unquote(form)}/3 does not support the :from, :to and :silent options; use #{
+                unquote(form)
+              }/2 instead"
+      end
+
+      update_data(unquote(form), update, endpoint, opts)
+    end
+  end)
 
   defp unvalidated_update(form, update, endpoint, opts) do
     unless raw_mode?(opts) do

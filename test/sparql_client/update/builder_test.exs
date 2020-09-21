@@ -121,7 +121,7 @@ defmodule SPARQL.Client.Update.BuilderTest do
     end
   end
 
-  describe "load/2" do
+  describe "load/3" do
     test "from IRI in string" do
       assert Builder.load(IRI.to_string(EX.Resource), nil, false) ==
                {:ok, "LOAD <#{IRI.to_string(EX.Resource)}>"}
@@ -188,6 +188,122 @@ defmodule SPARQL.Client.Update.BuilderTest do
 
       assert Builder.clear(EX.Graph, true) ==
                {:ok, "CLEAR SILENT GRAPH <#{IRI.to_string(EX.Graph)}>"}
+    end
+  end
+
+  describe "drop/2" do
+    test "with :default as graph" do
+      assert Builder.drop(:default, false) == {:ok, "DROP DEFAULT"}
+    end
+
+    test "with :named as graph" do
+      assert Builder.drop(:named, false) == {:ok, "DROP NAMED"}
+    end
+
+    test "with :all as graph" do
+      assert Builder.drop(:all, false) == {:ok, "DROP ALL"}
+    end
+
+    test "with IRI string as graph" do
+      assert Builder.drop(IRI.to_string(EX.Graph), false) ==
+               {:ok, "DROP GRAPH <#{IRI.to_string(EX.Graph)}>"}
+    end
+
+    test "with RDF.IRI as graph" do
+      assert Builder.drop(RDF.iri(EX.Graph), false) ==
+               {:ok, "DROP GRAPH <#{IRI.to_string(EX.Graph)}>"}
+    end
+
+    test "with vocabulary term as graph" do
+      assert Builder.drop(EX.Graph, false) ==
+               {:ok, "DROP GRAPH <#{IRI.to_string(EX.Graph)}>"}
+    end
+
+    test "with silent flag" do
+      assert Builder.drop(:default, true) == {:ok, "DROP SILENT DEFAULT"}
+
+      assert Builder.drop(EX.Graph, true) ==
+               {:ok, "DROP SILENT GRAPH <#{IRI.to_string(EX.Graph)}>"}
+    end
+  end
+
+  describe "create/2" do
+    test "without silent flag" do
+      assert Builder.create(EX.Graph, false) == {:ok, "CREATE GRAPH <#{IRI.to_string(EX.Graph)}>"}
+    end
+
+    test "with silent flag" do
+      assert Builder.create(EX.Graph, true) ==
+               {:ok, "CREATE SILENT GRAPH <#{IRI.to_string(EX.Graph)}>"}
+    end
+  end
+
+  describe "copy/3" do
+    test "with graph names as strings" do
+      assert Builder.copy(IRI.to_string(EX.Graph1), IRI.to_string(EX.Graph2), false) ==
+               {:ok,
+                "COPY GRAPH <#{IRI.to_string(EX.Graph1)}> TO GRAPH <#{IRI.to_string(EX.Graph2)}>"}
+    end
+
+    test "with graph names as RDF.IRIs" do
+      assert Builder.copy(RDF.iri(EX.Graph1), RDF.iri(EX.Graph2), false) ==
+               {:ok,
+                "COPY GRAPH <#{IRI.to_string(EX.Graph1)}> TO GRAPH <#{IRI.to_string(EX.Graph2)}>"}
+    end
+
+    test "with graph names as vocabulary terms" do
+      assert Builder.copy(EX.Graph1, EX.Graph2, false) ==
+               {:ok,
+                "COPY GRAPH <#{IRI.to_string(EX.Graph1)}> TO GRAPH <#{IRI.to_string(EX.Graph2)}>"}
+    end
+
+    test "with default graph" do
+      assert Builder.copy(:default, EX.Graph, false) ==
+               {:ok, "COPY DEFAULT TO GRAPH <#{IRI.to_string(EX.Graph)}>"}
+
+      assert Builder.copy(EX.Graph, :default, false) ==
+               {:ok, "COPY GRAPH <#{IRI.to_string(EX.Graph)}> TO DEFAULT"}
+    end
+
+    test "with silent flag" do
+      assert Builder.copy(EX.Graph, :default, true) ==
+               {:ok, "COPY SILENT GRAPH <#{IRI.to_string(EX.Graph)}> TO DEFAULT"}
+    end
+  end
+
+  describe "move/3" do
+    test "with graph names" do
+      assert Builder.move(EX.Graph1, IRI.to_string(EX.Graph2), false) ==
+               {:ok,
+                "MOVE GRAPH <#{IRI.to_string(EX.Graph1)}> TO GRAPH <#{IRI.to_string(EX.Graph2)}>"}
+    end
+
+    test "with default graph" do
+      assert Builder.move(:default, EX.Graph, false) ==
+               {:ok, "MOVE DEFAULT TO GRAPH <#{IRI.to_string(EX.Graph)}>"}
+    end
+
+    test "with silent flag" do
+      assert Builder.move(EX.Graph, :default, true) ==
+               {:ok, "MOVE SILENT GRAPH <#{IRI.to_string(EX.Graph)}> TO DEFAULT"}
+    end
+  end
+
+  describe "add/3" do
+    test "with graph names" do
+      assert Builder.add(EX.Graph1, IRI.to_string(EX.Graph2), false) ==
+               {:ok,
+                "ADD GRAPH <#{IRI.to_string(EX.Graph1)}> TO GRAPH <#{IRI.to_string(EX.Graph2)}>"}
+    end
+
+    test "with default graph" do
+      assert Builder.add(:default, EX.Graph, false) ==
+               {:ok, "ADD DEFAULT TO GRAPH <#{IRI.to_string(EX.Graph)}>"}
+    end
+
+    test "with silent flag" do
+      assert Builder.add(EX.Graph, :default, true) ==
+               {:ok, "ADD SILENT GRAPH <#{IRI.to_string(EX.Graph)}> TO DEFAULT"}
     end
   end
 end
