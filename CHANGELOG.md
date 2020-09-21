@@ -38,7 +38,7 @@ Elixir versions < 1.9 are no longer supported
   `SPARQL.Client.query/3` contained a typo
 
 
-[Compare v0.2.1...v0.3.0](https://github.com/rdf-elixir/sparql_client/compare/v0.2.1...v0.3.0)
+[Compare v0.2.2...v0.3.0](https://github.com/rdf-elixir/sparql_client/compare/v0.2.2...v0.3.0)
 
 
 
