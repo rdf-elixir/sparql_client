@@ -450,7 +450,7 @@ defmodule SPARQL.Client do
   See documentation of the generic `update/3` function and the [module documentation](`SPARQL.Client`) for the available options.
   """
   def load(endpoint, opts) when is_list(opts) do
-    {from, opts} = Keyword.pop!(opts, :from)
+    {from, opts} = pop_required_keyword(opts, :from)
     {to, opts} = Keyword.pop(opts, :to)
     {silent, opts} = Keyword.pop(opts, :silent)
 
@@ -501,7 +501,7 @@ defmodule SPARQL.Client do
     See documentation of the generic `update/3` function and the [module documentation](`SPARQL.Client`) for the available options.
     """
     def unquote(form)(endpoint, opts) when is_list(opts) do
-      {graph, opts} = Keyword.pop!(opts, :graph)
+      {graph, opts} = pop_required_keyword(opts, :graph)
       {silent, opts} = Keyword.pop(opts, :silent)
 
       with {:ok, update_string} <- apply(Client.Update.Builder, unquote(form), [graph, silent]) do
@@ -557,8 +557,8 @@ defmodule SPARQL.Client do
     See documentation of the generic `update/3` function and the [module documentation](`SPARQL.Client`) for the available options.
     """
     def unquote(form)(endpoint, opts) when is_list(opts) do
-      {from, opts} = Keyword.pop!(opts, :from)
-      {to, opts} = Keyword.pop!(opts, :to)
+      {from, opts} = pop_required_keyword(opts, :from)
+      {to, opts} = pop_required_keyword(opts, :to)
       {silent, opts} = Keyword.pop(opts, :silent)
 
       with {:ok, update_string} <- apply(Client.Update.Builder, unquote(form), [from, to, silent]) do
@@ -626,5 +626,12 @@ defmodule SPARQL.Client do
 
   defp raw_mode?(opts) do
     Keyword.get(opts, :raw_mode, default_raw_mode())
+  end
+
+  defp pop_required_keyword(opts, key) do
+    case Keyword.pop(opts, key) do
+      {nil, _} -> raise "missing required keyword option #{inspect(key)}"
+      result -> result
+    end
   end
 end
