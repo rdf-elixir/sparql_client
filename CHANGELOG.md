@@ -7,7 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 
 ## v0.3.0 - 2020-09-21
 
-Elixir versions < 1.8 are no longer supported
+Elixir versions < 1.9 are no longer supported
 
 ### Added
 
