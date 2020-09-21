@@ -5,7 +5,9 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 [Keep a CHANGELOG](http://keepachangelog.com).
 
 
-## Unreleased
+## v0.3.0 - 2020-09-21
+
+Elixir versions < 1.8 are no longer supported
 
 ### Added
 
@@ -36,7 +38,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
   `SPARQL.Client.query/3` contained a typo
 
 
-[Compare v0.2.1...HEAD](https://github.com/rdf-elixir/sparql_client/compare/v0.2.1...HEAD)
+[Compare v0.2.1...v0.3.0](https://github.com/rdf-elixir/sparql_client/compare/v0.2.1...v0.3.0)
 
 
 
