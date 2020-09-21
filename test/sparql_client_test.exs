@@ -1,5 +1,5 @@
 defmodule SPARQL.ClientTest do
-  use ExUnit.Case
+  use SPARQL.Client.Test.Case
 
   doctest SPARQL.Client
 end

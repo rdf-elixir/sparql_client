@@ -2,18 +2,88 @@ defmodule SPARQL.Client do
   @moduledoc """
   A SPARQL protocol client.
 
-  The [SPARQL Protocol](https://www.w3.org/TR/sparql11-protocol/) consists of
-  HTTP operations:
+  The [SPARQL Protocol](https://www.w3.org/TR/sparql11-protocol/) defines how the operations
+  specified in the SPARQL query and update specs can be requested by a client from a
+  SPARQL service via HTTP.
 
-  - a query operation for performing SPARQL 1.0 and 1.1 Query Language queries
-  - an update operation for performing SPARQL Update Language requests, which is
-    not fully implemented yet
+  This modules provides dedicated functions for the various forms of SPARQL query and update
+  operations and generic `query/3` and `update/3` for the query and update operations.
 
-  # Configuration
+  For a general introduction you may refer to the guides on the [homepage](https://rdf-elixir.dev).
 
-  Several default values for options of the operations can be configured via the
+
+  ## Raw-mode
+
+  The query functions can be called with a `SPARQL.Query` struct or a SPARQL query as a raw string.
+  By default, a SPARQL query string will be parsed into a `SPARQL.Query` struct for validation
+  purposes before the string is send via an HTTP request to the SPARQL protocol service endpoint.
+  This parsing step can be omitted by setting `:raw_mode` option to `true` on the dedicated
+  functions for the various SPARQL operation forms.
+
+      "SELECT * { ?s ?p ?o .}"
+      |> SPARQL.Client.select("http://example.com/sparql", raw_mode: true)
+
+  On the generic `SPARQL.Client.query/3` this raw-mode is not supported, since the parsing is
+  needed there to determine the query form which determines which result to expect.
+
+  For SPARQL update operations the picture is a little different. The SPARQL.ex package doesn't
+  provide parsing of SPARQL updates (yet), but except for `INSERT` and `DELETE` updates this isn't
+  actually needed, since all elements of the updates can be provided directly to the respective
+  functions for the update forms, which will generate valid SPARQL updates.
+
+        RDF.Graph.new({EX.S, EX.p, EX.O})
+        |> SPARQL.Client.insert_data("http://example.com/sparql")
+
+  You can still provide hand-written update strings to these functions, but due to the lack of
+  SPARQL update parsing the raw-mode is mandatory then. For the `INSERT` and `DELETE` update
+  forms this the only way to request them for now.
+
+        \"""
+        PREFIX dc:  <http://purl.org/dc/elements/1.1/>
+        PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+        INSERT
+        { GRAPH <http://example/bookStore2> { ?book ?p ?v } }
+        WHERE
+        { GRAPH  <http://example/bookStore>
+             { ?book dc:date ?date .
+               FILTER ( ?date > "1970-01-01T00:00:00-02:00"^^xsd:dateTime )
+               ?book ?p ?v
+        } }
+        \"""
+        |> SPARQL.Client.insert("http://example.com/sparql", raw_mode: true)
+
+
+  ## Specifying custom headers
+
+  Custom headers for the HTTP request to the SPARQL service can be specified with the `headers`
+  option and a map.
+
+      SPARQL.Client.query(query, "http://some.company.org/private/sparql",
+        headers: %{"Authorization" => "Basic XXX=="})
+
+
+  ## Specifying Tesla adapter specific options
+
+  The keyword list provided under the  `request_opts` options, will be passed as the `opts` option
+  value to the `Tesla.request/2` function.
+  This allows for example to set the timeout value for the Hackney adapter like this:
+
+  ```elixir
+  SPARQL.Client.query(query, "http://example.com/sparql",
+    request_opts: [adapter: [recv_timeout: 30_000]])
+  ```
+
+
+  ## Other options
+
+  - `max_redirects`: the number of redirects to follow before the operation fails (default: `5`)
+
+
+  ## Application configuration of default values
+
+  Several default values for the options of the operations can be configured via the
   Mix application environment.
-
   Here's an example configuration showing all available configuration options:
 
       config :sparql_client,
@@ -67,7 +137,8 @@ defmodule SPARQL.Client do
     raw_mode: [
       type: :boolean,
       doc:
-        "Allows disabling of the processing of query strings, passing them through as-is to the SPARQL endpoint."
+        "Allows disabling of the processing of query strings, passing them through as-is to the SPARQL endpoint.",
+      subsection: "Raw-mode"
     ]
   ]
 
@@ -100,13 +171,18 @@ defmodule SPARQL.Client do
                           ]
 
   @doc """
-  The query operation is used to send a SPARQL query to a service endpoint and receive the results of the query.
+  Executes any form of a SPARQL query operation against a service endpoint.
 
   The query can either be given as string or as an already parsed `SPARQL.Query`.
+
+      "SELECT * WHERE { ?s ?p ?o }"
+      |> SPARQL.Client.query(query, "http://dbpedia.org/sparql")
 
       with %SPARQL.Query{} = query <- SPARQL.Query.new("SELECT * WHERE { ?s ?p ?o }") do
         SPARQL.Client.query(query, "http://dbpedia.org/sparql")
       end
+
+  For the execution of queries in raw-mode see the [module documentation](`SPARQL.Client`)
 
   The result is in the success case returned in a `:ok` tuple or in error cases in an `:error`
   tuple with an error message or in case of a non-200 response by the SPARQL service with a
@@ -114,9 +190,8 @@ defmodule SPARQL.Client do
 
   The type of the result returned depends on the query form:
 
-  - `SELECT` queries will return a `SPARQL.Query.ResultSet` struct with a list of
-    `SPARQL.Query.Result` structs in the `results` field.
-  - `ASK` queries will return a `SPARQL.Query.ResultSet` struct with the boolean
+  - `SELECT` queries will return a `SPARQL.Query.Result` struct
+  - `ASK` queries will return a `SPARQL.Query.Result` struct with the boolean
     result in the `results` field
   - `CONSTRUCT` and `DESCRIBE` queries will return an RDF data structure
 
@@ -138,15 +213,6 @@ defmodule SPARQL.Client do
 
       SPARQL.Client.query(query, "http://dbpedia.org/sparql",
         request_method: :get, protocol_version: "1.1")
-
-
-  ## Specifying custom headers
-
-  You can specify custom headers for the HTTP request to the SPARQL service with
-  the `headers` option and a map.
-
-      SPARQL.Client.query(query, "http://some.company.org/private/sparql",
-        headers: %{"Authorization" => "Basic XXX=="})
 
 
   ## Specifying the response format
@@ -194,24 +260,6 @@ defmodule SPARQL.Client do
           "http://www.another.example/sparql/"
         ])
 
-
-  ## Specifying Tesla adapter specific options
-
-  The keyword list provided under the  `request_opts` options, will be passed as the `opts` option
-  value to the `Tesla.request/2` function.
-  This allows for example to set the timeout value for the Hackney adapter like this:
-
-  ```elixir
-  SPARQL.Client.query(query, "http://example.com/sparql",
-    request_opts: [adapter: [recv_timeout: 30_000]])
-  ```
-
-
-  ## Other options
-
-  - `max_redirects`: the number of redirects to follow before the operation fails (default: `5`)
-
-  For a general introduction you may refer to the guides on the [homepage](https://rdf-elixir.dev).
   """
 
   def query(query, endpoint, opts \\ [])
@@ -236,6 +284,11 @@ defmodule SPARQL.Client do
 
   SPARQL.Client.Query.forms()
   |> Enum.each(fn query_form ->
+    @doc """
+    Executes a SPARQL `#{query_form |> to_string() |> String.upcase()}` query operation against a service endpoint.
+
+    See documentation of the generic `query/3` function and the [module documentation](`SPARQL.Client`) for the available options.
+    """
     def unquote(query_form)(query, endpoint, opts \\ [])
 
     def unquote(query_form)(%SPARQL.Query{form: unquote(query_form)} = query, endpoint, opts) do
@@ -278,24 +331,96 @@ defmodule SPARQL.Client do
                              ]
                            ]
 
+  @doc """
+  Executes any form of a SPARQL update operation against a service endpoint.
+
+  In case of this generic function, updates can be given only as string and executed in raw-mode
+  (see the [module documentation](`SPARQL.Client`) for a description of the raw-mode)
+
+        \"""
+        PREFIX dc:  <http://purl.org/dc/elements/1.1/>
+        PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+        INSERT
+        { GRAPH <http://example/bookStore2> { ?book ?p ?v } }
+        WHERE
+        { GRAPH  <http://example/bookStore>
+             { ?book dc:date ?date .
+               FILTER ( ?date > "1970-01-01T00:00:00-02:00"^^xsd:dateTime )
+               ?book ?p ?v
+        } }
+        \"""
+        |> SPARQL.Client.update("http://example.com/sparql", raw_mode: true)
+
+
+  The result for all updates is either `:ok` or an `:error` tuple in error cases with an error
+  message or in case of a non-2XX response by the SPARQL service with a `SPARQL.Client.HTTPError`.
+
+  ## Specifying the request method
+
+  The SPARQL 1.1 protocol spec defines [two methods](https://www.w3.org/TR/sparql11-protocol/#update-operation)
+  to perform a SPARQL update operation via HTTP, which can be specified via the
+  `request_method` option:
+
+  1. update via URL-encoded POST: by setting the options `request_method: :url_encoded`
+  2. update via POST directly: by setting the options `request_method: :direct` (default)
+
+
+  """
   def update(update, endpoint, opts \\ []) do
     unvalidated_update(nil, update, endpoint, opts)
   end
 
+  @doc """
+  Executes a SPARQL `INSERT` update operation against a service endpoint.
+
+  See documentation of the generic `update/3` function and the [module documentation](`SPARQL.Client`) for the available options.
+  """
   def insert(update, endpoint, opts \\ []) do
     unvalidated_update(:insert, update, endpoint, opts)
   end
 
+  @doc """
+  Executes a SPARQL `DELETE` update operation against a service endpoint.
+
+  See documentation of the generic `update/3` function and the [module documentation](`SPARQL.Client`) for the available options.
+  """
   def delete(update, endpoint, opts \\ []) do
     unvalidated_update(:delete, update, endpoint, opts)
   end
 
-  def insert_data(data, endpoint, opts \\ []) do
-    update_data(:insert_data, data, endpoint, opts)
+  @doc """
+  Executes a SPARQL `INSERT DATA` update operation against a service endpoint.
+
+  The `INSERT DATA` update can either be given as string (only in raw-mode; see the
+  [module documentation](`SPARQL.Client`) for more information on the raw-mode) or
+  by providing the data to be inserted directly via an RDF.ex data structure
+  (`RDF.Graph`, `RDF.Description` or `RDF.Dataset`).
+
+      RDF.Graph.new({EX.S, EX.p, EX.O})
+      |> SPARQL.Client.insert_data("http://example.com/sparql")
+
+  See documentation of the generic `update/3` function and the [module documentation](`SPARQL.Client`) for the available options.
+  """
+  def insert_data(data_or_update, endpoint, opts \\ []) do
+    update_data(:insert_data, data_or_update, endpoint, opts)
   end
 
-  def delete_data(data, endpoint, opts \\ []) do
-    update_data(:delete_data, data, endpoint, opts)
+  @doc """
+  Executes a SPARQL `DELETE DATA` update operation against a service endpoint.
+
+  The `DELETE DATA` update can either be given as string (only in raw-mode; see the
+  [module documentation](`SPARQL.Client`) for more information on the raw-mode) or
+  by providing the data to be deleted directly via an RDF.ex data structure
+  (`RDF.Graph`, `RDF.Description` or `RDF.Dataset`).
+
+      RDF.Graph.new({EX.S, EX.p, EX.O})
+      |> SPARQL.Client.delete_data("http://example.com/sparql")
+
+  See documentation of the generic `update/3` function and the [module documentation](`SPARQL.Client`) for the available options.
+  """
+  def delete_data(data_or_update, endpoint, opts \\ []) do
+    update_data(:delete_data, data_or_update, endpoint, opts)
   end
 
   defp update_data(form, %rdf{} = data, endpoint, opts)
@@ -309,6 +434,21 @@ defmodule SPARQL.Client do
     unvalidated_update(form, update, endpoint, opts)
   end
 
+  @doc """
+  Executes a SPARQL `LOAD` update operation against a service endpoint.
+
+  The URL from to be loaded must be specified with the `:from` option. The graph name
+  to which the data should be loaded can be given with the `:to` option. Both options
+  expect an URI as a value which can be given as a string, `RDF.IRI` or vocabulary namespace term.
+
+      SPARQL.Client.load("http://example.com/sparql", from: "http://example.com/Resource")
+
+      SPARQL.Client.load("http://example.com/sparql", from: EX.Resource, to: EX.Graph)
+
+  The update operation can be run in `SILENT` mode by setting the `:silent` option to `true`.
+
+  See documentation of the generic `update/3` function and the [module documentation](`SPARQL.Client`) for the available options.
+  """
   def load(endpoint, opts) when is_list(opts) do
     {from, opts} = Keyword.pop!(opts, :from)
     {to, opts} = Keyword.pop(opts, :to)
@@ -319,6 +459,19 @@ defmodule SPARQL.Client do
     end
   end
 
+  @doc """
+  Executes a SPARQL `LOAD` update operation against a service endpoint.
+
+  This version only allows execution of `LOAD` update given as string in raw-mode (see the
+  [module documentation](`SPARQL.Client`) for more information on the raw-mode).
+
+      "LOAD <http://example.com/Resource>"
+      |> SPARQL.Client.load("http://example.com/sparql", raw_mode: true)
+
+  See `load/2` for how to execute a `LOAD` update with an automatically build update string.
+
+  See documentation of the generic `update/3` function and the [module documentation](`SPARQL.Client`) for the available options.
+  """
   def load(update, endpoint, opts) do
     if Keyword.has_key?(opts, :from) or Keyword.has_key?(opts, :to) or
          Keyword.has_key?(opts, :silent) do
@@ -331,6 +484,22 @@ defmodule SPARQL.Client do
 
   ~w[create clear drop]a
   |> Enum.each(fn form ->
+    form_keyword = form |> to_string() |> String.upcase()
+
+    @doc """
+    Executes a SPARQL `#{form_keyword}` update operation against a service endpoint.
+
+    The graph name must be specified with the `:graph` option either as a string, `RDF.IRI`,
+    vocabulary namespace term or one of the special values `:default`, `:named`, `:all`.
+
+        SPARQL.Client.#{form}("http://example.com/sparql", graph: "http://example.com/Graph")
+
+        SPARQL.Client.#{form}("http://example.com/sparql", graph: EX.Graph)
+
+    The update operation can be run in `SILENT` mode by setting the `:silent` option to `true`.
+
+    See documentation of the generic `update/3` function and the [module documentation](`SPARQL.Client`) for the available options.
+    """
     def unquote(form)(endpoint, opts) when is_list(opts) do
       {graph, opts} = Keyword.pop!(opts, :graph)
       {silent, opts} = Keyword.pop(opts, :silent)
@@ -340,6 +509,19 @@ defmodule SPARQL.Client do
       end
     end
 
+    @doc """
+    Executes a SPARQL `#{form_keyword}` update operation against a service endpoint.
+
+    This version only allows execution of `#{form_keyword}` updates given as string in raw-mode (see the
+    [module documentation](`SPARQL.Client`) for more information on the raw-mode).
+
+        "#{form_keyword} <http://example.com/Graph>"
+        |> SPARQL.Client.#{form}("http://example.com/sparql", raw_mode: true)
+
+    See `#{form}/2` for how to execute a `#{form_keyword}` update with an automatically build update string.
+
+    See documentation of the generic `update/3` function and the [module documentation](`SPARQL.Client`) for the available options.
+    """
     def unquote(form)(update, endpoint, opts) do
       if Keyword.has_key?(opts, :graph) or Keyword.has_key?(opts, :silent) do
         raise ArgumentError,
@@ -354,6 +536,26 @@ defmodule SPARQL.Client do
 
   ~w[copy move add]a
   |> Enum.each(fn form ->
+    form_keyword = form |> to_string() |> String.upcase()
+
+    @doc """
+    Executes a SPARQL `#{form_keyword}` update operation against a service endpoint.
+
+    The source graph must be specified with the `:graph` option and the destination graph with the
+    `:to` option either as a string, `RDF.IRI`, vocabulary namespace term for the graph name or
+    `:default` for the default graph.
+
+        SPARQL.Client.#{form}("http://example.com/sparql",
+          from: "http://example.com/Graph1", to: "http://example.com/Graph2")
+
+        SPARQL.Client.#{form}("http://example.com/sparql",
+          from: :default, to: EX.Graph)
+
+
+    The update operation can be run in `SILENT` mode by setting the `:silent` option to `true`.
+
+    See documentation of the generic `update/3` function and the [module documentation](`SPARQL.Client`) for the available options.
+    """
     def unquote(form)(endpoint, opts) when is_list(opts) do
       {from, opts} = Keyword.pop!(opts, :from)
       {to, opts} = Keyword.pop!(opts, :to)
@@ -364,6 +566,19 @@ defmodule SPARQL.Client do
       end
     end
 
+    @doc """
+    Executes a SPARQL `#{form_keyword}` update operation against a service endpoint.
+
+    This version only allows execution of `#{form_keyword}` updates given as string in raw-mode (see the
+    [module documentation](`SPARQL.Client`) for more information on the raw-mode).
+
+        "#{form_keyword} GRAPH <http://example.com/Graph1> TO GRAPH <http://example.com/Graph2>"
+        |> SPARQL.Client.#{form}("http://example.com/sparql", raw_mode: true)
+
+    See `#{form}/2` for how to execute a `#{form_keyword}` update with an automatically build update string.
+
+    See documentation of the generic `update/3` function and the [module documentation](`SPARQL.Client`) for the available options.
+    """
     def unquote(form)(update, endpoint, opts) do
       if Keyword.has_key?(opts, :from) or Keyword.has_key?(opts, :to) or
            Keyword.has_key?(opts, :silent) do

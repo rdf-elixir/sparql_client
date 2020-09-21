@@ -1,4 +1,12 @@
 defmodule SPARQL.Client.Request do
+  @moduledoc """
+  A struct representing a HTTP request of a SPARQL protocol operation.
+
+  For now, you won't have to deal with this struct that much.
+  You'll encounter it only as a member of a `SPARQL.Client.HTTPError` or when writing a custom
+  config function for the HTTP headers (see documentation of the configuration options for `SPARQL.Client`).
+  """
+
   defstruct [
     :sparql_operation_type,
     :sparql_operation_form,
@@ -38,6 +46,7 @@ defmodule SPARQL.Client.Request do
           result: SPARQL.Query.Result.t() | RDF.Data.t()
         }
 
+  @doc false
   def build(type, form, payload, endpoint, opts \\ []) do
     %__MODULE__{
       sparql_endpoint: endpoint,
@@ -54,10 +63,12 @@ defmodule SPARQL.Client.Request do
     request.sparql_operation_type.init(request, opts)
   end
 
+  @doc false
   def operation_http_headers(request, opts \\ []) do
     request.sparql_operation_type.http_headers(request, opts)
   end
 
+  @doc false
   def query_parameter_key(request) do
     request.sparql_operation_type.query_parameter_key()
   end
@@ -74,7 +85,7 @@ defmodule SPARQL.Client.Request do
 
   defp add_http_headers(error, _opts), do: error
 
-  def default_http_headers do
+  defp default_http_headers do
     Application.get_env(:sparql_client, :http_headers)
   end
 
@@ -111,6 +122,7 @@ defmodule SPARQL.Client.Request do
     |> Enum.reverse()
   end
 
+  @doc false
   def call(%__MODULE__{} = request, opts) do
     case SPARQL.Client.Tesla.call(request, opts) do
       {:ok, %__MODULE__{http_status: status} = request} when status in 200..299 ->
