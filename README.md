@@ -2,7 +2,7 @@
 
 # SPARQL.Client
 
-[![Travis](https://img.shields.io/travis/rdf-elixir/sparql_client.svg?style=flat-square)](https://travis-ci.org/rdf-elixir/sparql_client)
+[![CI](https://github.com/rdf-elixir/sparql_client/workflows/CI/badge.svg?branch=master)](https://github.com/rdf-elixir/sparql_client/actions?query=branch%3Amaster+workflow%3ACI)
 [![Hex.pm](https://img.shields.io/hexpm/v/sparql_client.svg?style=flat-square)](https://hex.pm/packages/sparql_client)
 
 
