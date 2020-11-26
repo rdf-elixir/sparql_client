@@ -39,5 +39,5 @@ defmodule SPARQL.Client.Update do
   end
 
   @impl true
-  def evaluate_response(_, _), do: :ok
+  def evaluate_response(request, _), do: {:ok, %{request | result: :ok}}
 end
