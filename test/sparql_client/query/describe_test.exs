@@ -7,9 +7,7 @@ defmodule SPARQL.Client.Query.DescribeTest do
 
   @example_query "DESCRIBE <#{IRI.to_string(EX.S)}>"
 
-  @result_graph RDF.Graph.new(
-                  {RDF.iri(EX.S), EX.p(), RDF.iri(EX.O)}
-                )
+  @result_graph RDF.Graph.new({RDF.iri(EX.S), EX.p(), RDF.iri(EX.O)})
   @result_dataset RDF.Dataset.new(@result_graph)
   @turtle_result RDF.Turtle.write_string!(@result_graph)
   @ntriples_result RDF.NTriples.write_string!(@result_graph)
@@ -66,7 +64,7 @@ defmodule SPARQL.Client.Query.DescribeTest do
     end)
 
     assert SPARQL.Client.describe(@example_query, @example_endpoint, result_format: :rdf_xml) ==
-             {:ok, RDF.Graph.add_prefixes(@result_graph, [rdf: RDF, ex: EX])}
+             {:ok, RDF.Graph.add_prefixes(@result_graph, rdf: RDF, ex: EX)}
   end
 
   test "NTriples result" do

@@ -10,9 +10,7 @@ defmodule SPARQL.Client.Query.ConstructTest do
   WHERE     { <#{IRI.to_string(EX.S)}> ?p ?o }
   """
 
-  @result_graph RDF.Graph.new(
-                  {RDF.iri(EX.S), EX.p(), RDF.iri(EX.O)}
-                )
+  @result_graph RDF.Graph.new({RDF.iri(EX.S), EX.p(), RDF.iri(EX.O)})
   @result_dataset RDF.Dataset.new(@result_graph)
   @turtle_result RDF.Turtle.write_string!(@result_graph)
   @ntriples_result RDF.NTriples.write_string!(@result_graph)
@@ -73,6 +71,7 @@ defmodule SPARQL.Client.Query.ConstructTest do
       SPARQL.Client.construct(@example_query, @example_endpoint, result_format: :rdf_xml)
     )
   end
+
   test "NTriples result" do
     url =
       @example_endpoint <>
