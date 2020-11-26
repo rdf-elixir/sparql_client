@@ -1,7 +1,7 @@
 defmodule SPARQL.Client.Update.Builder do
   @moduledoc false
 
-  import SPARQL.Client.Utils
+  import RDF.Utils
   import RDF.Guards
   alias RDF.{IRI, Turtle}
 
