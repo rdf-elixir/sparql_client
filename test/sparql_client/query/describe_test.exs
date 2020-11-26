@@ -5,10 +5,10 @@ defmodule SPARQL.Client.Query.DescribeTest do
 
   @default_accept_header SPARQL.Client.Query.default_accept_header(:describe)
 
-  @example_query "DESCRIBE <http://example.org/S>"
+  @example_query "DESCRIBE <#{IRI.to_string(EX.S)}>"
 
   @result_graph RDF.Graph.new(
-                  {~I<http://example.org/S>, ~I<http://example.org/p>, ~I<http://example.org/O>}
+                  {RDF.iri(EX.S), EX.p(), RDF.iri(EX.O)}
                 )
   @result_dataset RDF.Dataset.new(@result_graph)
   @turtle_result RDF.Turtle.write_string!(@result_graph)
@@ -51,6 +51,22 @@ defmodule SPARQL.Client.Query.DescribeTest do
 
     assert SPARQL.Client.describe(@example_query, @example_endpoint, result_format: :jsonld) ==
              {:ok, @result_dataset}
+  end
+
+  test "RDF-XML result", %{body: body} do
+    Tesla.Mock.mock(fn
+      env = %{method: :post, url: @example_endpoint, body: ^body} ->
+        assert Tesla.get_header(env, "Accept") == "application/rdf+xml"
+
+        %Tesla.Env{
+          status: 200,
+          body: RDF.XML.write_string!(@result_graph, prefixes: [rdf: RDF, ex: EX]),
+          headers: [{"content-type", "application/rdf+xml"}]
+        }
+    end)
+
+    assert SPARQL.Client.describe(@example_query, @example_endpoint, result_format: :rdf_xml) ==
+             {:ok, RDF.Graph.add_prefixes(@result_graph, [rdf: RDF, ex: EX])}
   end
 
   test "NTriples result" do

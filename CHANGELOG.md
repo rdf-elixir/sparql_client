@@ -5,6 +5,16 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 [Keep a CHANGELOG](http://keepachangelog.com).
 
 
+## Unreleased
+
+### Added
+
+- support for RDF-XML for graph results 
+
+[Compare v0.3.0...HEAD](https://github.com/rdf-elixir/sparql_client/compare/v0.3.0...HEAD)
+
+
+
 ## v0.3.0 - 2020-09-21
 
 Elixir versions < 1.9 are no longer supported

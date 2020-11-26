@@ -6,12 +6,12 @@ defmodule SPARQL.Client.Query.ConstructTest do
   @default_accept_header SPARQL.Client.Query.default_accept_header(:construct)
 
   @example_query """
-  CONSTRUCT { <http://example.org/S> ?p ?o }
-  WHERE     { <http://example.com/S> ?p ?o }
+  CONSTRUCT { <#{IRI.to_string(EX.S)}> ?p ?o }
+  WHERE     { <#{IRI.to_string(EX.S)}> ?p ?o }
   """
 
   @result_graph RDF.Graph.new(
-                  {~I<http://example.org/S>, ~I<http://example.org/p>, ~I<http://example.org/O>}
+                  {RDF.iri(EX.S), EX.p(), RDF.iri(EX.O)}
                 )
   @result_dataset RDF.Dataset.new(@result_graph)
   @turtle_result RDF.Turtle.write_string!(@result_graph)
@@ -56,6 +56,23 @@ defmodule SPARQL.Client.Query.ConstructTest do
              {:ok, @result_dataset}
   end
 
+  test "RDF-XML result", %{body: body} do
+    Tesla.Mock.mock(fn
+      env = %{method: :post, url: @example_endpoint, body: ^body} ->
+        assert Tesla.get_header(env, "Accept") == "application/rdf+xml"
+
+        %Tesla.Env{
+          status: 200,
+          body: RDF.XML.write_string!(@result_graph, prefixes: [rdf: RDF, ex: EX]),
+          headers: [{"content-type", "application/rdf+xml"}]
+        }
+    end)
+
+    assert_equal_graph(
+      @result_graph,
+      SPARQL.Client.construct(@example_query, @example_endpoint, result_format: :rdf_xml)
+    )
+  end
   test "NTriples result" do
     url =
       @example_endpoint <>
