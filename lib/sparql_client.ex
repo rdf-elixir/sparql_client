@@ -145,11 +145,11 @@ defmodule SPARQL.Client do
   @query_options_schema @general_options_schema ++
                           [
                             protocol_version: [
-                              type: {:one_of, ["1.0", "1.1"]},
+                              type: {:in, ["1.0", "1.1"]},
                               subsection: "Specifying the request method"
                             ],
                             request_method: [
-                              type: {:one_of, [:get, :post]},
+                              type: {:in, [:get, :post]},
                               subsection: "Specifying the request method"
                             ],
                             accept_header: [
@@ -157,7 +157,7 @@ defmodule SPARQL.Client do
                             ],
                             result_format: [
                               type:
-                                {:one_of,
+                                {:in,
                                  (SPARQL.result_formats() ++ RDF.Serialization.formats())
                                  |> Enum.map(fn format -> format.name end)},
                               subsection: "Specifying the response format"
@@ -326,7 +326,7 @@ defmodule SPARQL.Client do
   @update_options_schema @general_options_schema ++
                            [
                              request_method: [
-                               type: {:one_of, [:direct, :url_encoded]},
+                               type: {:in, [:direct, :url_encoded]},
                                subsection: "Specifying the request method"
                              ]
                            ]
