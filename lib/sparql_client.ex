@@ -31,27 +31,27 @@ defmodule SPARQL.Client do
   actually needed, since all elements of the updates can be provided directly to the respective
   functions for the update forms, which will generate valid SPARQL updates.
 
-        RDF.Graph.new({EX.S, EX.p, EX.O})
-        |> SPARQL.Client.insert_data("http://example.com/sparql")
+      RDF.Graph.new({EX.S, EX.p, EX.O})
+      |> SPARQL.Client.insert_data("http://example.com/sparql")
 
   You can still provide hand-written update strings to these functions, but due to the lack of
   SPARQL update parsing the raw-mode is mandatory then. For the `INSERT` and `DELETE` update
   forms this the only way to request them for now.
 
-        \"""
-        PREFIX dc:  <http://purl.org/dc/elements/1.1/>
-        PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+      \"""
+      PREFIX dc:  <http://purl.org/dc/elements/1.1/>
+      PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
-        INSERT
-        { GRAPH <http://example/bookStore2> { ?book ?p ?v } }
-        WHERE
-        { GRAPH  <http://example/bookStore>
-             { ?book dc:date ?date .
-               FILTER ( ?date > "1970-01-01T00:00:00-02:00"^^xsd:dateTime )
-               ?book ?p ?v
-        } }
-        \"""
-        |> SPARQL.Client.insert("http://example.com/sparql", raw_mode: true)
+      INSERT
+      { GRAPH <http://example/bookStore2> { ?book ?p ?v } }
+      WHERE
+      { GRAPH  <http://example/bookStore>
+           { ?book dc:date ?date .
+             FILTER ( ?date > "1970-01-01T00:00:00-02:00"^^xsd:dateTime )
+             ?book ?p ?v
+      } }
+      \"""
+      |> SPARQL.Client.insert("http://example.com/sparql", raw_mode: true)
 
 
   ## Specifying custom headers
@@ -337,20 +337,20 @@ defmodule SPARQL.Client do
   In case of this generic function, updates can be given only as string and executed in raw-mode
   (see the [module documentation](`SPARQL.Client`) for a description of the raw-mode)
 
-        \"""
-        PREFIX dc:  <http://purl.org/dc/elements/1.1/>
-        PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+      \"""
+      PREFIX dc:  <http://purl.org/dc/elements/1.1/>
+      PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
-        INSERT
-        { GRAPH <http://example/bookStore2> { ?book ?p ?v } }
-        WHERE
-        { GRAPH  <http://example/bookStore>
-             { ?book dc:date ?date .
-               FILTER ( ?date > "1970-01-01T00:00:00-02:00"^^xsd:dateTime )
-               ?book ?p ?v
-        } }
-        \"""
-        |> SPARQL.Client.update("http://example.com/sparql", raw_mode: true)
+      INSERT
+      { GRAPH <http://example/bookStore2> { ?book ?p ?v } }
+      WHERE
+      { GRAPH  <http://example/bookStore>
+           { ?book dc:date ?date .
+             FILTER ( ?date > "1970-01-01T00:00:00-02:00"^^xsd:dateTime )
+             ?book ?p ?v
+      } }
+      \"""
+      |> SPARQL.Client.update("http://example.com/sparql", raw_mode: true)
 
 
   The result for all updates is either `:ok` or an `:error` tuple in error cases with an error
@@ -362,8 +362,8 @@ defmodule SPARQL.Client do
   to perform a SPARQL update operation via HTTP, which can be specified via the
   `request_method` option:
 
-  1. update via URL-encoded POST: by setting the options `request_method: :url_encoded`
-  2. update via POST directly: by setting the options `request_method: :direct` (default)
+  1. Update via URL-encoded POST: by setting the options `request_method: :url_encoded`
+  2. Update via POST directly: by setting the options `request_method: :direct` (default)
 
 
   """
