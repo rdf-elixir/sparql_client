@@ -87,7 +87,8 @@ defmodule SPARQL.Client.Mixfile do
       {:nimble_options, "~> 0.3"},
 
       # Development
-      # We now have Hackney as a hard dependency through JSON-LD.ex; we should re-enable this once we got rid of this hard-dependency
+      # We now have Hackney as a hard dependency through JSON-LD.ex; we should
+      # re-enable this once we got rid of this hard-dependency
       # {:hackney, "~> 1.15", only: [:dev, :test]},
       {:gun, "~> 1.3", only: [:dev, :test]},
       {:mint, "~> 1.2", only: [:dev, :test]},
