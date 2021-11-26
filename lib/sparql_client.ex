@@ -296,9 +296,7 @@ defmodule SPARQL.Client do
     end
 
     def unquote(query_form)(%SPARQL.Query{form: form}, _, _) do
-      raise "expected a #{unquote(query_form) |> to_string() |> String.upcase()} query, got: #{
-              form |> to_string() |> String.upcase()
-            } query"
+      raise "expected a #{unquote(query_form) |> to_string() |> String.upcase()} query, got: #{form |> to_string() |> String.upcase()} query"
     end
 
     def unquote(query_form)(query_string, endpoint, opts) do
@@ -525,9 +523,7 @@ defmodule SPARQL.Client do
     def unquote(form)(update, endpoint, opts) do
       if Keyword.has_key?(opts, :graph) or Keyword.has_key?(opts, :silent) do
         raise ArgumentError,
-              "#{unquote(form)}/3 does not support the :graph and :silent options; use #{
-                unquote(form)
-              }/2 instead"
+              "#{unquote(form)}/3 does not support the :graph and :silent options; use #{unquote(form)}/2 instead"
       end
 
       update_data(unquote(form), update, endpoint, opts)
@@ -583,9 +579,7 @@ defmodule SPARQL.Client do
       if Keyword.has_key?(opts, :from) or Keyword.has_key?(opts, :to) or
            Keyword.has_key?(opts, :silent) do
         raise ArgumentError,
-              "#{unquote(form)}/3 does not support the :from, :to and :silent options; use #{
-                unquote(form)
-              }/2 instead"
+              "#{unquote(form)}/3 does not support the :from, :to and :silent options; use #{unquote(form)}/2 instead"
       end
 
       update_data(unquote(form), update, endpoint, opts)

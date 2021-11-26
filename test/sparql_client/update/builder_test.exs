@@ -149,9 +149,7 @@ defmodule SPARQL.Client.Update.BuilderTest do
 
       assert Builder.load(EX.Resource, EX.Graph, true) ==
                {:ok,
-                "LOAD SILENT <#{IRI.to_string(EX.Resource)}> INTO GRAPH <#{
-                  IRI.to_string(EX.Graph)
-                }>"}
+                "LOAD SILENT <#{IRI.to_string(EX.Resource)}> INTO GRAPH <#{IRI.to_string(EX.Graph)}>"}
     end
   end
 

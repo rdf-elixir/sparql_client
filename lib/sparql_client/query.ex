@@ -83,9 +83,7 @@ defmodule SPARQL.Client.Query do
 
   defp request_method(sparql_protocol_version, request_method) do
     {:error,
-     "request_method #{inspect(request_method)} is not supported with a query and protocol_version #{
-       sparql_protocol_version
-     }"}
+     "request_method #{inspect(request_method)} is not supported with a query and protocol_version #{sparql_protocol_version}"}
   end
 
   defp content_type("1.1", :post), do: "application/sparql-query"
