@@ -1,4 +1,4 @@
-use Mix.Config
+import Config
 
 config :exvcr,
   vcr_cassette_library_dir: "integration_test/fixtures/vcr_cassettes",
