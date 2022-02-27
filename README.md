@@ -29,9 +29,9 @@ The API documentation can be found [here](https://hexdocs.pm/sparql_client/). Fo
 See [CONTRIBUTING](CONTRIBUTING.md) for details.
 
 
-## Consulting and Partnership
+## Consulting
 
-If you need help with your Elixir and Linked Data projects, just contact <info@cokron.com> or visit <https://www.cokron.com/kontakt>.
+If you need help with your Elixir and Linked Data projects, just contact [NinjaConcept](https://www.ninjaconcept.com/) via <contact@ninjaconcept.com>.
 
 
 ## License and Copyright
