@@ -78,10 +78,10 @@ defmodule SPARQL.Client.Mixfile do
 
   defp deps do
     [
-      {:sparql, ">= 0.3.6"},
-      {:rdf, ">= 0.9.1"},
-      {:json_ld, ">= 0.3.3"},
-      {:rdf_xml, "~> 0.1"},
+      rdf_ex_dep(:rdf, "~> 0.9.1 or ~> 0.10"),
+      rdf_ex_dep(:sparql, ">= 0.3.6"),
+      rdf_ex_dep(:json_ld, ">= 0.3.3"),
+      rdf_ex_dep(:rdf_xml, "~> 0.1"),
       {:tesla, "~> 1.2"},
       {:content_type, "~> 0.1"},
       {:nimble_options, "~> 0.3"},
@@ -99,6 +99,13 @@ defmodule SPARQL.Client.Mixfile do
       {:ex_doc, "~> 0.23", only: :dev, runtime: false},
       {:excoveralls, "~> 0.13", only: :test}
     ]
+  end
+
+  defp rdf_ex_dep(dep, version) do
+    case System.get_env("RDF_EX_PACKAGES_SRC") do
+      "LOCAL" -> {dep, path: "../#{dep}"}
+      _ -> {dep, version}
+    end
   end
 
   defp aliases do
