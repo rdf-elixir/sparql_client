@@ -3,16 +3,11 @@ defmodule SPARQL.Client.Update.Builder do
 
   import RDF.Utils
   import RDF.Guards
-  alias RDF.{IRI, Turtle}
+  alias RDF.{IRI, Turtle, Graph, Dataset}
 
   def update_data(update_form, data, opts \\ []) do
-    with {:ok, prologue} <-
-           Turtle.write_string(
-             data,
-             Keyword.merge(opts, only: :directives, directive_style: :sparql)
-           ),
-         {:ok, triples} <-
-           update_data_triples(update_form, data, Keyword.get(opts, :merge_graphs, false), opts) do
+    with {:ok, prologue} <- update_prologue(data, opts),
+         {:ok, triples} <- update_data_triples(update_form, data, opts) do
       {:ok,
        """
        #{prologue}
@@ -23,15 +18,28 @@ defmodule SPARQL.Client.Update.Builder do
     end
   end
 
-  defp update_data_triples(update_form, %RDF.Dataset{} = dataset, false, opts) do
+  defp update_prologue(%Dataset{} = dataset, opts) do
     dataset
-    |> RDF.Dataset.graphs()
+    |> Dataset.default_graph()
+    |> update_prologue(opts)
+  end
+
+  defp update_prologue(graph, opts) do
+    Turtle.write_string(
+      graph,
+      Keyword.merge(opts, only: :directives, directive_style: :sparql)
+    )
+  end
+
+  defp update_data_triples(update_form, %Dataset{} = dataset, opts) do
+    dataset
+    |> Dataset.graphs()
     |> map_join_while_ok("\n", fn
-      %RDF.Graph{name: nil} = default_graph ->
-        update_data_triples(update_form, default_graph, false, opts)
+      %Graph{name: nil} = default_graph ->
+        update_data_triples(update_form, default_graph, opts)
 
       named_graph ->
-        with {:ok, triples} <- update_data_triples(update_form, named_graph, false, opts) do
+        with {:ok, triples} <- update_data_triples(update_form, named_graph, opts) do
           {:ok,
            """
            GRAPH <#{named_graph.name}> {
@@ -42,7 +50,7 @@ defmodule SPARQL.Client.Update.Builder do
     end)
   end
 
-  defp update_data_triples(_, data, _, opts) do
+  defp update_data_triples(_, data, opts) do
     Turtle.write_string(data, Keyword.merge(opts, only: :triples))
   end
 

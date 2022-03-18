@@ -9,6 +9,13 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 
 Elixir versions < 1.10 are no longer supported
 
+### Changed
+
+- In consistency with the change in RDF.ex 0.10 to longer support automatic 
+  merges of `RDF.Dataset`s, the `:merge_graphs` option is no longer supported 
+  on the `SPARQL.Client.insert_data/3` and `SPARQL.Client.delete_data/3` functions.
+
+
 [Compare v0.3.1...HEAD](https://github.com/rdf-elixir/sparql_client/compare/v0.3.1...HEAD)
 
 

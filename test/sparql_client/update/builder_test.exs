@@ -65,25 +65,6 @@ defmodule SPARQL.Client.Update.BuilderTest do
               """} = Builder.update_data(:insert_data, @example_dataset)
     end
 
-    test "INSERT DATA with dataset and merge_graphs: true" do
-      assert {:ok,
-              """
-              PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-              PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-              PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-
-
-              INSERT DATA {
-              <http://example.com/sparql-client-test#Foo>
-                  <http://example.com/sparql-client-test#bar> <http://example.com/sparql-client-test#Baz> .
-
-              <http://example.com/sparql-client-test#Other>
-                  <http://example.com/sparql-client-test#p> "string" .
-
-              }
-              """} = Builder.update_data(:insert_data, @example_dataset, merge_graphs: true)
-    end
-
     test "DELETE DATA with dataset" do
       assert {:ok,
               """
