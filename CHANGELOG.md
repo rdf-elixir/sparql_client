@@ -9,6 +9,11 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 
 Elixir versions < 1.10 are no longer supported
 
+### Added
+
+- general `:logger` option on all `SPARQL.Client` functions  
+  (instrumenting the `Tesla.Middleware.Logger`)
+
 ### Changed
 
 - In consistency with the change in RDF.ex 0.10 to longer support automatic 

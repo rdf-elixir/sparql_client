@@ -78,6 +78,9 @@ defmodule SPARQL.Client do
   ## Other options
 
   - `max_redirects`: the number of redirects to follow before the operation fails (default: `5`)
+  - `logger`: allows to enable and configure the `Tesla.Middleware.Logger` by
+    either setting it `true` or providing the `Tesla.Middleware.Logger` options
+    (default: `false`)
 
 
   ## Application configuration of default values
@@ -139,6 +142,10 @@ defmodule SPARQL.Client do
       doc:
         "Allows disabling of the processing of query strings, passing them through as-is to the SPARQL endpoint.",
       subsection: "Raw-mode"
+    ],
+    logger: [
+      type: {:or, [:boolean, :keyword_list]},
+      doc: "Allows to enable and configure the Tesla Logger middleware"
     ]
   ]
 
@@ -362,7 +369,6 @@ defmodule SPARQL.Client do
 
   1. Update via URL-encoded POST: by setting the options `request_method: :url_encoded`
   2. Update via POST directly: by setting the options `request_method: :direct` (default)
-
 
   """
   def update(update, endpoint, opts \\ []) do

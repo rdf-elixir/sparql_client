@@ -23,12 +23,20 @@ defmodule SPARQL.Client.Tesla do
   end
 
   defp client(request, opts) do
-    {:ok,
-     Tesla.client([
-       {Tesla.Middleware.Headers, Map.to_list(request.http_headers)},
-       {Tesla.Middleware.FollowRedirects,
-        max_redirects: Keyword.get(opts, :max_redirects, default_max_redirects())}
-     ])}
+    middleware = [
+      {Tesla.Middleware.Headers, Map.to_list(request.http_headers)},
+      {Tesla.Middleware.FollowRedirects,
+       max_redirects: Keyword.get(opts, :max_redirects, default_max_redirects())}
+    ]
+
+    middleware =
+      case Keyword.get(opts, :logger, false) do
+        false -> middleware
+        true -> middleware ++ [Tesla.Middleware.Logger]
+        log_opts when is_list(log_opts) -> middleware ++ [{Tesla.Middleware.Logger, log_opts}]
+      end
+
+    {:ok, Tesla.client(middleware)}
   end
 
   defp http_request(client, request, opts) do
