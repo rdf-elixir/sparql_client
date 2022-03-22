@@ -78,10 +78,10 @@ defmodule SPARQL.Client.Mixfile do
 
   defp deps do
     [
-      rdf_ex_dep(:rdf, "~> 0.9.1 or ~> 0.10"),
-      rdf_ex_dep(:sparql, ">= 0.3.6"),
+      rdf_ex_dep(:rdf, "~> 0.11"),
+      rdf_ex_dep(:sparql, ">= 0.3.7"),
       rdf_ex_dep(:json_ld, ">= 0.3.3"),
-      rdf_ex_dep(:rdf_xml, "~> 0.1"),
+      rdf_ex_dep(:rdf_xml, ">= 0.1.5"),
       {:tesla, "~> 1.2"},
       {:content_type, "~> 0.1"},
       {:nimble_options, "~> 0.3"},
