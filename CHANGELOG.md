@@ -18,7 +18,7 @@ Elixir versions < 1.10 are no longer supported
 
 ### Changed
 
-- In consistency with the change in RDF.ex 0.10 to longer support automatic 
+- In consistency with the change in RDF.ex 0.10 to no longer support automatic 
   merges of `RDF.Dataset`s, the `:merge_graphs` option is no longer supported 
   on the `SPARQL.Client.insert_data/3` and `SPARQL.Client.delete_data/3` functions.
 
