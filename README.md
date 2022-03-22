@@ -22,6 +22,7 @@ The API documentation can be found [here](https://hexdocs.pm/sparql_client/). Fo
 - Supports graph results in any RDF serialization format understood by [RDF.ex]
 - Supports generation of updates (except for `INSERT` and `DELETE` updates), incl. `INSERT/DELETE DATA` updates from all [RDF.ex] data structures
 - Works with multiple HTTP client libraries
+- Supports interpretation of SPARQL-star results
 
 
 ## Contributing

@@ -5,7 +5,9 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 [Keep a CHANGELOG](http://keepachangelog.com).
 
 
-## Unreleased
+## v0.4.0 - 2022-03-22
+
+With the latest SPARQL.ex version 0.3.7, RDF-star and SPARQL-star results can be handled now.
 
 Elixir versions < 1.10 are no longer supported
 
@@ -21,7 +23,7 @@ Elixir versions < 1.10 are no longer supported
   on the `SPARQL.Client.insert_data/3` and `SPARQL.Client.delete_data/3` functions.
 
 
-[Compare v0.3.1...HEAD](https://github.com/rdf-elixir/sparql_client/compare/v0.3.1...HEAD)
+[Compare v0.3.1...v0.4.0](https://github.com/rdf-elixir/sparql_client/compare/v0.3.1...v0.4.0)
 
 
 
