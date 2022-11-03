@@ -5,6 +5,17 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 [Keep a CHANGELOG](http://keepachangelog.com).
 
 
+## Unreleased
+
+This version is just upgraded to RDF.ex 1.0.
+
+Elixir versions < 1.11 are no longer supported
+
+
+[Compare v0.4.0...HEAD](https://github.com/rdf-elixir/sparql_client/compare/v0.4.0...HEAD)
+
+
+
 ## v0.4.0 - 2022-03-22
 
 With the latest SPARQL.ex version 0.3.7, RDF-star and SPARQL-star results can be handled now.

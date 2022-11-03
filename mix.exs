@@ -9,7 +9,7 @@ defmodule SPARQL.Client.Mixfile do
     [
       app: :sparql_client,
       version: @version,
-      elixir: "~> 1.10",
+      elixir: "~> 1.11",
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -78,10 +78,10 @@ defmodule SPARQL.Client.Mixfile do
 
   defp deps do
     [
-      rdf_ex_dep(:rdf, "~> 0.11"),
-      rdf_ex_dep(:sparql, ">= 0.3.7"),
-      rdf_ex_dep(:json_ld, ">= 0.3.3"),
-      rdf_ex_dep(:rdf_xml, ">= 0.1.5"),
+      rdf_ex_dep(:rdf, "~> 1.0"),
+      rdf_ex_dep(:sparql, ">= 0.3.8"),
+      rdf_ex_dep(:json_ld, ">= 0.3.6"),
+      rdf_ex_dep(:rdf_xml, "~> 1.0"),
       {:tesla, "~> 1.2"},
       {:content_type, "~> 0.1"},
       {:nimble_options, "~> 0.3"},
