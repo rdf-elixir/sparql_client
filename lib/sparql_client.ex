@@ -92,7 +92,7 @@ defmodule SPARQL.Client do
       config :sparql_client,
         protocol_version: "1.1",
         query_request_method: :get,
-        update_request_method: :directly,
+        update_request_method: :direct,
         query_result_format: %{
           select: :json,
           ask: :json,
