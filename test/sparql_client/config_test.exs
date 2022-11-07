@@ -38,6 +38,32 @@ defmodule SPARQL.Client.ConfigTest do
     assert SPARQL.Client.insert_data(@example_data, @example_endpoint) == :ok
   end
 
+  @tag config: [query_request_method: :get]
+  test "query_request_method" do
+    Tesla.Mock.mock(fn env ->
+      assert env.method == :get
+
+      %Tesla.Env{
+        status: 200,
+        body: "[]",
+        headers: [{"content-type", "application/sparql-results+json"}]
+      }
+    end)
+
+    assert {:ok, _} = SPARQL.Client.query("SELECT * WHERE {?s ?p ?o .}", @example_endpoint)
+  end
+
+  @tag config: [update_request_method: :url_encoded]
+  test "update_request_method" do
+    Tesla.Mock.mock(fn env ->
+      assert Tesla.get_header(env, "Content-Type") == "application/x-www-form-urlencoded"
+
+      %Tesla.Env{status: 200}
+    end)
+
+    assert SPARQL.Client.insert_data(@example_data, @example_endpoint) == :ok
+  end
+
   def reset_config do
     Application.get_all_env(:sparql_client)
     |> Enum.each(fn {key, _} -> Application.delete_env(:sparql_client, key) end)

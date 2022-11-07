@@ -6,7 +6,7 @@ defmodule SPARQL.Client.Update do
   @default_request_method :direct
 
   def default_request_method do
-    Application.get_env(:sparql_client, :query_request_method, @default_request_method)
+    Application.get_env(:sparql_client, :update_request_method, @default_request_method)
   end
 
   @impl true
