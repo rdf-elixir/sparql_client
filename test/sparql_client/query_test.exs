@@ -151,7 +151,8 @@ defmodule SPARQL.Client.QueryTest do
                request_method: :unknown_method,
                protocol_version: "1.1"
              ) ==
-               {:error, "expected :request_method to be in [:get, :post], got: :unknown_method"}
+               {:error,
+                "invalid value for :request_method option: expected one of [:get, :post], got: :unknown_method"}
 
       assert SPARQL.Client.query(@example_query, @example_endpoint,
                request_method: :get,
@@ -164,7 +165,8 @@ defmodule SPARQL.Client.QueryTest do
                request_method: :post,
                protocol_version: "1.23"
              ) ==
-               {:error, ~S(expected :protocol_version to be in ["1.0", "1.1"], got: "1.23")}
+               {:error,
+                "invalid value for :protocol_version option: expected one of [\"1.0\", \"1.1\"], got: \"1.23\""}
     end
   end
 
