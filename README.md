@@ -2,11 +2,14 @@
 
 # SPARQL.Client
 
-[![CI](https://github.com/rdf-elixir/sparql_client/workflows/CI/badge.svg?branch=master)](https://github.com/rdf-elixir/sparql_client/actions?query=branch%3Amaster+workflow%3ACI)
 [![Hex.pm](https://img.shields.io/hexpm/v/sparql_client.svg?style=flat-square)](https://hex.pm/packages/sparql_client)
 [![Hex Docs](https://img.shields.io/badge/hex-docs-lightgreen.svg)](https://hexdocs.pm/sparql_client/)
 [![Total Download](https://img.shields.io/hexpm/dt/sparql_client.svg)](https://hex.pm/packages/sparql_client)
 [![License](https://img.shields.io/hexpm/l/sparql_client.svg)](https://github.com/rdf-elixir/sparql_client/blob/master/LICENSE.md)
+
+[![ExUnit Tests](https://github.com/rdf-elixir/sparql_client/actions/workflows/elixir-build-and-test.yml/badge.svg)](https://github.com/rdf-elixir/sparql_client/actions/workflows/elixir-build-and-test.yml)
+[![Dialyzer](https://github.com/rdf-elixir/sparql_client/actions/workflows/elixir-dialyzer.yml/badge.svg)](https://github.com/rdf-elixir/sparql_client/actions/workflows/elixir-dialyzer.yml)
+[![Quality Checks](https://github.com/rdf-elixir/sparql_client/actions/workflows/elixir-quality-checks.yml/badge.svg)](https://github.com/rdf-elixir/sparql_client/actions/workflows/elixir-quality-checks.yml)
 
 
 A [SPARQL protocol](https://www.w3.org/TR/sparql11-protocol/) client for Elixir.
