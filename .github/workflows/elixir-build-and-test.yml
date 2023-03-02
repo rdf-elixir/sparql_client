@@ -54,5 +54,5 @@ jobs:
         if: always()
 
       - name: Run Integration Tests
-        run: mix integration_test ${{ matrix.build-flags }}
+        run: MIX_ENV=dev mix integration_test ${{ matrix.build-flags }}
         if: always()
