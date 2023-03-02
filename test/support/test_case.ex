@@ -1,4 +1,8 @@
 defmodule SPARQL.Client.Test.Case do
+  @moduledoc """
+  `ExUnit.CaseTemplate` for SPARQL.Client tests.
+  """
+
   use ExUnit.CaseTemplate
 
   use RDF.Vocabulary.Namespace

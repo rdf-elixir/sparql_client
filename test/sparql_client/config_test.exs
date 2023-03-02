@@ -4,6 +4,7 @@ defmodule SPARQL.Client.ConfigTest do
   @example_endpoint "http://example.com/sparql"
   @example_data EX.S |> EX.p(EX.O)
 
+  # credo:disable-for-next-line Credo.Check.Warning.ApplicationConfigInModuleAttribute
   @original_config Application.get_all_env(:sparql_client)
 
   setup %{config: config} do
