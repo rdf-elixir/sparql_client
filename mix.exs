@@ -28,6 +28,9 @@ defmodule SPARQL.Client.Mixfile do
         source_ref: "v#{@version}",
         extras: ["CHANGELOG.md"]
       ],
+      preferred_cli_env: [
+        check: :test
+      ],
 
       # ExVCR
       preferred_cli_env: [
@@ -110,7 +113,16 @@ defmodule SPARQL.Client.Mixfile do
 
   defp aliases do
     [
-      integration_test: &integration_test/1
+      integration_test: &integration_test/1,
+      check: [
+        "clean",
+        "deps.unlock --check-unused",
+        "compile --warnings-as-errors",
+        "format --check-formatted",
+        "deps.unlock --check-unused",
+        "test --warnings-as-errors",
+        "credo"
+      ]
     ]
   end
 
