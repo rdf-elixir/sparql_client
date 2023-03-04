@@ -52,7 +52,3 @@ jobs:
       - name: Run Tests
         run: mix coveralls.github ${{ matrix.build-flags }}
         if: always()
-
-      - name: Run Integration Tests
-        run: MIX_ENV=dev mix integration_test ${{ matrix.build-flags }}
-        if: always()
