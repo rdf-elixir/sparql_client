@@ -5,14 +5,18 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 [Keep a CHANGELOG](http://keepachangelog.com).
 
 
-## Unreleased
+## v0.4.2 - 2023-04-24
+
+### Added
+
+- support for nimble_options 1.0
 
 ### Fixed
 
 - The `:update_request_method` was not correctly fetched from the application config.
 
 
-[Compare v0.4.1...HEAD](https://github.com/rdf-elixir/sparql_client/compare/v0.4.1...HEAD)
+[Compare v0.4.1...v0.4.2](https://github.com/rdf-elixir/sparql_client/compare/v0.4.1...v0.4.1)
 
 
 
