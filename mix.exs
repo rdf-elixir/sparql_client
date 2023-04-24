@@ -87,7 +87,7 @@ defmodule SPARQL.Client.Mixfile do
       rdf_ex_dep(:rdf_xml, "~> 1.0"),
       {:tesla, "~> 1.2"},
       {:content_type, "~> 0.1"},
-      {:nimble_options, "~> 0.3"},
+      {:nimble_options, "~> 0.3 or ~> 1.0"},
 
       # Development
       # We now have Hackney as a hard dependency through JSON-LD.ex; we should
