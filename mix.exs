@@ -95,9 +95,9 @@ defmodule SPARQL.Client.Mixfile do
       # {:hackney, "~> 1.15", only: [:dev, :test]},
       {:gun, "~> 1.3", only: [:dev, :test]},
       {:mint, "~> 1.2", only: [:dev, :test]},
-      {:castore, "~> 0.1", only: [:dev, :test]},
-      {:dialyxir, "~> 1.2", only: [:dev, :test], runtime: false},
-      {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
+      {:castore, "~> 1.0", only: [:dev, :test]},
+      {:dialyxir, "~> 1.3", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:exvcr, "~> 0.13", only: [:dev, :test]},
       {:ex_doc, "~> 0.29", only: :dev, runtime: false},
       {:excoveralls, "~> 0.15", only: :test}
