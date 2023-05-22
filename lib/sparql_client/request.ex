@@ -46,6 +46,8 @@ defmodule SPARQL.Client.Request do
           result: SPARQL.Query.Result.t() | RDF.Data.t()
         }
 
+  alias RDF.IRI
+
   @doc false
   def build(type, form, payload, endpoint, opts \\ []) do
     %__MODULE__{
@@ -100,16 +102,16 @@ defmodule SPARQL.Client.Request do
   defp graph_params(SPARQL.Client.Query, opts) do
     Enum.flat_map(opts, fn
       {:default_graph, graph_uris} when is_list(graph_uris) ->
-        Enum.map(graph_uris, &{"default-graph-uri", &1})
+        Enum.map(graph_uris, &{"default-graph-uri", to_graph_name(&1)})
 
       {:default_graph, graph_uri} ->
-        [{"default-graph-uri", graph_uri}]
+        [{"default-graph-uri", to_graph_name(graph_uri)}]
 
       {:named_graph, graph_uris} when is_list(graph_uris) ->
-        Enum.map(graph_uris, &{"named-graph-uri", &1})
+        Enum.map(graph_uris, &{"named-graph-uri", to_graph_name(&1)})
 
       {:named_graph, graph_uri} ->
-        [{"named-graph-uri", graph_uri}]
+        [{"named-graph-uri", to_graph_name(graph_uri)}]
 
       _ ->
         []
@@ -119,21 +121,23 @@ defmodule SPARQL.Client.Request do
   defp graph_params(SPARQL.Client.Update, opts) do
     Enum.flat_map(opts, fn
       {:using_graph, graph_uris} when is_list(graph_uris) ->
-        Enum.map(graph_uris, &{"using-graph-uri", &1})
+        Enum.map(graph_uris, &{"using-graph-uri", to_graph_name(&1)})
 
       {:using_graph, graph_uri} ->
-        [{"using-graph-uri", graph_uri}]
+        [{"using-graph-uri", to_graph_name(graph_uri)}]
 
       {:using_named_graph, graph_uris} when is_list(graph_uris) ->
-        Enum.map(graph_uris, &{"using-named-graph-uri", &1})
+        Enum.map(graph_uris, &{"using-named-graph-uri", to_graph_name(&1)})
 
       {:using_named_graph, graph_uri} ->
-        [{"using-named-graph-uri", graph_uri}]
+        [{"using-named-graph-uri", to_graph_name(graph_uri)}]
 
       _ ->
         []
     end)
   end
+
+  defp to_graph_name(iri), do: iri |> RDF.iri() |> IRI.to_string()
 
   @doc false
   def call(%__MODULE__{} = request, opts) do

@@ -491,6 +491,34 @@ defmodule SPARQL.Client.UpdateTest do
              ) ==
                :ok
     end
+
+    test "support for graph names as RDF namespace terms" do
+      body =
+        URI.encode_query([
+          {"update", @example_update},
+          {"using-graph-uri", RDF.iri(EX.Graph1)},
+          {"using-named-graph-uri", RDF.iri(EX.Graph2)},
+          {"using-named-graph-uri", RDF.iri(EX.Graph3)}
+        ])
+
+      Tesla.Mock.mock(fn
+        env = %{method: :post, url: @example_endpoint, body: ^body} ->
+          assert Tesla.get_header(env, "Content-Type") == "application/x-www-form-urlencoded"
+
+          %Tesla.Env{
+            status: 204,
+            body: ""
+          }
+      end)
+
+      assert SPARQL.Client.insert(@example_update, @example_endpoint,
+               request_method: :url_encoded,
+               using_graph: EX.Graph1,
+               using_named_graph: [EX.Graph2, EX.Graph3],
+               raw_mode: true
+             ) ==
+               :ok
+    end
   end
 
   def mock_update_request(request_method, update, opts \\ [])

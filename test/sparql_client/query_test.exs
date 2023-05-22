@@ -1,5 +1,5 @@
 defmodule SPARQL.Client.QueryTest do
-  use ExUnit.Case
+  use SPARQL.Client.Test.Case
 
   alias SPARQL.Query
 
@@ -254,6 +254,28 @@ defmodule SPARQL.Client.QueryTest do
                request_method: :get,
                protocol_version: "1.1",
                named_graph: [@graph_uri, @another_graph_uri]
+             ) ==
+               {:ok, @success_result}
+    end
+
+    test "support for graph names as RDF namespace terms" do
+      url =
+        @example_endpoint <>
+          "?" <>
+          URI.encode_query([
+            {"query", SPARQL.query(@example_query).query_string},
+            {"default-graph-uri", RDF.iri(EX.Graph1)},
+            {"named-graph-uri", RDF.iri(EX.Graph2)},
+            {"named-graph-uri", RDF.iri(EX.Graph3)}
+          ])
+
+      Tesla.Mock.mock(fn %{method: :get, url: ^url} -> @success_response end)
+
+      assert SPARQL.Client.query(@example_query, @example_endpoint,
+               request_method: :get,
+               protocol_version: "1.1",
+               default_graph: EX.Graph1,
+               named_graph: [EX.Graph2, EX.Graph3]
              ) ==
                {:ok, @success_result}
     end
