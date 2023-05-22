@@ -207,7 +207,7 @@ defmodule SPARQL.Client do
 
   The SPARQL 1.1 protocol spec defines [three methods](https://www.w3.org/TR/sparql11-protocol/#query-operation)
   to perform a SPARQL query operation via HTTP, which can be specified via the
-  `request_method` and `protocol_version` options:
+  `:request_method` and `:protocol_version` options:
 
   1. query via GET: by setting the options as `request_method: :get` and `protocol_version: "1.1"`
   2. query via URL-encoded POST: by setting the options as `request_method: :post` and `protocol_version: "1.0"`
@@ -237,7 +237,7 @@ defmodule SPARQL.Client do
 
   Although the returned result is mostly independent from the actually returned
   response format from the service, you might want to set it manually with the
-  `result_format` and the name of the format
+  `:result_format` and the name of the format
 
       SPARQL.Client.query(query, "http://some.company.org/private/sparql",
         result_format: :xml)
@@ -247,7 +247,7 @@ defmodule SPARQL.Client do
   - tuple result formats: `:json, :xml, :csv, :tsv`
   - RDF result formats: `:turtle, :ntriples, :nquads, :jsonld`
 
-  When a `result_format` is specified the `Accept` header is set to the corresponding
+  When a `:result_format` is specified the `Accept` header is set to the corresponding
   media type. You might however still want to overwrite the `Accept` header, for
   example when a SPARQL service uses a non-standard media type for a format.
   Note that, when providing a custom non-standard `Accept` header the `result_format`
@@ -257,12 +257,22 @@ defmodule SPARQL.Client do
   ## Specifying an RDF Dataset
 
   The RDF dataset to be queried can be specified [as described in the spec](https://www.w3.org/TR/sparql11-protocol/#dataset)
-  via the the `default_graph` and `named_graph` options and either a single graph
+  via the `:default_graph` and `:named_graph` options and either a single graph
   name or lists of graphs.
 
       SPARQL.Client.query(query, "http://some.company.org/private/sparql",
         default_graph: "http://www.example/sparql/",
         named_graph: [
+          "http://www.other.example/sparql/",
+          "http://www.another.example/sparql/"
+        ])
+
+  Similarly, the `:using_graph` and `:using_named_graph` can be used to
+  specify the dataset on update operation [as described in the spec](https://www.w3.org/TR/sparql11-protocol/#update-dataset).
+
+      SPARQL.Client.update(update, "http://some.company.org/private/sparql",
+        using_graph: "http://www.example/sparql/",
+        using_named_graph: [
           "http://www.other.example/sparql/",
           "http://www.another.example/sparql/"
         ])
@@ -333,6 +343,12 @@ defmodule SPARQL.Client do
                              request_method: [
                                type: {:in, [:direct, :url_encoded]},
                                subsection: "Specifying the request method"
+                             ],
+                             using_graph: [
+                               subsection: "Specifying an RDF Dataset"
+                             ],
+                             using_named_graph: [
+                               subsection: "Specifying an RDF Dataset"
                              ]
                            ]
 

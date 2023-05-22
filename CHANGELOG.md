@@ -5,6 +5,17 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 [Keep a CHANGELOG](http://keepachangelog.com).
 
 
+## Unreleased
+
+### Added
+
+- support for dataset parameters `:using_graph` and `:using_named_graph`
+  on update operations
+
+[Compare v0.4.2...HEAD](https://github.com/rdf-elixir/sparql_client/compare/v0.4.2...HEAD)
+
+
+
 ## v0.4.2 - 2023-04-24
 
 ### Added

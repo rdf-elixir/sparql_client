@@ -418,6 +418,81 @@ defmodule SPARQL.Client.UpdateTest do
     end
   end
 
+  describe "specifying an RDF Dataset" do
+    @graph_uri "http://www.other.example/sparql/"
+
+    @example_update """
+    PREFIX dc:  <http://purl.org/dc/elements/1.1/>
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+    INSERT
+    { GRAPH <http://example/bookStore2> { ?book ?p ?v } }
+    WHERE
+    { GRAPH  <http://example/bookStore>
+     { ?book dc:date ?date .
+       FILTER ( ?date > "1970-01-01T00:00:00-02:00"^^xsd:dateTime )
+       ?book ?p ?v
+    } }
+    """
+
+    test "using default and named graphs via direct POST" do
+      url =
+        @example_endpoint <>
+          "?" <>
+          URI.encode_query([
+            {"using-graph-uri", @graph_uri <> "1"},
+            {"using-named-graph-uri", @graph_uri <> "2"},
+            {"using-named-graph-uri", @graph_uri <> "3"}
+          ])
+
+      Tesla.Mock.mock(fn
+        env = %{method: :post, url: ^url, body: @example_update} ->
+          assert Tesla.get_header(env, "Content-Type") == "application/sparql-update"
+
+          %Tesla.Env{
+            status: 204,
+            body: ""
+          }
+      end)
+
+      assert SPARQL.Client.insert(@example_update, @example_endpoint,
+               request_method: :direct,
+               using_graph: @graph_uri <> "1",
+               using_named_graph: [@graph_uri <> "2", @graph_uri <> "3"],
+               raw_mode: true
+             ) ==
+               :ok
+    end
+
+    test "using default and named graphs via URL-encoded POST" do
+      body =
+        URI.encode_query([
+          {"update", @example_update},
+          {"using-graph-uri", @graph_uri <> "1"},
+          {"using-named-graph-uri", @graph_uri <> "2"},
+          {"using-named-graph-uri", @graph_uri <> "3"}
+        ])
+
+      Tesla.Mock.mock(fn
+        env = %{method: :post, url: @example_endpoint, body: ^body} ->
+          assert Tesla.get_header(env, "Content-Type") == "application/x-www-form-urlencoded"
+
+          %Tesla.Env{
+            status: 204,
+            body: ""
+          }
+      end)
+
+      assert SPARQL.Client.insert(@example_update, @example_endpoint,
+               request_method: :url_encoded,
+               using_graph: @graph_uri <> "1",
+               using_named_graph: [@graph_uri <> "2", @graph_uri <> "3"],
+               raw_mode: true
+             ) ==
+               :ok
+    end
+  end
+
   def mock_update_request(request_method, update, opts \\ [])
 
   def mock_update_request(:direct, update, opts) do

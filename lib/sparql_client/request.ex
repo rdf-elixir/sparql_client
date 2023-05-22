@@ -53,7 +53,7 @@ defmodule SPARQL.Client.Request do
       sparql_operation_type: type,
       sparql_operation_form: form,
       sparql_operation_payload: payload,
-      sparql_graph_params: graph_params(opts)
+      sparql_graph_params: graph_params(type, opts)
     }
     |> init_operation(opts)
     |> add_http_headers(opts)
@@ -97,29 +97,42 @@ defmodule SPARQL.Client.Request do
     end
   end
 
-  defp graph_params(opts) do
-    opts
-    |> Enum.reduce([], fn
-      {:default_graph, graph_uris}, acc when is_list(graph_uris) ->
-        Enum.reduce(graph_uris, acc, fn graph_uri, acc ->
-          [{"default-graph-uri", graph_uri} | acc]
-        end)
+  defp graph_params(SPARQL.Client.Query, opts) do
+    Enum.flat_map(opts, fn
+      {:default_graph, graph_uris} when is_list(graph_uris) ->
+        Enum.map(graph_uris, &{"default-graph-uri", &1})
 
-      {:default_graph, graph_uri}, acc ->
-        [{"default-graph-uri", graph_uri} | acc]
+      {:default_graph, graph_uri} ->
+        [{"default-graph-uri", graph_uri}]
 
-      {:named_graph, graph_uris}, acc when is_list(graph_uris) ->
-        Enum.reduce(graph_uris, acc, fn graph_uri, acc ->
-          [{"named-graph-uri", graph_uri} | acc]
-        end)
+      {:named_graph, graph_uris} when is_list(graph_uris) ->
+        Enum.map(graph_uris, &{"named-graph-uri", &1})
 
-      {:named_graph, graph_uri}, acc ->
-        [{"named-graph-uri", graph_uri} | acc]
+      {:named_graph, graph_uri} ->
+        [{"named-graph-uri", graph_uri}]
 
-      _, acc ->
-        acc
+      _ ->
+        []
     end)
-    |> Enum.reverse()
+  end
+
+  defp graph_params(SPARQL.Client.Update, opts) do
+    Enum.flat_map(opts, fn
+      {:using_graph, graph_uris} when is_list(graph_uris) ->
+        Enum.map(graph_uris, &{"using-graph-uri", &1})
+
+      {:using_graph, graph_uri} ->
+        [{"using-graph-uri", graph_uri}]
+
+      {:using_named_graph, graph_uris} when is_list(graph_uris) ->
+        Enum.map(graph_uris, &{"using-named-graph-uri", &1})
+
+      {:using_named_graph, graph_uri} ->
+        [{"using-named-graph-uri", graph_uri}]
+
+      _ ->
+        []
+    end)
   end
 
   @doc false
