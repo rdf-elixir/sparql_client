@@ -6,8 +6,13 @@ defmodule SPARQL.Client.Update.BuilderTest do
   @example_description EX.Foo |> EX.bar(EX.Baz)
   @example_graph RDF.Graph.new(@example_description, prefixes: %{ex: EX})
                  |> RDF.Graph.add(EX.Other |> EX.p("string"))
-  @example_dataset RDF.Dataset.new(@example_description)
-                   |> RDF.Dataset.add({EX.Other, EX.p(), "string", EX.NamedGraph})
+  @example_dataset RDF.Dataset.new(@example_graph)
+                   |> RDF.Dataset.add(
+                     RDF.Graph.new({EX.Another, EX.p(), ~I<http://example.com/2/foo>},
+                       name: EX.NamedGraph,
+                       prefixes: [ex2: "http://example.com/2/"]
+                     )
+                   )
 
   describe "update_data/3" do
     test "INSERT DATA with description" do
@@ -46,18 +51,20 @@ defmodule SPARQL.Client.Update.BuilderTest do
     test "INSERT DATA with dataset" do
       assert {:ok,
               """
-              PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-              PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-              PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+              PREFIX ex: <http://example.com/sparql-client-test#>
+              PREFIX ex2: <http://example.com/2/>
 
 
               INSERT DATA {
-              <http://example.com/sparql-client-test#Foo>
-                  <http://example.com/sparql-client-test#bar> <http://example.com/sparql-client-test#Baz> .
+              ex:Foo
+                  ex:bar ex:Baz .
+
+              ex:Other
+                  ex:p "string" .
 
               GRAPH <http://example.com/sparql-client-test#NamedGraph> {
-              <http://example.com/sparql-client-test#Other>
-                  <http://example.com/sparql-client-test#p> "string" .
+              ex:Another
+                  ex:p ex2:foo .
 
               }
 
@@ -68,18 +75,20 @@ defmodule SPARQL.Client.Update.BuilderTest do
     test "DELETE DATA with dataset" do
       assert {:ok,
               """
-              PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-              PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-              PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+              PREFIX ex: <http://example.com/sparql-client-test#>
+              PREFIX ex2: <http://example.com/2/>
 
 
               DELETE DATA {
-              <http://example.com/sparql-client-test#Foo>
-                  <http://example.com/sparql-client-test#bar> <http://example.com/sparql-client-test#Baz> .
+              ex:Foo
+                  ex:bar ex:Baz .
+
+              ex:Other
+                  ex:p "string" .
 
               GRAPH <http://example.com/sparql-client-test#NamedGraph> {
-              <http://example.com/sparql-client-test#Other>
-                  <http://example.com/sparql-client-test#p> "string" .
+              ex:Another
+                  ex:p ex2:foo .
 
               }
 

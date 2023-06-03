@@ -16,8 +16,16 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 
 - graph names on dataset parameters can be provided as RDF namespace terms
 
+### Fixed
+
+- `SPARQL.Client.insert_data/3` and `SPARQL.Client.delete_data/3` with 
+  `RDF.Dataset`s where the graphs had different prefixes associated,
+  resulted in invalid queries since not all prefixes were included in 
+  the update prologue
+
 
 [Compare v0.4.2...HEAD](https://github.com/rdf-elixir/sparql_client/compare/v0.4.2...HEAD)
+
 
 
 ## v0.4.2 - 2023-04-24

@@ -6,7 +6,10 @@ defmodule SPARQL.Client.Update.Builder do
   alias RDF.{IRI, Turtle, Graph, Dataset}
 
   def update_data(update_form, data, opts \\ []) do
-    with {:ok, prologue} <- update_prologue(data, opts),
+    {prefixes, opts} = Keyword.pop(opts, :prefixes)
+
+    with {:ok, data} <- setup_prefixes(data, prefixes),
+         {:ok, prologue} <- update_prologue(data, opts),
          {:ok, triples} <- update_data_triples(update_form, data, opts) do
       {:ok,
        """
@@ -18,9 +21,31 @@ defmodule SPARQL.Client.Update.Builder do
     end
   end
 
+  defp setup_prefixes(%Dataset{} = dataset, nil) do
+    setup_prefixes(dataset, Dataset.prefixes(dataset))
+  end
+
+  defp setup_prefixes(%Dataset{} = dataset, prefixes) do
+    {:ok,
+     dataset
+     |> Dataset.graphs()
+     |> Enum.reduce(dataset, fn graph, dataset ->
+       Dataset.update(dataset, graph.name, &Graph.add_prefixes(&1, prefixes))
+     end)}
+  end
+
+  defp setup_prefixes(data, nil), do: {:ok, data}
+
+  defp setup_prefixes(data, prefixes) do
+    {:ok, Graph.new(data, prefixes: prefixes)}
+  end
+
+  defp update_prologue(nil, _), do: ""
+
   defp update_prologue(%Dataset{} = dataset, opts) do
     dataset
-    |> Dataset.default_graph()
+    |> Dataset.graphs()
+    |> List.first()
     |> update_prologue(opts)
   end
 
