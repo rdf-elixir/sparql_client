@@ -11,6 +11,9 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 
 - support for dataset parameters `:using_graph` and `:using_named_graph`
   on update operations
+- `:prefixes` option used by `SPARQL.Client.insert_data/3` and 
+  `SPARQL.Client.delete_data/3` to specify custom prefixes to be used
+  when rendering the update
 
 ### Changed
 

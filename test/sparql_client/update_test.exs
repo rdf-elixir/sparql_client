@@ -115,6 +115,13 @@ defmodule SPARQL.Client.UpdateTest do
              ) ==
                :ok
     end
+
+    test "passing :prefixes" do
+      mock_update_data_request(:direct, :insert_data, @example_graph)
+
+      assert SPARQL.Client.insert_data(@example_graph, @example_endpoint, prefixes: [ex: EX]) ==
+               :ok
+    end
   end
 
   describe "delete_data/3" do

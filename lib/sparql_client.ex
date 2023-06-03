@@ -349,6 +349,10 @@ defmodule SPARQL.Client do
                              ],
                              using_named_graph: [
                                subsection: "Specifying an RDF Dataset"
+                             ],
+                             prefixes: [
+                               doc:
+                                 "The prefixes to be used when generating an update. This has currently only effect on INSERT DATA and DELETE DATA updates."
                              ]
                            ]
 
