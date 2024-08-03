@@ -93,14 +93,14 @@ defmodule SPARQL.Client.Mixfile do
       # We now have Hackney as a hard dependency through JSON-LD.ex; we should
       # re-enable this once we got rid of this hard-dependency
       # {:hackney, "~> 1.15", only: [:dev, :test]},
-      {:gun, "~> 1.3", only: [:dev, :test]},
-      {:mint, "~> 1.2", only: [:dev, :test]},
+      {:gun, "~> 2.1", only: [:dev, :test]},
+      {:mint, "~> 1.6", only: [:dev, :test]},
       {:castore, "~> 1.0", only: [:dev, :test]},
-      {:dialyxir, "~> 1.3", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-      {:exvcr, "~> 0.13", only: [:dev, :test]},
-      {:ex_doc, "~> 0.29", only: :dev, runtime: false},
-      {:excoveralls, "~> 0.15", only: :test}
+      {:exvcr, "~> 0.15", only: [:test]},
+      {:ex_doc, "~> 0.34", only: :dev, runtime: false},
+      {:excoveralls, "~> 0.18", only: :test}
     ]
   end
 
