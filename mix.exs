@@ -81,7 +81,7 @@ defmodule SPARQL.Client.Mixfile do
 
   defp deps do
     [
-      rdf_ex_dep(:rdf, "~> 1.2"),
+      rdf_ex_dep(:rdf, "~> 2.0"),
       rdf_ex_dep(:sparql, ">= 0.3.8"),
       rdf_ex_dep(:json_ld, ">= 0.3.6"),
       rdf_ex_dep(:rdf_xml, "~> 1.0"),

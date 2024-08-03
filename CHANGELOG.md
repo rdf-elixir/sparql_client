@@ -7,6 +7,8 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 
 ## Unreleased
 
+This version upgrades to RDF.ex v2.0.
+
 Elixir versions < 1.13 and OTP version < 23 are no longer supported
 
 ### Added
@@ -67,7 +69,7 @@ Elixir versions < 1.10 are no longer supported
 
 ### Added
 
-- general `:logger` option on all `SPARQL.Client` functions  
+- general `:logger` option on all `SPARQL.Client` functions
   (instrumenting the `Tesla.Middleware.Logger`)
 
 ### Changed

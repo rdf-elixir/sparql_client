@@ -52,7 +52,7 @@ defmodule SPARQL.Client.Update.Builder do
   defp update_prologue(graph, opts) do
     Turtle.write_string(
       graph,
-      Keyword.merge(opts, only: :directives, directive_style: :sparql)
+      Keyword.merge(opts, content: :directives, directive_style: :sparql)
     )
   end
 
@@ -76,7 +76,7 @@ defmodule SPARQL.Client.Update.Builder do
   end
 
   defp update_data_triples(_, data, opts) do
-    Turtle.write_string(data, Keyword.merge(opts, only: :triples))
+    Turtle.write_string(data, Keyword.merge(opts, content: :triples))
   end
 
   def load(from, to, silent) do

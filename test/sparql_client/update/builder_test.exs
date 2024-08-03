@@ -22,7 +22,6 @@ defmodule SPARQL.Client.Update.BuilderTest do
               PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
               PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
-
               INSERT DATA {
               <http://example.com/sparql-client-test#Foo>
                   <http://example.com/sparql-client-test#bar> <http://example.com/sparql-client-test#Baz> .
@@ -35,7 +34,6 @@ defmodule SPARQL.Client.Update.BuilderTest do
       assert {:ok,
               """
               PREFIX ex: <http://example.com/sparql-client-test#>
-
 
               INSERT DATA {
               ex:Foo
@@ -53,7 +51,6 @@ defmodule SPARQL.Client.Update.BuilderTest do
               """
               PREFIX ex: <http://example.com/sparql-client-test#>
               PREFIX ex2: <http://example.com/2/>
-
 
               INSERT DATA {
               ex:Foo
@@ -78,7 +75,6 @@ defmodule SPARQL.Client.Update.BuilderTest do
               PREFIX ex: <http://example.com/sparql-client-test#>
               PREFIX ex2: <http://example.com/2/>
 
-
               DELETE DATA {
               ex:Foo
                   ex:bar ex:Baz .
@@ -100,7 +96,6 @@ defmodule SPARQL.Client.Update.BuilderTest do
       assert {:ok,
               """
               PREFIX ex: <http://example.com/sparql-client-test#>
-
 
               INSERT DATA {
               ex:Foo
