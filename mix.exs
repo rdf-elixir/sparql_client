@@ -9,7 +9,7 @@ defmodule SPARQL.Client.Mixfile do
     [
       app: :sparql_client,
       version: @version,
-      elixir: "~> 1.11",
+      elixir: "~> 1.13",
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
       deps: deps(),

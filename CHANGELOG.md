@@ -7,6 +7,8 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 
 ## Unreleased
 
+Elixir versions < 1.13 and OTP version < 23 are no longer supported
+
 ### Added
 
 - support for dataset parameters `:using_graph` and `:using_named_graph`
