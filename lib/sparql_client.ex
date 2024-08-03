@@ -166,7 +166,7 @@ defmodule SPARQL.Client do
                               type:
                                 {:in,
                                  (SPARQL.result_formats() ++ RDF.Serialization.formats())
-                                 |> Enum.map(fn format -> format.name end)},
+                                 |> Enum.map(fn format -> format.name() end)},
                               subsection: "Specifying the response format"
                             ],
                             default_graph: [

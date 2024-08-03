@@ -105,7 +105,7 @@ defmodule SPARQL.Client.Query do
 
   defp result_media_type(query_form, result_format) do
     if format = ResultFormat.by_name(result_format, query_form) do
-      {:ok, format.media_type}
+      {:ok, format.media_type()}
     else
       {:error, "#{result_format} is not a valid result format for #{query_form} queries"}
     end
