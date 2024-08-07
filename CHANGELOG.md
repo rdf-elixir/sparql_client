@@ -5,7 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 [Keep a CHANGELOG](http://keepachangelog.com).
 
 
-## Unreleased
+## v0.5.0 - 2024-08-07
 
 This version upgrades to RDF.ex v2.0.
 
@@ -31,7 +31,7 @@ Elixir versions < 1.13 and OTP version < 23 are no longer supported
   the update prologue
 
 
-[Compare v0.4.2...HEAD](https://github.com/rdf-elixir/sparql_client/compare/v0.4.2...HEAD)
+[Compare v0.4.2...v0.5.0](https://github.com/rdf-elixir/sparql_client/compare/v0.4.2...v0.5.0)
 
 
 
