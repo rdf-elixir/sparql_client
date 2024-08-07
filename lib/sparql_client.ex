@@ -6,7 +6,7 @@ defmodule SPARQL.Client do
   specified in the SPARQL query and update specs can be requested by a client from a
   SPARQL service via HTTP.
 
-  This modules provides dedicated functions for the various forms of SPARQL query and update
+  This module provides dedicated functions for the various forms of SPARQL query and update
   operations and generic `query/3` and `update/3` for the query and update operations.
 
   For a general introduction you may refer to the guides on the [homepage](https://rdf-elixir.dev).
@@ -16,7 +16,7 @@ defmodule SPARQL.Client do
 
   The query functions can be called with a `SPARQL.Query` struct or a SPARQL query as a raw string.
   By default, a SPARQL query string will be parsed into a `SPARQL.Query` struct for validation
-  purposes before the string is send via an HTTP request to the SPARQL protocol service endpoint.
+  purposes before the string is sent via an HTTP request to the SPARQL protocol service endpoint.
   This parsing step can be omitted by setting `:raw_mode` option to `true` on the dedicated
   functions for the various SPARQL operation forms.
 
@@ -34,7 +34,7 @@ defmodule SPARQL.Client do
       RDF.Graph.new({EX.S, EX.p, EX.O})
       |> SPARQL.Client.insert_data("http://example.com/sparql")
 
-  You can still provide hand-written update strings to these functions, but due to the lack of
+  You can still provide handwritten update strings to these functions, but due to the lack of
   SPARQL update parsing the raw-mode is mandatory then. For the `INSERT` and `DELETE` update
   forms this the only way to request them for now.
 
@@ -224,7 +224,7 @@ defmodule SPARQL.Client do
 
   ## Specifying the response format
 
-  The `SPARQL.Client` can handle all of the specified result formats for SPARQL
+  The `SPARQL.Client` can handle all the specified result formats for SPARQL
   tuple results (JSON, XML, CSV and TSV) and for `CONSTRUCT` and `DESCRIBE` queries
   all RDF serialization formats supported by [RDF.ex](https://github.com/rdf-elixir/rdf-ex)
   can be handled.
@@ -235,7 +235,7 @@ defmodule SPARQL.Client do
   - JSON being the preferred format for `SELECT` and `ASK` queries
   - Turtle being the preferred format for `CONSTRUCT` and `DESCRIBE` queries
 
-  Although the returned result is mostly independent from the actually returned
+  Although the returned result is mostly independent of the actually returned
   response format from the service, you might want to set it manually with the
   `:result_format` and the name of the format
 
@@ -463,7 +463,7 @@ defmodule SPARQL.Client do
 
   The URL from to be loaded must be specified with the `:from` option. The graph name
   to which the data should be loaded can be given with the `:to` option. Both options
-  expect an URI as a value which can be given as a string, `RDF.IRI` or vocabulary namespace term.
+  expect a URI as a value which can be given as a string, `RDF.IRI` or vocabulary namespace term.
 
       SPARQL.Client.load("http://example.com/sparql", from: "http://example.com/Resource")
 
@@ -492,7 +492,7 @@ defmodule SPARQL.Client do
       "LOAD <http://example.com/Resource>"
       |> SPARQL.Client.load("http://example.com/sparql", raw_mode: true)
 
-  See `load/2` for how to execute a `LOAD` update with an automatically build update string.
+  See `load/2` for how to execute a `LOAD` update with an automatically built update string.
 
   See documentation of the generic `update/3` function and the [module documentation](`SPARQL.Client`) for the available options.
   """
@@ -542,7 +542,7 @@ defmodule SPARQL.Client do
         "#{form_keyword} <http://example.com/Graph>"
         |> SPARQL.Client.#{form}("http://example.com/sparql", raw_mode: true)
 
-    See `#{form}/2` for how to execute a `#{form_keyword}` update with an automatically build update string.
+    See `#{form}/2` for how to execute a `#{form_keyword}` update with an automatically built update string.
 
     See documentation of the generic `update/3` function and the [module documentation](`SPARQL.Client`) for the available options.
     """
@@ -597,7 +597,7 @@ defmodule SPARQL.Client do
         "#{form_keyword} GRAPH <http://example.com/Graph1> TO GRAPH <http://example.com/Graph2>"
         |> SPARQL.Client.#{form}("http://example.com/sparql", raw_mode: true)
 
-    See `#{form}/2` for how to execute a `#{form_keyword}` update with an automatically build update string.
+    See `#{form}/2` for how to execute a `#{form_keyword}` update with an automatically built update string.
 
     See documentation of the generic `update/3` function and the [module documentation](`SPARQL.Client`) for the available options.
     """
