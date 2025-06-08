@@ -514,7 +514,8 @@ defmodule SPARQL.Client do
     Executes a SPARQL `#{form_keyword}` update operation against a service endpoint.
 
     The graph name must be specified with the `:graph` option either as a string, `RDF.IRI`,
-    vocabulary namespace term or one of the special values `:default`, `:named`, `:all`.
+    vocabulary namespace term, one of the special values `:default`, `:named`, `:all`, or a list of
+    any of the above.
 
         SPARQL.Client.#{form}("http://example.com/sparql", graph: "http://example.com/Graph")
 
@@ -563,9 +564,9 @@ defmodule SPARQL.Client do
     @doc """
     Executes a SPARQL `#{form_keyword}` update operation against a service endpoint.
 
-    The source graph must be specified with the `:graph` option and the destination graph with the
+    The source graph must be specified with the `:from` option and the destination graph with the
     `:to` option either as a string, `RDF.IRI`, vocabulary namespace term for the graph name or
-    `:default` for the default graph.
+    `:default` for the default graph. #{if form == :add, do: "The source graph can also be a list of graphs with any of the above as elements.", else: ""}
 
         SPARQL.Client.#{form}("http://example.com/sparql",
           from: "http://example.com/Graph1", to: "http://example.com/Graph2")

@@ -172,6 +172,41 @@ defmodule SPARQL.Client.Update.BuilderTest do
       assert Builder.clear(EX.Graph, true) ==
                {:ok, "CLEAR SILENT GRAPH <#{IRI.to_string(EX.Graph)}>"}
     end
+
+    test "with list of graph IRIs" do
+      assert Builder.clear(
+               [IRI.to_string(EX.Graph1), RDF.iri(EX.Graph2), :default, EX.Graph3, :named],
+               false
+             ) ==
+               {:ok,
+                """
+                CLEAR GRAPH <#{IRI.to_string(EX.Graph1)}>;
+                CLEAR GRAPH <#{IRI.to_string(EX.Graph2)}>;
+                CLEAR DEFAULT;
+                CLEAR GRAPH <#{IRI.to_string(EX.Graph3)}>;
+                CLEAR NAMED
+                """
+                |> String.trim_trailing()}
+    end
+
+    test "with list of graph IRIs and silent flag" do
+      assert Builder.clear([EX.Graph1, EX.Graph2], true) ==
+               {:ok,
+                """
+                CLEAR SILENT GRAPH <#{IRI.to_string(EX.Graph1)}>;
+                CLEAR SILENT GRAPH <#{IRI.to_string(EX.Graph2)}>
+                """
+                |> String.trim_trailing()}
+    end
+
+    test "with single element list" do
+      assert Builder.clear([EX.Graph], false) ==
+               {:ok, "CLEAR GRAPH <#{IRI.to_string(EX.Graph)}>"}
+    end
+
+    test "with empty list" do
+      assert Builder.clear([], false) == {:error, "no graphs to clear"}
+    end
   end
 
   describe "drop/2" do
@@ -208,6 +243,41 @@ defmodule SPARQL.Client.Update.BuilderTest do
       assert Builder.drop(EX.Graph, true) ==
                {:ok, "DROP SILENT GRAPH <#{IRI.to_string(EX.Graph)}>"}
     end
+
+    test "with list of graph IRIs" do
+      assert Builder.drop(
+               [IRI.to_string(EX.Graph1), RDF.iri(EX.Graph2), :default, EX.Graph3, :named],
+               false
+             ) ==
+               {:ok,
+                """
+                DROP GRAPH <#{IRI.to_string(EX.Graph1)}>;
+                DROP GRAPH <#{IRI.to_string(EX.Graph2)}>;
+                DROP DEFAULT;
+                DROP GRAPH <#{IRI.to_string(EX.Graph3)}>;
+                DROP NAMED
+                """
+                |> String.trim_trailing()}
+    end
+
+    test "with list of graph IRIs and silent flag" do
+      assert Builder.drop([EX.Graph1, EX.Graph2], true) ==
+               {:ok,
+                """
+                DROP SILENT GRAPH <#{IRI.to_string(EX.Graph1)}>;
+                DROP SILENT GRAPH <#{IRI.to_string(EX.Graph2)}>
+                """
+                |> String.trim_trailing()}
+    end
+
+    test "with single element list" do
+      assert Builder.drop([EX.Graph], false) ==
+               {:ok, "DROP GRAPH <#{IRI.to_string(EX.Graph)}>"}
+    end
+
+    test "with empty list" do
+      assert Builder.drop([], false) == {:error, "no graphs to drop"}
+    end
   end
 
   describe "create/2" do
@@ -218,6 +288,39 @@ defmodule SPARQL.Client.Update.BuilderTest do
     test "with silent flag" do
       assert Builder.create(EX.Graph, true) ==
                {:ok, "CREATE SILENT GRAPH <#{IRI.to_string(EX.Graph)}>"}
+    end
+
+    test "with list of graph IRIs" do
+      assert Builder.create(
+               [IRI.to_string(EX.Graph1), RDF.iri(EX.Graph2), EX.Graph3],
+               false
+             ) ==
+               {:ok,
+                """
+                CREATE GRAPH <#{IRI.to_string(EX.Graph1)}>;
+                CREATE GRAPH <#{IRI.to_string(EX.Graph2)}>;
+                CREATE GRAPH <#{IRI.to_string(EX.Graph3)}>
+                """
+                |> String.trim_trailing()}
+    end
+
+    test "with list of graph IRIs and silent flag" do
+      assert Builder.create([EX.Graph1, EX.Graph2], true) ==
+               {:ok,
+                """
+                CREATE SILENT GRAPH <#{IRI.to_string(EX.Graph1)}>;
+                CREATE SILENT GRAPH <#{IRI.to_string(EX.Graph2)}>
+                """
+                |> String.trim_trailing()}
+    end
+
+    test "with single element list" do
+      assert Builder.create([EX.Graph], false) ==
+               {:ok, "CREATE GRAPH <#{IRI.to_string(EX.Graph)}>"}
+    end
+
+    test "with empty list" do
+      assert Builder.create([], false) == {:error, "no graphs to create"}
     end
   end
 
@@ -287,6 +390,42 @@ defmodule SPARQL.Client.Update.BuilderTest do
     test "with silent flag" do
       assert Builder.add(EX.Graph, :default, true) ==
                {:ok, "ADD SILENT GRAPH <#{IRI.to_string(EX.Graph)}> TO DEFAULT"}
+    end
+
+    test "with list of source graphs" do
+      assert Builder.add(
+               [IRI.to_string(EX.Graph1), RDF.iri(EX.Graph2), :default, EX.Graph3],
+               EX.Target,
+               false
+             ) ==
+               {:ok,
+                """
+                ADD GRAPH <#{IRI.to_string(EX.Graph1)}> TO GRAPH <#{IRI.to_string(EX.Target)}>;
+                ADD GRAPH <#{IRI.to_string(EX.Graph2)}> TO GRAPH <#{IRI.to_string(EX.Target)}>;
+                ADD DEFAULT TO GRAPH <#{IRI.to_string(EX.Target)}>;
+                ADD GRAPH <#{IRI.to_string(EX.Graph3)}> TO GRAPH <#{IRI.to_string(EX.Target)}>
+                """
+                |> String.trim_trailing()}
+    end
+
+    test "with list of source graphs and silent flag" do
+      assert Builder.add([EX.Graph1, EX.Graph2], :default, true) ==
+               {:ok,
+                """
+                ADD SILENT GRAPH <#{IRI.to_string(EX.Graph1)}> TO DEFAULT;
+                ADD SILENT GRAPH <#{IRI.to_string(EX.Graph2)}> TO DEFAULT
+                """
+                |> String.trim_trailing()}
+    end
+
+    test "with single element list" do
+      assert Builder.add([EX.Graph], EX.Target, false) ==
+               {:ok,
+                "ADD GRAPH <#{IRI.to_string(EX.Graph)}> TO GRAPH <#{IRI.to_string(EX.Target)}>"}
+    end
+
+    test "with empty list" do
+      assert Builder.add([], EX.Target, false) == {:error, "no graphs to add"}
     end
   end
 end

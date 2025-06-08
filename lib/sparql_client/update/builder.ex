@@ -83,12 +83,39 @@ defmodule SPARQL.Client.Update.Builder do
     {:ok, "LOAD " <> silent_fragment(silent) <> iri_ref(from) <> into_graph_fragment(to)}
   end
 
+  def clear([], _silent), do: {:error, "no graphs to clear"}
+
+  def clear(graph_iris, silent) when is_list(graph_iris) do
+    with {:ok, updates} <-
+           RDF.Utils.map_while_ok(graph_iris, &clear(&1, silent)) do
+      {:ok, Enum.join(updates, ";\n")}
+    end
+  end
+
   def clear(graph_iri, silent) do
     {:ok, "CLEAR " <> silent_fragment(silent) <> clear_graph_identifier(graph_iri)}
   end
 
+  def create([], _silent), do: {:error, "no graphs to create"}
+
+  def create(graph_iris, silent) when is_list(graph_iris) do
+    with {:ok, updates} <-
+           RDF.Utils.map_while_ok(graph_iris, &create(&1, silent)) do
+      {:ok, Enum.join(updates, ";\n")}
+    end
+  end
+
   def create(graph_iri, silent) do
     {:ok, "CREATE " <> silent_fragment(silent) <> "GRAPH #{iri_ref(graph_iri)}"}
+  end
+
+  def drop([], _silent), do: {:error, "no graphs to drop"}
+
+  def drop(graph_iris, silent) when is_list(graph_iris) do
+    with {:ok, updates} <-
+           RDF.Utils.map_while_ok(graph_iris, &drop(&1, silent)) do
+      {:ok, Enum.join(updates, ";\n")}
+    end
   end
 
   def drop(graph_iri, silent) do
@@ -101,6 +128,15 @@ defmodule SPARQL.Client.Update.Builder do
 
   def move(from, to, silent) do
     graph_update(:move, from, to, silent)
+  end
+
+  def add([], _to, _silent), do: {:error, "no graphs to add"}
+
+  def add(from_graphs, to, silent) when is_list(from_graphs) do
+    with {:ok, updates} <-
+           RDF.Utils.map_while_ok(from_graphs, &add(&1, to, silent)) do
+      {:ok, Enum.join(updates, ";\n")}
+    end
   end
 
   def add(from, to, silent) do
