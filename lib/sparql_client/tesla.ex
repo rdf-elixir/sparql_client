@@ -1,8 +1,6 @@
 defmodule SPARQL.Client.Tesla do
   @moduledoc false
 
-  use Tesla, docs: false
-
   alias SPARQL.Client.Request
 
   @default_max_redirects 5
@@ -53,7 +51,7 @@ defmodule SPARQL.Client.Tesla do
   end
 
   defp do_http_request(client, :get, "1.1", endpoint, query, query_param_key, graph_params, opts) do
-    get(
+    Tesla.get(
       client,
       endpoint <> "?" <> URI.encode_query([{query_param_key, query} | graph_params]),
       tesla_request_opts(opts)
@@ -67,11 +65,11 @@ defmodule SPARQL.Client.Tesla do
         graph_params -> endpoint <> "?" <> URI.encode_query(graph_params)
       end
 
-    post(client, url, query, tesla_request_opts(opts))
+    Tesla.post(client, url, query, tesla_request_opts(opts))
   end
 
   defp do_http_request(client, :post, "1.0", endpoint, query, query_param_key, graph_params, opts) do
-    post(
+    Tesla.post(
       client,
       endpoint,
       URI.encode_query([{query_param_key, query} | graph_params]),
