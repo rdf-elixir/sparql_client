@@ -80,7 +80,7 @@ defmodule SPARQL.Client.Update.Builder do
   end
 
   def load(from, to, silent) do
-    {:ok, "LOAD " <> silent_fragment(silent) <> iri_ref(from) <> into_graph_fragment(to)}
+    {:ok, "LOAD " <> silent_fragment(silent) <> graph_ref(from) <> into_graph_fragment(to)}
   end
 
   def clear([], _silent), do: {:error, "no graphs to clear"}
@@ -106,7 +106,7 @@ defmodule SPARQL.Client.Update.Builder do
   end
 
   def create(graph_iri, silent) do
-    {:ok, "CREATE " <> silent_fragment(silent) <> "GRAPH #{iri_ref(graph_iri)}"}
+    {:ok, "CREATE " <> silent_fragment(silent) <> "GRAPH #{graph_ref(graph_iri)}"}
   end
 
   def drop([], _silent), do: {:error, "no graphs to drop"}
@@ -157,20 +157,30 @@ defmodule SPARQL.Client.Update.Builder do
   defp graph_update_keyword(:add), do: "ADD"
 
   defp into_graph_fragment(nil), do: ""
-  defp into_graph_fragment(iri), do: " INTO GRAPH #{iri_ref(iri)}"
+  defp into_graph_fragment(iri), do: " INTO GRAPH #{graph_ref(iri)}"
 
   defp clear_graph_identifier(:default), do: "DEFAULT"
   defp clear_graph_identifier(:named), do: "NAMED"
   defp clear_graph_identifier(:all), do: "ALL"
-  defp clear_graph_identifier(iri), do: "GRAPH #{iri_ref(iri)}"
+  defp clear_graph_identifier(iri), do: "GRAPH #{graph_ref(iri)}"
 
   defp graph_identifier(:default), do: "DEFAULT"
-  defp graph_identifier(iri), do: "GRAPH #{iri_ref(iri)}"
+  defp graph_identifier(iri), do: "GRAPH #{graph_ref(iri)}"
 
   defp silent_fragment(true), do: "SILENT "
   defp silent_fragment(_), do: ""
 
-  defp iri_ref(iri) when is_binary(iri), do: "<#{iri}>"
-  defp iri_ref(%IRI{} = iri), do: iri |> IRI.to_string() |> iri_ref()
-  defp iri_ref(term) when maybe_ns_term(term), do: term |> IRI.to_string() |> iri_ref()
+  defp graph_ref(iri) when is_binary(iri), do: "<#{iri}>"
+  defp graph_ref(%IRI{} = iri), do: iri |> IRI.to_string() |> graph_ref()
+  defp graph_ref(term) when maybe_ns_term(term), do: term |> IRI.to_string() |> graph_ref()
+
+  defp graph_ref(%RDF.BlankNode{} = bnode),
+    do:
+      raise(
+        ArgumentError,
+        "invalid graph reference: #{inspect(bnode)} (blank nodes are not allowed in SPARQL)"
+      )
+
+  defp graph_ref(invalid),
+    do: raise(ArgumentError, "invalid graph reference: #{inspect(invalid)} ")
 end
