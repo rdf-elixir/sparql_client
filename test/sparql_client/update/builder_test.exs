@@ -136,6 +136,14 @@ defmodule SPARQL.Client.Update.BuilderTest do
                {:ok,
                 "LOAD SILENT <#{IRI.to_string(EX.Resource)}> INTO GRAPH <#{IRI.to_string(EX.Graph)}>"}
     end
+
+    test "with :default as target graph" do
+      assert Builder.load(EX.Resource, :default, false) ==
+               {:ok, "LOAD <#{IRI.to_string(EX.Resource)}>"}
+
+      assert Builder.load(EX.Resource, :default, true) ==
+               {:ok, "LOAD SILENT <#{IRI.to_string(EX.Resource)}>"}
+    end
   end
 
   describe "clear/2" do

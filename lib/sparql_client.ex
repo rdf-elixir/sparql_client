@@ -464,10 +464,13 @@ defmodule SPARQL.Client do
   The URL from to be loaded must be specified with the `:from` option. The graph name
   to which the data should be loaded can be given with the `:to` option. Both options
   expect a URI as a value which can be given as a string, `RDF.IRI` or vocabulary namespace term.
+  The `:to` option can also be `:default` to explicitly load into the default graph.
 
       SPARQL.Client.load("http://example.com/sparql", from: "http://example.com/Resource")
 
       SPARQL.Client.load("http://example.com/sparql", from: EX.Resource, to: EX.Graph)
+
+      SPARQL.Client.load("http://example.com/sparql", from: EX.Resource, to: :default)
 
   The update operation can be run in `SILENT` mode by setting the `:silent` option to `true`.
 

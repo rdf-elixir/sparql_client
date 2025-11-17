@@ -193,6 +193,13 @@ defmodule SPARQL.Client.UpdateTest do
       mock_update_request(:direct, "LOAD SILENT <http://example.com/sparql-client-test#Resource>")
       assert SPARQL.Client.load(@example_endpoint, from: EX.Resource, silent: true) == :ok
     end
+
+    test "with :to option as :default" do
+      update = "LOAD <http://example.com/sparql-client-test#Resource>"
+
+      mock_update_request(:direct, update)
+      assert SPARQL.Client.load(@example_endpoint, from: EX.Resource, to: :default) == :ok
+    end
   end
 
   describe "load/3" do

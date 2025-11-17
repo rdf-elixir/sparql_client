@@ -157,6 +157,7 @@ defmodule SPARQL.Client.Update.Builder do
   defp graph_update_keyword(:add), do: "ADD"
 
   defp into_graph_fragment(nil), do: ""
+  defp into_graph_fragment(:default), do: ""
   defp into_graph_fragment(iri), do: " INTO GRAPH #{graph_ref(iri)}"
 
   defp clear_graph_identifier(:default), do: "DEFAULT"

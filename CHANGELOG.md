@@ -11,11 +11,13 @@ Elixir versions < 1.14 and OTP version < 24 are no longer supported.
 
 ### Added
 
-- support lists of graphs for operations on multiple graphs in 
+- support lists of graphs for operations on multiple graphs in
   - `SPARQL.Client.add/3`
   - `SPARQL.Client.clear/2`
   - `SPARQL.Client.create/2`
-  - `SPARQL.Client.drop/2` 
+  - `SPARQL.Client.drop/2`
+- support `:default` as value for the `:to` option of `SPARQL.Client.load/2`
+  to explicitly load into the default graph 
 
 
 [Compare v0.5.0...HEAD](https://github.com/rdf-elixir/sparql_client/compare/v0.5.0...HEAD)
