@@ -28,9 +28,6 @@ defmodule SPARQL.Client.Mixfile do
         source_ref: "v#{@version}",
         extras: ["CHANGELOG.md"]
       ],
-      preferred_cli_env: [
-        check: :test
-      ],
 
       # ExVCR
       preferred_cli_env: [
@@ -41,13 +38,7 @@ defmodule SPARQL.Client.Mixfile do
       ],
 
       # ExCoveralls
-      test_coverage: [tool: ExCoveralls],
-      preferred_cli_env: [
-        coveralls: :test,
-        "coveralls.detail": :test,
-        "coveralls.post": :test,
-        "coveralls.html": :test
-      ]
+      test_coverage: [tool: ExCoveralls]
     ]
   end
 
@@ -107,6 +98,18 @@ defmodule SPARQL.Client.Mixfile do
       "LOCAL" -> {dep, path: "../#{dep}"}
       _ -> {dep, version}
     end
+  end
+
+  def cli do
+    [
+      preferred_envs: [
+        check: :test,
+        coveralls: :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test
+      ]
+    ]
   end
 
   defp aliases do
