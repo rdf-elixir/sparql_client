@@ -1,35 +1,35 @@
 [
   {
     "request": {
-      "body": "query=PREFIX+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0APREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0APREFIX+xsd%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2001%2FXMLSchema%23%3E%0ACONSTRUCT+%7B+%3Chttp%3A%2F%2Fexample.org%2FElixir%3E+%3Fp+%3Fo+%7D%0AWHERE++%7B+%3Chttp%3A%2F%2Fdbpedia.org%2Fresource%2FElixir_%28programming_language%29%3E+%3Fp+%3Fo+%7D%0ALIMIT+3%0A",
+      "options": [],
+      "body": "",
+      "url": "https://dbpedia.org/sparql?query=PREFIX+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0APREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0APREFIX+xsd%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2001%2FXMLSchema%23%3E%0ACONSTRUCT+%7B+%3Chttp%3A%2F%2Fexample.org%2FElixir%3E+%3Fp+%3Fo+%7D%0AWHERE++%7B+%3Chttp%3A%2F%2Fdbpedia.org%2Fresource%2FElixir_%28programming_language%29%3E+%3Fp+%3Fo+%7D%0ALIMIT+3%0A",
       "headers": {
         "Accept": "text/plain",
-        "Content-Type": "application/x-www-form-urlencoded"
+        "Content-Type": ""
       },
-      "method": "post",
-      "options": [],
-      "request_body": "",
-      "url": "http://dbpedia.org/sparql"
+      "method": "get",
+      "request_body": ""
     },
     "response": {
       "binary": false,
-      "body": "<http://example.org/Elixir>\t<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>\t<http://www.w3.org/2002/07/owl#Thing> .\n<http://example.org/Elixir>\t<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>\t<http://dbpedia.org/ontology/Language> .\n<http://example.org/Elixir>\t<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>\t<http://www.wikidata.org/entity/Q315> .\n",
+      "type": "ok",
+      "body": "<http://example.org/Elixir>\t<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>\t<http://dbpedia.org/ontology/Language> .\n<http://example.org/Elixir>\t<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>\t<http://www.w3.org/2002/07/owl#Thing> .\n",
       "headers": {
-        "Date": "Sat, 22 Sep 2018 21:22:17 GMT",
+        "Date": "Mon, 23 Feb 2026 01:28:44 GMT",
         "Content-Type": "text/plain; charset=UTF-8",
-        "Content-Length": "355",
+        "Content-Length": "237",
         "Connection": "keep-alive",
-        "Server": "Virtuoso/07.20.3229 (Linux) i686-generic-linux-glibc25-64  VDB",
-        "Expires": "Sat, 29 Sep 2018 21:22:17 GMT",
-        "Cache-Control": "max-age=604800",
-        "Access-Control-Allow-Origin": "*",
+        "Server": "Virtuoso/08.03.3334 (Linux) x86_64-generic-linux-glibc2.12  VDB",
+        "Content-disposition": "filename=sparql_2026-02-23_01-20-48Z.nt",
+        "Expires": "Wed, 25 Mar 2026 01:28:44 GMT",
+        "Cache-Control": "max-age=2592000",
         "Access-Control-Allow-Credentials": "true",
         "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-        "Access-Control-Allow-Headers": "DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Accept-Encoding",
+        "Access-Control-Allow-Headers": "Depth,DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Accept-Encoding",
         "Accept-Ranges": "bytes"
       },
-      "status_code": 200,
-      "type": "ok"
+      "status_code": 200
     }
   }
 ]

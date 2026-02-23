@@ -4,11 +4,11 @@
       "options": {
         "recv_timeout": 30000
       },
-      "body": "query=PREFIX+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0APREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0APREFIX+xsd%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2001%2FXMLSchema%23%3E%0APREFIX+xsd%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2001%2FXMLSchema%23%3E%0APREFIX+foaf%3A+%3Chttp%3A%2F%2Fxmlns.com%2Ffoaf%2F0.1%2F%3E%0APREFIX+%3A+%3Chttp%3A%2F%2Fdbpedia.org%2Fresource%2F%3E%0APREFIX+dbo%3A+%3Chttp%3A%2F%2Fdbpedia.org%2Fontology%2F%3E%0A%0ASELECT+%3Fname+%3Fbirth+%3Fdeath+%3Fperson%0AWHERE+%7B%0A++%3Fperson%0A++++foaf%3Aname++++++%3Fname+%3B%0A++++dbo%3AbirthPlace+%3ABerlin+%3B%0A++++dbo%3AbirthDate++%3Fbirth+%3B%0A++++dbo%3AdeathDate++%3Fdeath+.%0A++FILTER+%28%3Fbirth+%3C+%221900-01-01%22%5E%5Exsd%3Adate%29+.%0A%7D%0AORDER+BY+%3Fname%0ALIMIT+3%0A",
+      "body": "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nPREFIX foaf: <http://xmlns.com/foaf/0.1/>\nPREFIX : <http://dbpedia.org/resource/>\nPREFIX dbo: <http://dbpedia.org/ontology/>\n\nSELECT ?name ?birth ?death ?person\nWHERE {\n  ?person\n    foaf:name      ?name ;\n    dbo:birthPlace :Berlin ;\n    dbo:birthDate  ?birth ;\n    dbo:deathDate  ?death .\n  FILTER (?birth < \"1900-01-01\"^^xsd:date) .\n}\nORDER BY ?name\nLIMIT 3\n",
       "url": "https://dbpedia.org/sparql",
       "headers": {
         "Accept": "application/sparql-results+json",
-        "Content-Type": "application/x-www-form-urlencoded"
+        "Content-Type": "application/sparql-query"
       },
       "method": "post",
       "request_body": ""
@@ -18,13 +18,13 @@
       "type": "ok",
       "body": "\n{ \"head\": { \"link\": [], \"vars\": [\"name\", \"birth\", \"death\", \"person\"] },\n  \"results\": { \"distinct\": false, \"ordered\": true, \"bindings\": [\n    { \"name\": { \"type\": \"literal\", \"xml:lang\": \"en\", \"value\": \"\\\"Annot\\\" (Annot Jacobi)\" }\t, \"birth\": { \"type\": \"literal\", \"datatype\": \"http://www.w3.org/2001/XMLSchema#date\", \"value\": \"1894-12-27\" }\t, \"death\": { \"type\": \"literal\", \"datatype\": \"http://www.w3.org/2001/XMLSchema#date\", \"value\": \"1981-10-20\" }\t, \"person\": { \"type\": \"uri\", \"value\": \"http://dbpedia.org/resource/Annot_(artist)\" }},\n    { \"name\": { \"type\": \"literal\", \"xml:lang\": \"en\", \"value\": \"Adam M\\u00FCller\" }\t, \"birth\": { \"type\": \"literal\", \"datatype\": \"http://www.w3.org/2001/XMLSchema#date\", \"value\": \"1779-06-30\" }\t, \"death\": { \"type\": \"literal\", \"datatype\": \"http://www.w3.org/2001/XMLSchema#date\", \"value\": \"1829-01-17\" }\t, \"person\": { \"type\": \"uri\", \"value\": \"http://dbpedia.org/resource/Adam_M\\u00FCller\" }},\n    { \"name\": { \"type\": \"literal\", \"xml:lang\": \"en\", \"value\": \"Adele Spitzeder\" }\t, \"birth\": { \"type\": \"literal\", \"datatype\": \"http://www.w3.org/2001/XMLSchema#date\", \"value\": \"1832-02-09\" }\t, \"death\": { \"type\": \"literal\", \"datatype\": \"http://www.w3.org/2001/XMLSchema#date\", \"value\": \"1895-10-28\" }\t, \"person\": { \"type\": \"uri\", \"value\": \"http://dbpedia.org/resource/Adele_Spitzeder\" }} ] } }",
       "headers": {
-        "Date": "Mon, 23 Feb 2026 01:28:43 GMT",
+        "Date": "Mon, 23 Feb 2026 01:30:33 GMT",
         "Content-Type": "application/sparql-results+json",
         "Content-Length": "1316",
         "Connection": "keep-alive",
         "Server": "Virtuoso/08.03.3334 (Linux) x86_64-generic-linux-glibc2.12  VDB",
-        "Content-disposition": "filename=sparql_2026-02-23_01-20-26Z.json",
-        "Expires": "Wed, 25 Mar 2026 01:28:43 GMT",
+        "Content-disposition": "filename=sparql_2026-02-23_01-30-33Z.json",
+        "Expires": "Wed, 25 Mar 2026 01:30:33 GMT",
         "Cache-Control": "max-age=2592000",
         "Access-Control-Allow-Credentials": "true",
         "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
