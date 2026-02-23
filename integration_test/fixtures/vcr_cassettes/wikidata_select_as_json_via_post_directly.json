@@ -1,0 +1,45 @@
+[
+  {
+    "request": {
+      "options": [],
+      "body": "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nPREFIX wd: <http://www.wikidata.org/entity/>\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\n\nSELECT ?item ?label\nWHERE {\n  ?item wdt:P31 wd:Q9143 ;\n        rdfs:label ?label .\n  FILTER(LANG(?label) = \"en\")\n}\nORDER BY ?label\nLIMIT 3\n",
+      "url": "https://query.wikidata.org/sparql",
+      "headers": {
+        "Accept": "application/sparql-results+json",
+        "Content-Type": "application/sparql-query",
+        "User-Agent": "SPARQL.Client Integration Tests"
+      },
+      "method": "post",
+      "request_body": ""
+    },
+    "response": {
+      "binary": false,
+      "type": "ok",
+      "body": "{\n  \"head\" : {\n    \"vars\" : [ \"item\", \"label\" ]\n  },\n  \"results\" : {\n    \"bindings\" : [ {\n      \"item\" : {\n        \"type\" : \"uri\",\n        \"value\" : \"http://www.wikidata.org/entity/Q4544975\"\n      },\n      \"label\" : {\n        \"xml:lang\" : \"en\",\n        \"type\" : \"literal\",\n        \"value\" : \"*Lisp\"\n      }\n    }, {\n      \"item\" : {\n        \"type\" : \"uri\",\n        \"value\" : \"http://www.wikidata.org/entity/Q16321601\"\n      },\n      \"label\" : {\n        \"xml:lang\" : \"en\",\n        \"type\" : \"literal\",\n        \"value\" : \"///\"\n      }\n    }, {\n      \"item\" : {\n        \"type\" : \"uri\",\n        \"value\" : \"http://www.wikidata.org/entity/Q65065977\"\n      },\n      \"label\" : {\n        \"xml:lang\" : \"en\",\n        \"type\" : \"literal\",\n        \"value\" : \"1C:Enterprise programming language\"\n      }\n    } ]\n  }\n}",
+      "headers": {
+        "server": "nginx/1.18.0",
+        "date": "Mon, 23 Feb 2026 05:25:46 GMT",
+        "content-type": "application/sparql-results+json;charset=utf-8",
+        "x-first-solution-millis": "2",
+        "x-served-by": "wdqs1013",
+        "access-control-allow-origin": "*",
+        "access-control-allow-headers": "accept, content-type, content-length, user-agent, api-user-agent",
+        "cache-control": "public, max-age=300",
+        "age": "3",
+        "vary": "Accept, Accept-Encoding",
+        "x-cache": "cp3070 miss, cp3070 pass",
+        "x-cache-status": "pass",
+        "server-timing": "cache;desc=\"pass\", host;desc=\"cp3070\"",
+        "strict-transport-security": "max-age=106384710; includeSubDomains; preload",
+        "report-to": "{ \"group\": \"wm_nel\", \"max_age\": 604800, \"endpoints\": [{ \"url\": \"https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0\" }] }",
+        "nel": "{ \"report_to\": \"wm_nel\", \"max_age\": 604800, \"failure_fraction\": 0.05, \"success_fraction\": 0.0}",
+        "x-client-ip": "92.208.183.237",
+        "set-cookie": "WMF-Uniq=s1q1GGjJRL9QeLCJQOaowwMQAAAAAFvdHwmsb7cXGUV3WqCnDlS7UFesADnC2XlE;Domain=.wikidata.org;Path=/;HttpOnly;secure;SameSite=None;Expires=Tue, 23 Feb 2027 00:00:00 GMT",
+        "content-length": "801",
+        "x-request-id": "a2edcae4-4b76-4794-a073-bd93d442fa32",
+        "x-analytics": ""
+      },
+      "status_code": 200
+    }
+  }
+]

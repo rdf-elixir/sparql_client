@@ -1,0 +1,47 @@
+[
+  {
+    "request": {
+      "options": [],
+      "body": "",
+      "url": "https://query.wikidata.org/sparql?query=PREFIX+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0APREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0APREFIX+xsd%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2001%2FXMLSchema%23%3E%0APREFIX+wd%3A+%3Chttp%3A%2F%2Fwww.wikidata.org%2Fentity%2F%3E%0APREFIX+wdt%3A+%3Chttp%3A%2F%2Fwww.wikidata.org%2Fprop%2Fdirect%2F%3E%0A%0ASELECT+%3Fitem+%3Flabel%0AWHERE+%7B%0A++%3Fitem+wdt%3AP31+wd%3AQ9143+%3B%0A++++++++rdfs%3Alabel+%3Flabel+.%0A++FILTER%28LANG%28%3Flabel%29+%3D+%22en%22%29%0A%7D%0AORDER+BY+%3Flabel%0ALIMIT+3%0A",
+      "headers": {
+        "Accept": "text/csv",
+        "Content-Type": "",
+        "User-Agent": "SPARQL.Client Integration Tests"
+      },
+      "method": "get",
+      "request_body": ""
+    },
+    "response": {
+      "binary": false,
+      "type": "ok",
+      "body": "item,label\r\nhttp://www.wikidata.org/entity/Q4544975,*Lisp\r\nhttp://www.wikidata.org/entity/Q16321601,///\r\nhttp://www.wikidata.org/entity/Q65065977,1C:Enterprise programming language\r\n",
+      "headers": {
+        "server": "nginx/1.18.0",
+        "date": "Mon, 23 Feb 2026 06:03:38 GMT",
+        "content-type": "text/csv;charset=utf-8",
+        "content-disposition": "attachment; filename=query265059.csv",
+        "x-first-solution-millis": "2",
+        "x-served-by": "wdqs1013",
+        "access-control-allow-origin": "*",
+        "access-control-allow-headers": "accept, content-type, content-length, user-agent, api-user-agent",
+        "cache-control": "public, max-age=300",
+        "age": "2",
+        "accept-ranges": "bytes",
+        "vary": "Accept, Accept-Encoding",
+        "x-cache": "cp3070 miss, cp3070 pass",
+        "x-cache-status": "pass",
+        "server-timing": "cache;desc=\"pass\", host;desc=\"cp3070\"",
+        "strict-transport-security": "max-age=106384710; includeSubDomains; preload",
+        "report-to": "{ \"group\": \"wm_nel\", \"max_age\": 604800, \"endpoints\": [{ \"url\": \"https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0\" }] }",
+        "nel": "{ \"report_to\": \"wm_nel\", \"max_age\": 604800, \"failure_fraction\": 0.05, \"success_fraction\": 0.0}",
+        "x-client-ip": "92.208.183.237",
+        "set-cookie": "WMF-Uniq=_AQTXNW8nmT99OVYpGyAowMQAAAAAFvdpu2mMyodpg8_ELrvHN9jaddJ49F4f_y5;Domain=.wikidata.org;Path=/;HttpOnly;secure;SameSite=None;Expires=Tue, 23 Feb 2027 00:00:00 GMT",
+        "content-length": "182",
+        "x-request-id": "90e48611-2bf4-4234-a0c9-b888f047730a",
+        "x-analytics": ""
+      },
+      "status_code": 200
+    }
+  }
+]

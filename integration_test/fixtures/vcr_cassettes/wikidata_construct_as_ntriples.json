@@ -1,0 +1,45 @@
+[
+  {
+    "request": {
+      "options": [],
+      "body": "query=PREFIX+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0APREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0APREFIX+xsd%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2001%2FXMLSchema%23%3E%0APREFIX+wd%3A+%3Chttp%3A%2F%2Fwww.wikidata.org%2Fentity%2F%3E%0A%0ACONSTRUCT+%7B+%3Chttp%3A%2F%2Fexample.org%2FElixir%3E+%3Fp+%3Fo+%7D%0AWHERE+%7B+wd%3AQ5362035+%3Fp+%3Fo+%7D%0ALIMIT+3%0A",
+      "url": "https://query.wikidata.org/sparql",
+      "headers": {
+        "Accept": "application/n-triples",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "SPARQL.Client Integration Tests"
+      },
+      "method": "post",
+      "request_body": ""
+    },
+    "response": {
+      "binary": false,
+      "type": "ok",
+      "body": "<http://example.org/Elixir> <http://www.wikidata.org/prop/direct/P31> <http://www.wikidata.org/entity/Q1130645> .\n<http://example.org/Elixir> <http://www.wikidata.org/prop/direct/P31> <http://www.wikidata.org/entity/Q3839507> .\n<http://example.org/Elixir> <http://www.wikidata.org/prop/direct/P277> <http://www.wikidata.org/entity/Q5362035> .\n",
+      "headers": {
+        "server": "nginx/1.18.0",
+        "date": "Mon, 23 Feb 2026 05:25:50 GMT",
+        "content-type": "application/n-triples;charset=utf-8",
+        "content-disposition": "attachment; filename=query3676523.nt",
+        "x-served-by": "wdqs1014",
+        "access-control-allow-origin": "*",
+        "access-control-allow-headers": "accept, content-type, content-length, user-agent, api-user-agent",
+        "cache-control": "public, max-age=300",
+        "age": "0",
+        "vary": "Accept",
+        "x-cache": "cp3070 miss, cp3070 pass",
+        "x-cache-status": "pass",
+        "server-timing": "cache;desc=\"pass\", host;desc=\"cp3070\"",
+        "strict-transport-security": "max-age=106384710; includeSubDomains; preload",
+        "report-to": "{ \"group\": \"wm_nel\", \"max_age\": 604800, \"endpoints\": [{ \"url\": \"https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0\" }] }",
+        "nel": "{ \"report_to\": \"wm_nel\", \"max_age\": 604800, \"failure_fraction\": 0.05, \"success_fraction\": 0.0}",
+        "x-client-ip": "92.208.183.237",
+        "set-cookie": "WMF-Uniq=tX2N1H9R3a3TeMrJ0jOTcwMQAAAAAFvdIzOIAmQyiExBfAwCCdYWtDoN8vGQG7jN;Domain=.wikidata.org;Path=/;HttpOnly;secure;SameSite=None;Expires=Tue, 23 Feb 2027 00:00:00 GMT",
+        "content-length": "343",
+        "x-request-id": "41624193-fe21-4cb7-b622-cea889c8a45b",
+        "x-analytics": ""
+      },
+      "status_code": 200
+    }
+  }
+]
