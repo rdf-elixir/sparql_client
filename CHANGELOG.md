@@ -7,7 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 
 ## Unreleased
 
-Elixir versions < 1.15 and OTP version < 24 are no longer supported.
+Elixir versions < 1.15 and OTP version < 25 are no longer supported.
 
 ### Added
 
