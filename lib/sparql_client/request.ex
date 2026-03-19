@@ -43,7 +43,7 @@ defmodule SPARQL.Client.Request do
           http_status: pos_integer,
           http_response_content_type: String.t(),
           http_response_body: String.t(),
-          result: SPARQL.Query.Result.t() | RDF.Data.t()
+          result: SPARQL.Query.Result.t() | RDF.Data.Source.t()
         }
 
   alias RDF.IRI

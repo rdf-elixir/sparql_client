@@ -72,7 +72,7 @@ defmodule SPARQL.Client.Mixfile do
 
   defp deps do
     [
-      rdf_ex_dep(:rdf, "~> 2.0"),
+      rdf_ex_dep(:rdf, "~> 3.0"),
       rdf_ex_dep(:sparql, ">= 0.3.10"),
       rdf_ex_dep(:json_ld, ">= 0.3.6"),
       rdf_ex_dep(:rdf_xml, "~> 1.2"),
@@ -87,8 +87,8 @@ defmodule SPARQL.Client.Mixfile do
       {:castore, "~> 1.0", only: [:dev, :test]},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-      {:exvcr, "~> 0.15", only: [:dev, :test]},
-      {:ex_doc, "~> 0.34", only: :dev, runtime: false},
+      {:exvcr, "~> 0.17", only: [:dev, :test]},
+      {:ex_doc, "~> 0.40", only: :dev, runtime: false},
       {:excoveralls, "~> 0.18", only: :test}
     ]
   end
