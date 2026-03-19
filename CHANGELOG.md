@@ -5,7 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 [Keep a CHANGELOG](http://keepachangelog.com).
 
 
-## Unreleased
+## v0.5.1 - 2026-03-19
 
 Elixir versions < 1.15 and OTP version < 25 are no longer supported.
 
@@ -19,8 +19,12 @@ Elixir versions < 1.15 and OTP version < 25 are no longer supported.
 - support `:default` as value for the `:to` option of `SPARQL.Client.load/2`
   to explicitly load into the default graph 
 
+### Fixed
 
-[Compare v0.5.0...HEAD](https://github.com/rdf-elixir/sparql_client/compare/v0.5.0...HEAD)
+- Raise proper error on blank node graph names
+
+
+[Compare v0.5.0...v0.5.1](https://github.com/rdf-elixir/sparql_client/compare/v0.5.0...v0.5.1)
 
 
 
