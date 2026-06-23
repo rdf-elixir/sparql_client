@@ -81,7 +81,7 @@ defmodule SPARQL.Client.Mixfile do
       {:nimble_options, "~> 0.3 or ~> 1.0"},
 
       # Development
-      {:hackney, "~> 1.15", only: [:dev, :test]},
+      {:hackney, "~> 4.3", only: [:dev, :test]},
       {:gun, "~> 2.1", only: [:dev, :test]},
       {:mint, "~> 1.6", only: [:dev, :test]},
       {:castore, "~> 1.0", only: [:dev, :test]},
