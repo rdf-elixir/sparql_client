@@ -5,6 +5,14 @@ This project adheres to [Semantic Versioning](http://semver.org/) and
 [Keep a CHANGELOG](http://keepachangelog.com).
 
 
+## Unreleased
+
+Elixir versions < 1.16 are no longer supported.
+
+[Compare v0.5.1...HEAD](https://github.com/rdf-elixir/sparql_client/compare/v0.5.1...HEAD)
+
+
+
 ## v0.5.1 - 2026-03-19
 
 Elixir versions < 1.15 and OTP version < 25 are no longer supported.
