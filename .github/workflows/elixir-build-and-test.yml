@@ -20,7 +20,7 @@ jobs:
         include:
           - pair:
               elixir: 1.16.2
-              otp: 25.3
+              otp: 26.2
             build-flags: --warnings-as-errors
           - pair:
               elixir: 1.17.3
